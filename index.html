@@ -7,12 +7,103 @@
       name="description"
       content="Olga Shirokostup is an independent curator, researcher, and educator whose work connects artistic research, archives, and exhibition-making."
     />
+    <meta name="author" content="Olga Shirokostup" />
+    <meta name="robots" content="index, follow" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f2efe7" />
     <title>Olga Shirokostup — Curator, Researcher &amp; Educator</title>
-    <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="canonical" href="https://anton-gorokhovatsky.github.io/shirokostup/" />
+    <link rel="icon" href="assets/mark.svg?v=2" type="image/svg+xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Olga Shirokostup" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:url" content="https://anton-gorokhovatsky.github.io/shirokostup/" />
+    <meta property="og:title" content="Olga Shirokostup — Curator, Researcher &amp; Educator" />
+    <meta
+      property="og:description"
+      content="A research-driven practice connecting artistic research, archival work, and exhibition-making across the European High North."
+    />
+    <meta
+      property="og:image"
+      content="https://anton-gorokhovatsky.github.io/shirokostup/assets/og-card.jpg"
+    />
+    <meta
+      property="og:image:secure_url"
+      content="https://anton-gorokhovatsky.github.io/shirokostup/assets/og-card.jpg"
+    />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Olga Shirokostup — independent curator, researcher, and educator"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Olga Shirokostup — Curator, Researcher &amp; Educator" />
+    <meta
+      name="twitter:description"
+      content="A research-driven practice connecting artistic research, archival work, and exhibition-making across the European High North."
+    />
+    <meta
+      name="twitter:image"
+      content="https://anton-gorokhovatsky.github.io/shirokostup/assets/og-card.jpg"
+    />
+    <meta
+      name="twitter:image:alt"
+      content="Olga Shirokostup — independent curator, researcher, and educator"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Olga Shirokostup",
+        "url": "https://anton-gorokhovatsky.github.io/shirokostup/",
+        "email": "mailto:shirokostup@gmail.com",
+        "jobTitle": "Independent curator, researcher, and educator",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Lyon",
+          "addressCountry": "FR"
+        },
+        "knowsAbout": [
+          "Artistic research",
+          "Archives",
+          "Exhibition-making",
+          "European High North",
+          "Contemporary art"
+        ]
+      }
+    </script>
+    <link rel="stylesheet" href="styles.css?v=20260721-4" />
     <script>
-      document.documentElement.classList.replace("no-js", "js");
+      (() => {
+        const root = document.documentElement;
+        let savedTheme = null;
+
+        root.classList.replace("no-js", "js");
+
+        try {
+          savedTheme = localStorage.getItem("olga-theme");
+        } catch (error) {
+          savedTheme = null;
+        }
+
+        const themeMode = ["system", "light", "dark"].includes(savedTheme) ? savedTheme : "system";
+        const theme =
+          themeMode === "system"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : themeMode;
+
+        root.dataset.themeMode = themeMode;
+        root.dataset.theme = theme;
+        root.style.colorScheme = theme;
+        document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#11130f" : "#f2efe7";
+      })();
     </script>
   </head>
   <body>
@@ -30,10 +121,39 @@
         <span class="brand__name">Olga Shirokostup</span>
       </a>
 
-      <button class="index-button" type="button" aria-haspopup="dialog" aria-controls="site-index" aria-expanded="false">
-        <span>Index</span>
-        <span class="index-button__glyph" aria-hidden="true"><i></i><i></i></span>
-      </button>
+      <div class="site-header__actions">
+        <div class="theme-switcher" role="group" aria-label="Colour theme">
+          <button
+            class="theme-choice"
+            type="button"
+            data-theme-choice="system"
+            aria-pressed="true"
+            title="Follow system appearance"
+          >
+            <span class="theme-choice__icon theme-choice__icon--system" aria-hidden="true"></span>
+            <span class="theme-choice__label">System</span>
+          </button>
+          <button class="theme-choice" type="button" data-theme-choice="light" aria-pressed="false" title="Use light theme">
+            <span class="theme-choice__icon theme-choice__icon--light" aria-hidden="true"></span>
+            <span class="theme-choice__label">Light</span>
+          </button>
+          <button class="theme-choice" type="button" data-theme-choice="dark" aria-pressed="false" title="Use dark theme">
+            <span class="theme-choice__icon theme-choice__icon--dark" aria-hidden="true"></span>
+            <span class="theme-choice__label">Dark</span>
+          </button>
+        </div>
+        <button
+          class="index-button"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="site-index"
+          aria-expanded="false"
+          title="Open index"
+        >
+          <span class="index-button__label">Index</span>
+          <span class="index-button__glyph" aria-hidden="true"><i></i><i></i></span>
+        </button>
+      </div>
     </header>
 
     <dialog class="site-index" id="site-index" aria-labelledby="index-title">
@@ -68,7 +188,7 @@
       </div>
     </dialog>
 
-    <main id="main">
+    <main id="main" tabindex="-1">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="aurora-orbit" aria-hidden="true"><span></span></div>
         <div class="hero__content">
@@ -140,7 +260,10 @@
             <div class="project__count">01</div>
             <p class="project__type">Research · exhibitions · publications</p>
             <h3><a href="https://kinmuseum.se/en/events/kvinnor-i-norr-kajsa-zetterquist-i-fokus">Women in the North</a></h3>
-            <p class="project__years">2022—ongoing</p>
+            <p class="project__years">
+              <span>Since 2022</span>
+              <span class="ongoing-status"><i aria-hidden="true"></i>Ongoing</span>
+            </p>
             <p class="project__description">
               A multi-year collaborative thread at Kin Museum of Contemporary Art that foregrounds the conditions,
               knowledge, and dreams of women in the North. Olga’s contributions move between archival research, encounters,
@@ -180,7 +303,10 @@
                 Archive of Artistic Life in Zapolyarye
               </a>
             </h3>
-            <p class="project__years">2023—ongoing</p>
+            <p class="project__years">
+              <span>Since 2023</span>
+              <span class="ongoing-status"><i aria-hidden="true"></i>Ongoing</span>
+            </p>
             <p class="project__description">
               An independent archive of contemporary art in Murmansk Oblast, launched by Olga within the Russian Art
               Archive Network. Beginning with the art scene in Apatity, it brings together testimonies, artworks, documents,
@@ -270,8 +396,20 @@
           <ol class="timeline" aria-label="Selected roles and projects" data-reveal>
             <li><time>2024—27</time><span>Curator, ARCA European research project</span></li>
             <li><time>2026</time><span>Co-curator, Arctic Art Forum V, Oslo</span></li>
-            <li><time>2023—</time><span>Archive of Artistic Life in Zapolyarye, RAAN</span></li>
-            <li><time>2022—</time><span>Women in the North, Kin Museum</span></li>
+            <li>
+              <span class="timeline__period">
+                <time datetime="2023">2023</time>
+                <span class="ongoing-status"><i aria-hidden="true"></i>Ongoing</span>
+              </span>
+              <span>Archive of Artistic Life in Zapolyarye, RAAN</span>
+            </li>
+            <li>
+              <span class="timeline__period">
+                <time datetime="2022">2022</time>
+                <span class="ongoing-status"><i aria-hidden="true"></i>Ongoing</span>
+              </span>
+              <span>Women in the North, Kin Museum</span>
+            </li>
             <li><time>2021—23</time><span>Chief Curator, Radiance Centre, Apatity</span></li>
             <li><time>2020—24</time><span>Research Course Leader, Garage Academy</span></li>
           </ol>
@@ -300,7 +438,7 @@
             <span class="texts__arrow" aria-hidden="true">↗</span>
           </a>
           <a href="https://www.e-flux.com/announcements/582787/konstfest">
-            <span class="texts__meta">Programme · e-flux</span>
+            <span class="texts__meta">Programme · e&#8209;flux</span>
             <strong>Konstfest: The Observatory—Art and Life in the Critical Zone</strong>
             <span class="texts__arrow" aria-hidden="true">↗</span>
           </a>
@@ -314,19 +452,38 @@
         <p class="contact__kicker">For research, exhibitions, teaching, and conversations</p>
         <h2 id="contact-title"><a href="mailto:shirokostup@gmail.com">shirokostup<br />@gmail.com</a></h2>
         <div class="contact__footer">
-          <p>Lyon · European High North</p>
-          <p>© Olga Shirokostup, 2026</p>
+          <div class="contact__signature">
+            <svg class="contact__mark" viewBox="0 0 48 48" aria-hidden="true">
+              <path d="M4 24C10 8 31 4 43 16" />
+              <path d="M6 31c9-16 28-18 38-7" />
+              <path d="M11 38c8-12 24-15 32-6" />
+              <circle cx="8" cy="12" r="3.5" />
+            </svg>
+            <span>Olga<br />Shirokostup</span>
+          </div>
+          <div class="contact__coordinates">
+            <p><span>Based</span>Lyon</p>
+            <p><span>Working across</span>European High North</p>
+          </div>
+          <div class="contact__closing">
+            <p>© Olga Shirokostup, 2026</p>
+            <a class="back-to-top" href="#top">
+              <span class="back-to-top__label">Back to top</span>
+              <span class="back-to-top__arrow" aria-hidden="true">↑</span>
+            </a>
+          </div>
           <details class="credits">
-            <summary>Image credits</summary>
-            <p>
-              Women in the North images: Kin Museum of Contemporary Art. Climate Microchanges image: Natural History
-              Museum, Oslo. Apatity archival image: original source currently unknown, via Kin Museum.
-            </p>
+            <summary><span>Image credits</span><span class="credits__count">3 sources</span></summary>
+            <ul>
+              <li><span>Women in the North</span><span>Kin Museum of Contemporary Art</span></li>
+              <li><span>Climate Microchanges</span><span>Natural History Museum, Oslo</span></li>
+              <li><span>Apatity archival image</span><span>Original source currently unknown, via Kin Museum</span></li>
+            </ul>
           </details>
         </div>
       </section>
     </main>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260721-4"></script>
   </body>
 </html>

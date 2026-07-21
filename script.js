@@ -3,6 +3,69 @@ const progressBar = document.querySelector(".reading-progress span");
 const menuButton = document.querySelector(".index-button");
 const menu = document.querySelector("#site-index");
 const menuClose = menu?.querySelector(".index-close");
+const themeChoices = Array.from(document.querySelectorAll("[data-theme-choice]"));
+const themeColor = document.querySelector('meta[name="theme-color"]');
+const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const validThemeModes = new Set(["system", "light", "dark"]);
+let menuCloseTimer = 0;
+
+const readSavedThemeMode = () => {
+  try {
+    const savedThemeMode = localStorage.getItem("olga-theme");
+    return validThemeModes.has(savedThemeMode) ? savedThemeMode : "system";
+  } catch (error) {
+    return "system";
+  }
+};
+
+const resolveTheme = (themeMode) => {
+  if (themeMode === "system") {
+    return systemTheme.matches ? "dark" : "light";
+  }
+
+  return themeMode;
+};
+
+const applyTheme = (themeMode, { save = false } = {}) => {
+  const nextThemeMode = validThemeModes.has(themeMode) ? themeMode : "system";
+  const nextTheme = resolveTheme(nextThemeMode);
+
+  document.documentElement.dataset.themeMode = nextThemeMode;
+  document.documentElement.dataset.theme = nextTheme;
+  document.documentElement.style.colorScheme = nextTheme;
+
+  if (themeColor) {
+    themeColor.content = nextTheme === "dark" ? "#11130f" : "#f2efe7";
+  }
+
+  themeChoices.forEach((choice) => {
+    const isSelected = choice.dataset.themeChoice === nextThemeMode;
+    choice.setAttribute("aria-pressed", String(isSelected));
+  });
+
+  if (save) {
+    try {
+      localStorage.setItem("olga-theme", nextThemeMode);
+    } catch (error) {
+      // The selected theme still applies for the current visit when storage is unavailable.
+    }
+  }
+};
+
+applyTheme(document.documentElement.dataset.themeMode || readSavedThemeMode());
+
+themeChoices.forEach((choice) => {
+  choice.addEventListener("click", () => {
+    applyTheme(choice.dataset.themeChoice, { save: true });
+  });
+});
+
+systemTheme.addEventListener?.("change", () => {
+  if ((document.documentElement.dataset.themeMode || readSavedThemeMode()) === "system") {
+    applyTheme("system");
+  }
+});
 
 const updateScrollUI = () => {
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
@@ -34,14 +97,38 @@ updateScrollUI();
 const openMenu = () => {
   if (!menu || typeof menu.showModal !== "function") return;
 
+  window.clearTimeout(menuCloseTimer);
+  menu.classList.remove("is-closing");
   menu.showModal();
   document.body.classList.add("menu-open");
   menuButton?.setAttribute("aria-expanded", "true");
 };
 
+const finishMenuClose = () => {
+  window.clearTimeout(menuCloseTimer);
+  menuCloseTimer = 0;
+  menu?.removeEventListener("animationend", handleMenuExit);
+  menu?.classList.remove("is-closing");
+
+  if (menu?.open) menu.close();
+};
+
+const handleMenuExit = (event) => {
+  if (event.target !== menu || event.animationName !== "index-out") return;
+  finishMenuClose();
+};
+
 const closeMenu = () => {
-  if (!menu?.open) return;
-  menu.close();
+  if (!menu?.open || menu.classList.contains("is-closing")) return;
+
+  if (reducedMotion.matches) {
+    finishMenuClose();
+    return;
+  }
+
+  menu.classList.add("is-closing");
+  menu.addEventListener("animationend", handleMenuExit);
+  menuCloseTimer = window.setTimeout(finishMenuClose, 300);
 };
 
 menuButton?.addEventListener("click", openMenu);
@@ -51,7 +138,16 @@ menu?.addEventListener("click", (event) => {
   if (event.target === menu) closeMenu();
 });
 
+menu?.addEventListener("cancel", (event) => {
+  event.preventDefault();
+  closeMenu();
+});
+
 menu?.addEventListener("close", () => {
+  window.clearTimeout(menuCloseTimer);
+  menuCloseTimer = 0;
+  menu.removeEventListener("animationend", handleMenuExit);
+  menu.classList.remove("is-closing");
   document.body.classList.remove("menu-open");
   menuButton?.setAttribute("aria-expanded", "false");
   menuButton?.focus();
