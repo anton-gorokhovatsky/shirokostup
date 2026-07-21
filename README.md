@@ -1,0 +1,24 @@
+# Olga Shirokostup — portfolio prototype
+
+A static editorial portfolio for independent curator, researcher, and educator Olga Shirokostup.
+
+## Run locally
+
+```bash
+python3 -m http.server 4173
+```
+
+Then open `http://127.0.0.1:4173`.
+
+There is no build step or runtime dependency. The repository can be published directly with GitHub Pages.
+
+## Structure
+
+- `index.html` — content and document structure
+- `styles.css` — responsive visual system
+- `script.js` — index dialog, scroll progress, and restrained reveal motion
+- `assets/images` — locally stored project imagery
+
+## Content sources
+
+The first prototype is based on Olga’s supplied website materials and the public project pages linked from that document. Image provenance is recorded in [`assets/images/CREDITS.md`](assets/images/CREDITS.md).
