@@ -52,17 +52,35 @@
   --forum-label: rgba(250, 249, 245, 0.76);
   --forum-label-line: rgba(30, 39, 55, 0.2);
   --contact-line: rgba(17, 19, 16, 0.4);
+  --duration-instant: 120ms;
   --duration-fast: 180ms;
-  --duration-medium: 360ms;
-  --ease-enter: cubic-bezier(0, 0, 0.58, 1);
-  --ease-exit: cubic-bezier(0.42, 0, 1, 1);
-  --ease-move: cubic-bezier(0.42, 0, 0.58, 1);
-  --ease-settle: cubic-bezier(0.34, 1.35, 0.64, 1);
+  --duration-responsive: 260ms;
+  --duration-medium: 420ms;
+  --duration-slow: 680ms;
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-settle: cubic-bezier(0.22, 1, 0.36, 1);
   --gutter: clamp(1.25rem, 3.5vw, 4.5rem);
   --section-top-clearance: clamp(6rem, 10vh, 8rem);
   --type-hero: clamp(3.1rem, calc(1.05rem + 9.6vw), 10.5rem);
   --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
   --sans: Arial, Helvetica, sans-serif;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--duration-medium);
+  animation-timing-function: var(--ease-move);
+  mix-blend-mode: normal;
+}
+
+:root.is-theme-transitioning body,
+:root.is-theme-transitioning .site-index,
+:root.is-theme-transitioning .site-index__top,
+:root.is-theme-transitioning .site-index__theme {
+  transition: color var(--duration-medium) var(--ease-move), background-color var(--duration-medium) var(--ease-move),
+    border-color var(--duration-medium) var(--ease-move);
 }
 
 :root[data-theme="dark"] {
@@ -255,7 +273,7 @@ button {
   color: var(--paper);
   background: var(--ink);
   transform: translateY(-150%);
-  transition: transform 180ms ease;
+  transition: transform var(--duration-responsive) var(--ease-enter);
 }
 
 .skip-link:focus {
@@ -294,8 +312,8 @@ button {
   background: transparent;
   border-bottom: 0;
   box-shadow: none;
-  transition: color var(--duration-fast) var(--ease-move), min-height 220ms var(--ease-move),
-    padding 220ms var(--ease-move);
+  transition: color var(--duration-fast) var(--ease-move), min-height var(--duration-responsive) var(--ease-move),
+    padding var(--duration-responsive) var(--ease-move);
 }
 
 .site-header[data-header-ink="dark"] {
@@ -337,8 +355,14 @@ button {
   visibility: visible;
   opacity: 1;
   transform: translateY(0);
-  transition: visibility 0s linear 0s, opacity var(--duration-fast) var(--ease-move),
-    transform var(--duration-fast) var(--ease-exit);
+  transition: visibility 0s linear 0s, opacity var(--duration-fast) var(--ease-enter),
+    transform var(--duration-responsive) var(--ease-enter);
+}
+
+.brand:focus-visible {
+  border-radius: 999px;
+  outline-width: 2px;
+  outline-offset: 2px;
 }
 
 .site-header.is-scrolled .brand {
@@ -346,7 +370,9 @@ button {
   pointer-events: none;
   opacity: 0;
   transform: translateY(-0.35rem);
-  transition-delay: var(--duration-fast), 0s, 0s;
+  transition-duration: 0s, var(--duration-fast), var(--duration-responsive);
+  transition-timing-function: linear, var(--ease-exit), var(--ease-exit);
+  transition-delay: var(--duration-responsive), 0s, 0s;
 }
 
 .brand__mark {
@@ -444,7 +470,7 @@ button {
   content: "";
   opacity: 0;
   transform: scaleX(0);
-  transition: opacity var(--duration-fast) var(--ease-move), transform 280ms var(--ease-settle);
+  transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-responsive) var(--ease-settle);
 }
 
 .theme-choice[aria-pressed="true"]::after {
@@ -468,7 +494,7 @@ button {
   flex: 0 0 auto;
   border-radius: 50%;
   scale: 1;
-  transition: scale 260ms var(--ease-settle), opacity var(--duration-fast) var(--ease-move);
+  transition: scale var(--duration-responsive) var(--ease-settle), opacity var(--duration-fast) var(--ease-move);
 }
 
 .theme-choice[aria-pressed="true"] .theme-choice__icon {
@@ -518,37 +544,42 @@ button {
   min-height: 48px;
   padding: 0 0.25rem 0 0.5rem;
   justify-content: center;
-  border-radius: 0.625rem;
-  transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-enter);
+  border-radius: 999px;
+  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
 .index-button::before {
   position: absolute;
   z-index: -1;
-  inset: 0.08rem -0.42rem 0.02rem -0.3rem;
+  inset: 0.25rem -0.85rem 0.25rem -0.55rem;
   background: var(--index-material-background);
   border: 1px solid var(--index-material-border);
-  border-radius: 46% 54% 49% 51% / 58% 43% 57% 42%;
+  border-radius: 999px;
   box-shadow: var(--index-material-shadow);
   content: "";
-  transform: rotate(-0.7deg);
+  transform: scale(1);
   -webkit-backdrop-filter: blur(14px) saturate(118%);
   backdrop-filter: blur(14px) saturate(118%);
   transition: background-color var(--duration-fast) var(--ease-move), border-color var(--duration-fast) var(--ease-move),
-    transform 280ms var(--ease-settle);
+    transform var(--duration-responsive) var(--ease-settle);
 }
 
 .index-button:hover {
   color: inherit;
-  opacity: 0.64;
+  transform: translateY(-1px);
 }
 
 .index-button:hover::before {
-  transform: rotate(0deg) scale(1.015);
+  transform: scale(1.015);
 }
 
 .index-button:active {
-  transform: scale(0.96);
+  transform: translateY(0) scale(0.985);
+}
+
+.index-button:focus-visible {
+  outline-width: 2px;
+  outline-offset: 2px;
 }
 
 .index-button__label {
@@ -588,7 +619,7 @@ button {
   right: 0;
   bottom: 3px;
   width: 68%;
-  transition: width 280ms var(--ease-settle);
+  transition: width var(--duration-responsive) var(--ease-settle);
 }
 
 .index-button:hover .index-button__glyph i:last-child {
@@ -612,11 +643,11 @@ button {
 .site-index[open] {
   display: grid;
   grid-template-rows: auto 1fr;
-  animation: index-in 480ms var(--ease-enter) both;
+  animation: index-in 520ms var(--ease-enter) both;
 }
 
 .site-index.is-closing {
-  animation: index-out 240ms var(--ease-exit) both;
+  animation: index-out 300ms var(--ease-exit) both;
 }
 
 .site-index::backdrop {
@@ -624,11 +655,11 @@ button {
 }
 
 .site-index[open]::backdrop {
-  animation: index-backdrop-in 320ms var(--ease-enter) both;
+  animation: index-backdrop-in 360ms var(--ease-enter) both;
 }
 
 .site-index.is-closing::backdrop {
-  animation: index-backdrop-out 220ms var(--ease-exit) both;
+  animation: index-backdrop-out var(--duration-responsive) var(--ease-exit) both;
 }
 
 .site-index__top {
@@ -645,17 +676,24 @@ button {
   gap: 0.9rem;
   align-items: center;
   font-size: 0.82rem;
+  transform: translateY(0.5px);
 }
 
 .index-close {
   min-height: 48px;
+  border-radius: 999px;
+}
+
+.index-close:focus-visible {
+  outline-width: 2px;
+  outline-offset: -3px;
 }
 
 .index-close i {
   position: relative;
   width: 28px;
   transform: rotate(45deg);
-  transition: transform 320ms var(--ease-settle);
+  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
 .index-close i::after {
@@ -663,7 +701,7 @@ button {
 }
 
 .index-close:hover i {
-  transform: rotate(135deg);
+  transform: rotate(90deg) scale(0.96);
 }
 
 .site-index__body {
@@ -690,7 +728,7 @@ button {
   line-height: 0.95;
   letter-spacing: -0.055em;
   text-decoration: none;
-  transition: color var(--duration-fast) var(--ease-move), transform 280ms var(--ease-enter);
+  transition: color var(--duration-fast) var(--ease-move), transform var(--duration-responsive) var(--ease-settle);
 }
 
 .index-nav a span {
@@ -701,9 +739,10 @@ button {
   letter-spacing: 0;
 }
 
-.index-nav a:hover {
+.index-nav a:hover,
+.index-nav a:focus-visible {
   color: var(--menu-accent);
-  transform: translateX(0.08em);
+  transform: translateX(0.045em);
 }
 
 .site-index__meta {
@@ -761,18 +800,26 @@ button {
 @keyframes index-in {
   from {
     clip-path: inset(0 0 100% 0);
+    opacity: 0.88;
+    transform: translateY(-1.25rem);
   }
   to {
     clip-path: inset(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes index-out {
   from {
     clip-path: inset(0);
+    opacity: 1;
+    transform: translateY(0);
   }
   to {
     clip-path: inset(0 0 100% 0);
+    opacity: 0.9;
+    transform: translateY(-0.85rem);
   }
 }
 
@@ -797,7 +844,7 @@ button {
 @keyframes index-item-in {
   from {
     opacity: 0;
-    transform: translateY(0.65em);
+    transform: translateY(0.42em);
   }
   to {
     opacity: 1;
@@ -816,32 +863,32 @@ button {
 }
 
 .site-index[open]:not(.is-closing) .site-index__top {
-  animation: index-top-in 220ms var(--ease-move) 40ms both;
+  animation: index-top-in var(--duration-responsive) var(--ease-move) 30ms both;
 }
 
 .site-index[open]:not(.is-closing) .index-nav li,
 .site-index[open]:not(.is-closing) .site-index__meta {
-  animation: index-item-in 460ms var(--ease-enter) both;
+  animation: index-item-in 480ms var(--ease-enter) both;
 }
 
 .site-index[open]:not(.is-closing) .index-nav li:nth-child(1) {
-  animation-delay: 160ms;
+  animation-delay: 90ms;
 }
 
 .site-index[open]:not(.is-closing) .index-nav li:nth-child(2) {
-  animation-delay: 205ms;
+  animation-delay: 130ms;
 }
 
 .site-index[open]:not(.is-closing) .index-nav li:nth-child(3) {
-  animation-delay: 250ms;
+  animation-delay: 170ms;
 }
 
 .site-index[open]:not(.is-closing) .index-nav li:nth-child(4) {
-  animation-delay: 295ms;
+  animation-delay: 210ms;
 }
 
 .site-index[open]:not(.is-closing) .site-index__meta {
-  animation-delay: 330ms;
+  animation-delay: 230ms;
 }
 
 .section-label {
@@ -951,10 +998,11 @@ button {
 
 .scroll-cue i {
   font-style: normal;
-  transition: transform 180ms ease;
+  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
-.scroll-cue:hover i {
+.scroll-cue:hover i,
+.scroll-cue:focus-visible i {
   transform: translateY(0.3rem);
 }
 
@@ -1090,10 +1138,12 @@ button {
   border: 1px solid currentColor;
   border-radius: 50%;
   font-size: clamp(1.4rem, 2vw, 2.2rem);
-  transition: color 180ms ease, background-color 180ms ease, transform 180ms ease;
+  transition: color var(--duration-fast) var(--ease-move), background-color var(--duration-fast) var(--ease-move),
+    transform var(--duration-responsive) var(--ease-settle);
 }
 
-.now__card:hover .round-arrow {
+.now__card:hover .round-arrow,
+.now__card:focus-visible .round-arrow {
   color: var(--lichen);
   background: var(--accent-ink);
   transform: rotate(45deg);
@@ -1180,13 +1230,16 @@ button {
 }
 
 .project h3 a {
-  text-decoration: none;
-}
-
-.project h3 a:hover {
   text-decoration: underline;
+  text-decoration-color: transparent;
   text-decoration-thickness: 0.04em;
   text-underline-offset: 0.09em;
+  transition: text-decoration-color var(--duration-responsive) var(--ease-enter);
+}
+
+.project h3 a:hover,
+.project h3 a:focus-visible {
+  text-decoration-color: currentColor;
 }
 
 .project__years {
@@ -1204,7 +1257,7 @@ button {
   align-items: center;
   gap: 0.38rem;
   width: fit-content;
-  padding: 0.34rem 0.5rem;
+  padding: 0.37rem 0.5rem 0.31rem;
   background: rgba(17, 19, 16, 0.055);
   border: 1px solid rgba(17, 19, 16, 0.2);
   border-radius: 999px;
@@ -1227,7 +1280,7 @@ button {
   height: 0.42rem;
   background: var(--aurora-green);
   border-radius: 50%;
-  animation: ongoing-pulse 2.4s ease-in-out infinite;
+  animation: ongoing-pulse 2.8s var(--ease-move) infinite;
 }
 
 @keyframes ongoing-pulse {
@@ -1238,8 +1291,8 @@ button {
   }
 
   50% {
-    opacity: 0.62;
-    transform: scale(1.35);
+    opacity: 0.72;
+    transform: scale(1.18);
   }
 }
 
@@ -1301,10 +1354,11 @@ button {
 }
 
 .text-link span {
-  transition: transform 180ms ease;
+  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
-.text-link:hover span {
+.text-link:hover span,
+.text-link:focus-visible span {
   transform: translate(0.2rem, -0.2rem);
 }
 
@@ -1356,10 +1410,47 @@ button {
   stroke-width: 1.15px;
 }
 
+.js .women-route__underlay,
+.js .women-route__line {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.35s var(--ease-enter) 180ms;
+}
+
+.js .project__visual--collage.is-visible .women-route__underlay,
+.js .project__visual--collage.is-visible .women-route__line {
+  stroke-dashoffset: 0;
+}
+
 .women-route__points circle {
   fill: #111310;
   stroke: rgba(250, 249, 245, 0.94);
   stroke-width: 1.8px;
+}
+
+.js .women-route__points circle {
+  opacity: 0;
+  transform: scale(0.72);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity var(--duration-medium) var(--ease-enter), transform var(--duration-medium) var(--ease-settle);
+}
+
+.js .project__visual--collage.is-visible .women-route__points circle {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.js .women-route__points circle:nth-child(-n + 5) {
+  transition-delay: 520ms;
+}
+
+.js .women-route__points circle:nth-child(n + 6):nth-child(-n + 10) {
+  transition-delay: 860ms;
+}
+
+.js .women-route__points circle:nth-child(n + 11) {
+  transition-delay: 1.18s;
 }
 
 .project__visual--collage .project__image--main {
@@ -1443,7 +1534,7 @@ button {
 
 .project__visual--forum > .project__image:not(.project__image--inset) {
   height: min(75svh, 58rem);
-  transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform var(--duration-slow) var(--ease-enter);
 }
 
 .project__visual--forum:hover > .project__image {
@@ -1611,7 +1702,7 @@ button {
   padding: clamp(1.6rem, 3vw, 3rem) 0;
   border-bottom: 1px solid var(--line);
   text-decoration: none;
-  transition: color 220ms ease, padding 220ms ease, background-color 220ms ease;
+  transition: color var(--duration-fast) var(--ease-move);
 }
 
 .texts__list a::before {
@@ -1621,7 +1712,7 @@ button {
   background: var(--lichen);
   content: "";
   opacity: 0;
-  transition: opacity 220ms ease;
+  transition: opacity var(--duration-responsive) var(--ease-move);
 }
 
 .texts__list a > * {
@@ -1658,10 +1749,11 @@ button {
 
 .texts__arrow {
   font-size: 1.5rem;
-  transition: transform 180ms ease;
+  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
-.texts__list a:hover .texts__arrow {
+.texts__list a:hover .texts__arrow,
+.texts__list a:focus-visible .texts__arrow {
   transform: translate(0.3rem, -0.3rem);
 }
 
@@ -1689,13 +1781,16 @@ button {
 }
 
 .contact h2 a {
-  text-decoration: none;
-}
-
-.contact h2 a:hover {
   text-decoration: underline;
+  text-decoration-color: transparent;
   text-decoration-thickness: 0.035em;
   text-underline-offset: 0.08em;
+  transition: text-decoration-color var(--duration-responsive) var(--ease-enter);
+}
+
+.contact h2 a:hover,
+.contact h2 a:focus-visible {
+  text-decoration-color: currentColor;
 }
 
 .contact__footer {
@@ -1797,10 +1892,11 @@ button {
 .back-to-top__arrow {
   display: inline-block;
   line-height: 1;
-  transition: transform 180ms ease;
+  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
-.back-to-top:hover .back-to-top__arrow {
+.back-to-top:hover .back-to-top__arrow,
+.back-to-top:focus-visible .back-to-top__arrow {
   transform: translateY(-0.2rem);
 }
 
@@ -1829,6 +1925,12 @@ button {
   display: none;
 }
 
+.credits summary:focus-visible {
+  border-radius: 0.25rem;
+  outline-width: 2px;
+  outline-offset: 2px;
+}
+
 .credits__count {
   display: inline-flex;
   gap: 0.75rem;
@@ -1843,7 +1945,7 @@ button {
   font-weight: 400;
   line-height: 1;
   text-align: center;
-  transition: transform 280ms var(--ease-settle);
+  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
 .credits[open] .credits__count::after {
@@ -1855,6 +1957,38 @@ button {
   margin: 0;
   padding: 0 0 1.25rem;
   list-style: none;
+}
+
+.credits[open] ul {
+  animation: credits-in 320ms var(--ease-enter) both;
+}
+
+.credits.is-closing ul {
+  animation: credits-out var(--duration-fast) var(--ease-exit) both;
+}
+
+@keyframes credits-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.45rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes credits-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
 }
 
 .credits li {
@@ -1879,13 +2013,30 @@ button {
 
 .js [data-reveal] {
   opacity: 0;
-  transform: translateY(2.2rem);
-  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: translateY(1.4rem);
+  transition: opacity var(--duration-slow) var(--ease-enter), transform var(--duration-slow) var(--ease-enter);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
 .js [data-reveal].is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.hero .eyebrow {
+  --reveal-delay: 60ms;
+}
+
+.hero__title span:first-child {
+  --reveal-delay: 120ms;
+}
+
+.hero__title span:last-child {
+  --reveal-delay: 180ms;
+}
+
+.hero__details {
+  --reveal-delay: 250ms;
 }
 
 @media (max-width: 980px) {
@@ -2365,8 +2516,15 @@ button {
   *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
   }
 
   .js [data-reveal] {

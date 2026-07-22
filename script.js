@@ -1,3 +1,4 @@
+const root = document.documentElement;
 const header = document.querySelector("[data-header]");
 const progressBar = document.querySelector(".reading-progress span");
 const menuButton = document.querySelector(".index-button");
@@ -9,7 +10,11 @@ const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const validThemeModes = new Set(["system", "light", "dark"]);
 const headerInkSurfaces = Array.from(document.querySelectorAll("[data-header-ink]"));
+const credits = document.querySelector(".credits");
+const creditsSummary = credits?.querySelector("summary");
 let menuCloseTimer = 0;
+let creditsCloseTimer = 0;
+let themeTransitionTimer = 0;
 
 const resolveHeaderInk = (inkMode) => {
   const isDarkTheme = document.documentElement.dataset.theme === "dark";
@@ -80,7 +85,22 @@ applyTheme(document.documentElement.dataset.themeMode || readSavedThemeMode());
 
 themeChoices.forEach((choice) => {
   choice.addEventListener("click", () => {
-    applyTheme(choice.dataset.themeChoice, { save: true });
+    const updateTheme = () => applyTheme(choice.dataset.themeChoice, { save: true });
+
+    if (!reducedMotion.matches && typeof document.startViewTransition === "function") {
+      document.startViewTransition(updateTheme);
+      return;
+    }
+
+    if (!reducedMotion.matches) {
+      root.classList.add("is-theme-transitioning");
+      window.requestAnimationFrame(updateTheme);
+      window.clearTimeout(themeTransitionTimer);
+      themeTransitionTimer = window.setTimeout(() => root.classList.remove("is-theme-transitioning"), 480);
+      return;
+    }
+
+    updateTheme();
   });
 });
 
@@ -152,7 +172,7 @@ const closeMenu = () => {
 
   menu.classList.add("is-closing");
   menu.addEventListener("animationend", handleMenuExit);
-  menuCloseTimer = window.setTimeout(finishMenuClose, 300);
+  menuCloseTimer = window.setTimeout(finishMenuClose, 380);
 };
 
 menuButton?.addEventListener("click", openMenu);
@@ -179,6 +199,22 @@ menu?.addEventListener("close", () => {
 
 menu?.querySelectorAll("a[href^='#']").forEach((link) => {
   link.addEventListener("click", closeMenu);
+});
+
+const finishCreditsClose = () => {
+  window.clearTimeout(creditsCloseTimer);
+  creditsCloseTimer = 0;
+  credits?.classList.remove("is-closing");
+
+  if (credits) credits.open = false;
+};
+
+creditsSummary?.addEventListener("click", (event) => {
+  if (!credits?.open || credits.classList.contains("is-closing") || reducedMotion.matches) return;
+
+  event.preventDefault();
+  credits.classList.add("is-closing");
+  creditsCloseTimer = window.setTimeout(finishCreditsClose, 240);
 });
 
 const revealItems = document.querySelectorAll("[data-reveal]");
