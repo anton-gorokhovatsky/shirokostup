@@ -13,6 +13,7 @@
   --aurora-blue: #a9cdea;
   --aurora-violet: #c9b2d6;
   --aurora-glow: rgba(201, 178, 214, 0.52);
+  --aurora-sweep: linear-gradient(90deg, var(--aurora-violet), var(--aurora-blue), var(--aurora-green));
   --contact-start: #d4bfd7;
   --contact-middle: #cbdff0;
   --contact-end: #a6c4b0;
@@ -292,7 +293,7 @@ button {
   display: block;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, var(--aurora-blue), var(--aurora-violet), var(--aurora-green));
+  background: var(--aurora-sweep);
   transform: scaleX(0);
   transform-origin: left;
 }
@@ -738,10 +739,14 @@ button {
   margin: 0;
   padding: 0;
   color: var(--ink);
-  background: var(--paper);
-  border: 0;
+  background-color: var(--glass-background-dense);
+  background-image: var(--glass-sheen);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
   overflow: hidden;
   transform-origin: top center;
+  -webkit-backdrop-filter: blur(24px) saturate(116%);
+  backdrop-filter: blur(24px) saturate(116%);
 }
 
 .site-index[open] {
@@ -767,12 +772,23 @@ button {
 }
 
 .site-index__top {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   min-height: 76px;
   padding: 0.75rem var(--gutter);
-  border-bottom: 1px solid var(--line);
+}
+
+.site-index__top::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--line), var(--aurora-violet), var(--aurora-blue), var(--aurora-green));
+  content: "";
+  opacity: 0.72;
 }
 
 .site-index__identity {
@@ -1601,9 +1617,18 @@ button {
   align-items: center;
   min-height: 2.75rem;
   padding-bottom: 0.25rem;
-  border-bottom: 1px solid currentColor;
+  background-image: linear-gradient(
+      90deg,
+      color-mix(in srgb, currentColor 46%, transparent),
+      color-mix(in srgb, currentColor 46%, transparent)
+    ),
+    var(--aurora-sweep);
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 1px, 0 2px;
   font-size: 0.82rem;
   text-decoration: none;
+  transition: background-size var(--duration-responsive) var(--ease-enter);
 }
 
 .text-link span {
@@ -1613,6 +1638,11 @@ button {
 .text-link:hover span,
 .text-link:focus-visible span {
   transform: translate(0.2rem, -0.2rem);
+}
+
+.text-link:hover,
+.text-link:focus-visible {
+  background-size: 0 1px, 100% 2px;
 }
 
 .project__visual {
@@ -2086,18 +2116,26 @@ button {
 
 .about__biography a,
 .timeline a {
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, currentColor 42%, transparent);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.16em;
-  transition: text-decoration-color var(--duration-fast) var(--ease-move);
+  background-image: linear-gradient(
+      90deg,
+      color-mix(in srgb, currentColor 42%, transparent),
+      color-mix(in srgb, currentColor 42%, transparent)
+    ),
+    var(--aurora-sweep);
+  background-position: left calc(100% - 0.12em);
+  background-repeat: no-repeat;
+  background-size: 100% 1px, 0 2px;
+  text-decoration: none;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size var(--duration-responsive) var(--ease-enter);
 }
 
 .about__biography a:hover,
 .about__biography a:focus-visible,
 .timeline a:hover,
 .timeline a:focus-visible {
-  text-decoration-color: currentColor;
+  background-size: 0 1px, 100% 2px;
 }
 
 .timeline {
@@ -2420,7 +2458,7 @@ button {
   align-items: center;
   font-family: var(--serif);
   font-size: clamp(1.55rem, 2.2vw, 2.35rem);
-  line-height: 0.84;
+  line-height: 1;
   letter-spacing: -0.035em;
 }
 
@@ -2475,16 +2513,22 @@ button {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, currentColor 48%, transparent);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
-  transition: text-decoration-color var(--duration-fast) var(--ease-move);
+  background-image: linear-gradient(
+      90deg,
+      color-mix(in srgb, currentColor 48%, transparent),
+      color-mix(in srgb, currentColor 48%, transparent)
+    ),
+    var(--aurora-sweep);
+  background-position: left calc(50% + 0.72em);
+  background-repeat: no-repeat;
+  background-size: 100% 1px, 0 2px;
+  text-decoration: none;
+  transition: background-size var(--duration-responsive) var(--ease-enter);
 }
 
 .site-credit:hover,
 .site-credit:focus-visible {
-  text-decoration-color: currentColor;
+  background-size: 0 1px, 100% 2px;
 }
 
 .back-to-top {
@@ -2496,9 +2540,16 @@ button {
 }
 
 .back-to-top__label {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.22em;
+  background-image: linear-gradient(
+      90deg,
+      color-mix(in srgb, currentColor 48%, transparent),
+      color-mix(in srgb, currentColor 48%, transparent)
+    ),
+    var(--aurora-sweep);
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 1px, 0 2px;
+  transition: background-size var(--duration-responsive) var(--ease-enter);
 }
 
 .back-to-top__arrow {
@@ -2510,6 +2561,11 @@ button {
 .back-to-top:hover .back-to-top__arrow,
 .back-to-top:focus-visible .back-to-top__arrow {
   transform: translateY(-0.2rem);
+}
+
+.back-to-top:hover .back-to-top__label,
+.back-to-top:focus-visible .back-to-top__label {
+  background-size: 0 1px, 100% 2px;
 }
 
 .credits {
@@ -2983,7 +3039,7 @@ button {
   }
 
   .project__visual--collage {
-    padding-bottom: 24%;
+    padding-bottom: 0;
   }
 
   .project__visual--collage .project__image--main {
@@ -2992,12 +3048,28 @@ button {
   }
 
   .project__image--inset {
+    position: relative;
+    z-index: 2;
+    right: auto;
+    bottom: auto;
+    display: block;
     width: 54%;
+    margin: -3rem 0 0 auto;
     border-width: 0.45rem;
   }
 
   .project__visual--collage figcaption {
-    max-width: 52%;
+    position: relative;
+    z-index: 4;
+    max-width: 48%;
+    margin: 0.85rem 0 0;
+  }
+
+  .women-route {
+    top: -5%;
+    right: -12%;
+    width: 96%;
+    height: 104%;
   }
 
   .project__visual--archive {
@@ -3290,6 +3362,20 @@ button {
   .theme-switcher {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+
+  .site-index {
+    background: var(--paper);
+    border: 2px solid currentColor;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .site-index__top::after {
+    height: 2px;
+    background: currentColor;
+    opacity: 1;
   }
 
   .theme-choice[aria-pressed="true"] {
