@@ -5,13 +5,18 @@ const menuButton = document.querySelector(".index-button");
 const menu = document.querySelector("#site-index");
 const menuClose = menu?.querySelector(".index-close");
 const themeChoices = Array.from(document.querySelectorAll("[data-theme-choice]"));
+const motionChoices = Array.from(document.querySelectorAll("[data-motion-choice]"));
 const themeColor = document.querySelector('meta[name="theme-color"]');
 const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
-const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const systemReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 const validThemeModes = new Set(["system", "light", "dark"]);
+const validMotionModes = new Set(["system", "reduced"]);
 const headerInkSurfaces = Array.from(document.querySelectorAll("[data-header-ink]"));
 const credits = document.querySelector(".credits");
 const creditsSummary = credits?.querySelector("summary");
+const cursorTrail = document.querySelector("[data-cursor-trail]");
+const cometCursor = document.querySelector("[data-comet-cursor]");
 let menuCloseTimer = 0;
 let creditsCloseTimer = 0;
 let themeTransitionTimer = 0;
@@ -42,6 +47,38 @@ const readSavedThemeMode = () => {
     return validThemeModes.has(savedThemeMode) ? savedThemeMode : "system";
   } catch (error) {
     return "system";
+  }
+};
+
+const readSavedMotionMode = () => {
+  try {
+    const savedMotionMode = localStorage.getItem("olga-motion");
+    return validMotionModes.has(savedMotionMode) ? savedMotionMode : "system";
+  } catch (error) {
+    return "system";
+  }
+};
+
+const motionIsReduced = () => root.dataset.motion === "reduced";
+
+const applyMotion = (motionMode, { save = false } = {}) => {
+  const nextMotionMode = validMotionModes.has(motionMode) ? motionMode : "system";
+  const nextMotion = nextMotionMode === "reduced" || systemReducedMotion.matches ? "reduced" : "full";
+
+  root.dataset.motionMode = nextMotionMode;
+  root.dataset.motion = nextMotion;
+  if (nextMotion === "reduced") cometCursor?.classList.remove("is-visible", "is-interactive", "is-pressed");
+
+  motionChoices.forEach((choice) => {
+    choice.setAttribute("aria-pressed", String(choice.dataset.motionChoice === nextMotionMode));
+  });
+
+  if (save) {
+    try {
+      localStorage.setItem("olga-motion", nextMotionMode);
+    } catch (error) {
+      // The selected preference still applies for the current visit when storage is unavailable.
+    }
   }
 };
 
@@ -82,17 +119,18 @@ const applyTheme = (themeMode, { save = false } = {}) => {
 };
 
 applyTheme(document.documentElement.dataset.themeMode || readSavedThemeMode());
+applyMotion(document.documentElement.dataset.motionMode || readSavedMotionMode());
 
 themeChoices.forEach((choice) => {
   choice.addEventListener("click", () => {
     const updateTheme = () => applyTheme(choice.dataset.themeChoice, { save: true });
 
-    if (!reducedMotion.matches && typeof document.startViewTransition === "function") {
+    if (!motionIsReduced() && typeof document.startViewTransition === "function") {
       document.startViewTransition(updateTheme);
       return;
     }
 
-    if (!reducedMotion.matches) {
+    if (!motionIsReduced()) {
       root.classList.add("is-theme-transitioning");
       window.requestAnimationFrame(updateTheme);
       window.clearTimeout(themeTransitionTimer);
@@ -104,10 +142,18 @@ themeChoices.forEach((choice) => {
   });
 });
 
+motionChoices.forEach((choice) => {
+  choice.addEventListener("click", () => applyMotion(choice.dataset.motionChoice, { save: true }));
+});
+
 systemTheme.addEventListener?.("change", () => {
   if ((document.documentElement.dataset.themeMode || readSavedThemeMode()) === "system") {
     applyTheme("system");
   }
+});
+
+systemReducedMotion.addEventListener?.("change", () => {
+  if ((root.dataset.motionMode || readSavedMotionMode()) === "system") applyMotion("system");
 });
 
 const updateScrollUI = () => {
@@ -138,6 +184,170 @@ window.addEventListener(
 
 updateScrollUI();
 
+if (cursorTrail) {
+  const trailContext = cursorTrail.getContext("2d", { alpha: true });
+  const trailLifetime = 620;
+  const trailPoints = [];
+  let trailFrame = 0;
+  let trailPixelRatio = 1;
+  let trailTarget = null;
+  let trailHead = null;
+
+  const colourWithAlpha = (colour, alpha) => {
+    const match = colour.trim().match(/^#([0-9a-f]{6})$/i);
+    if (!match) return colour;
+
+    const value = Number.parseInt(match[1], 16);
+    const red = (value >> 16) & 255;
+    const green = (value >> 8) & 255;
+    const blue = value & 255;
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+  };
+
+  const readTrailPalette = () => {
+    const styles = window.getComputedStyle(root);
+    return {
+      violet: styles.getPropertyValue("--aurora-violet").trim(),
+      blue: styles.getPropertyValue("--aurora-blue").trim(),
+      green: styles.getPropertyValue("--aurora-green").trim(),
+    };
+  };
+
+  const resizeTrail = () => {
+    trailPixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    cursorTrail.width = Math.round(window.innerWidth * trailPixelRatio);
+    cursorTrail.height = Math.round(window.innerHeight * trailPixelRatio);
+    trailContext.setTransform(trailPixelRatio, 0, 0, trailPixelRatio, 0, 0);
+    trailPoints.length = 0;
+    trailTarget = null;
+    trailHead = null;
+  };
+
+  const drawTrail = (now) => {
+    trailFrame = 0;
+    trailContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+    if (motionIsReduced() || !finePointer.matches) {
+      trailPoints.length = 0;
+      trailTarget = null;
+      trailHead = null;
+      return;
+    }
+
+    if (trailTarget && trailHead) {
+      const deltaX = trailTarget.x - trailHead.x;
+      const deltaY = trailTarget.y - trailHead.y;
+      const distanceToTarget = Math.hypot(deltaX, deltaY);
+
+      if (distanceToTarget > 0.35) {
+        trailHead.x += deltaX * 0.16;
+        trailHead.y += deltaY * 0.16;
+        trailPoints.push({ x: trailHead.x, y: trailHead.y, time: now });
+        if (trailPoints.length > 38) trailPoints.shift();
+      }
+    }
+
+    while (trailPoints.length && now - trailPoints[0].time > trailLifetime) trailPoints.shift();
+
+    if (trailPoints.length > 1) {
+      const firstPoint = trailPoints[0];
+      const lastPoint = trailPoints[trailPoints.length - 1];
+      const idleFade = Math.max(0, 1 - (now - lastPoint.time) / trailLifetime);
+      const palette = readTrailPalette();
+      const gradient = trailContext.createLinearGradient(firstPoint.x, firstPoint.y, lastPoint.x, lastPoint.y);
+
+      gradient.addColorStop(0, colourWithAlpha(palette.violet, 0));
+      gradient.addColorStop(0.48, colourWithAlpha(palette.blue, 0.76));
+      gradient.addColorStop(1, colourWithAlpha(palette.green, 0.94));
+
+      trailContext.beginPath();
+      trailContext.moveTo(firstPoint.x, firstPoint.y);
+
+      for (let index = 1; index < trailPoints.length - 1; index += 1) {
+        const point = trailPoints[index];
+        const nextPoint = trailPoints[index + 1];
+        trailContext.quadraticCurveTo(point.x, point.y, (point.x + nextPoint.x) / 2, (point.y + nextPoint.y) / 2);
+      }
+
+      trailContext.lineTo(lastPoint.x, lastPoint.y);
+      trailContext.globalAlpha = 0.5 * idleFade;
+      trailContext.lineCap = "round";
+      trailContext.lineJoin = "round";
+      trailContext.lineWidth = 2.1;
+      trailContext.strokeStyle = gradient;
+      trailContext.shadowBlur = 7;
+      trailContext.shadowColor = colourWithAlpha(palette.blue, 0.24);
+      trailContext.stroke();
+      trailContext.globalAlpha = 1;
+      trailContext.shadowBlur = 0;
+    }
+
+    const headIsMoving =
+      trailTarget && trailHead && Math.hypot(trailTarget.x - trailHead.x, trailTarget.y - trailHead.y) > 0.35;
+    if (trailPoints.length > 1 || headIsMoving) trailFrame = window.requestAnimationFrame(drawTrail);
+  };
+
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      if (motionIsReduced() || !finePointer.matches || (event.pointerType && event.pointerType !== "mouse")) return;
+
+      const now = performance.now();
+      trailTarget = { x: event.clientX, y: event.clientY, time: now };
+
+      if (!trailHead) {
+        trailHead = { x: event.clientX, y: event.clientY };
+        trailPoints.push({ x: event.clientX, y: event.clientY, time: now });
+      }
+
+      if (!trailFrame) trailFrame = window.requestAnimationFrame(drawTrail);
+    },
+    { passive: true },
+  );
+
+  window.addEventListener("resize", resizeTrail, { passive: true });
+  resizeTrail();
+}
+
+if (cometCursor) {
+  let cursorFrame = 0;
+  let cursorX = -48;
+  let cursorY = -48;
+
+  const renderCursor = () => {
+    cursorFrame = 0;
+    cometCursor.style.setProperty("--cursor-x", `${cursorX - 3}px`);
+    cometCursor.style.setProperty("--cursor-y", `${cursorY - 3}px`);
+  };
+
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      if (motionIsReduced() || !finePointer.matches || (event.pointerType && event.pointerType !== "mouse")) return;
+
+      cursorX = event.clientX;
+      cursorY = event.clientY;
+      cometCursor.classList.add("is-visible");
+      if (!cursorFrame) cursorFrame = window.requestAnimationFrame(renderCursor);
+    },
+    { passive: true },
+  );
+
+  window.addEventListener(
+    "pointerover",
+    (event) => {
+      const interactiveTarget = event.target.closest?.("a, button, summary, [role='button'], [tabindex='0']");
+      cometCursor.classList.toggle("is-interactive", Boolean(interactiveTarget));
+    },
+    { passive: true },
+  );
+
+  window.addEventListener("pointerdown", () => cometCursor.classList.add("is-pressed"), { passive: true });
+  window.addEventListener("pointerup", () => cometCursor.classList.remove("is-pressed"), { passive: true });
+  window.addEventListener("blur", () => cometCursor.classList.remove("is-visible", "is-interactive", "is-pressed"));
+  document.documentElement.addEventListener("mouseleave", () => cometCursor.classList.remove("is-visible"));
+}
+
 const openMenu = () => {
   if (!menu || typeof menu.showModal !== "function") return;
 
@@ -165,7 +375,7 @@ const handleMenuExit = (event) => {
 const closeMenu = () => {
   if (!menu?.open || menu.classList.contains("is-closing")) return;
 
-  if (reducedMotion.matches) {
+  if (motionIsReduced()) {
     finishMenuClose();
     return;
   }
@@ -210,7 +420,7 @@ const finishCreditsClose = () => {
 };
 
 creditsSummary?.addEventListener("click", (event) => {
-  if (!credits?.open || credits.classList.contains("is-closing") || reducedMotion.matches) return;
+  if (!credits?.open || credits.classList.contains("is-closing") || motionIsReduced()) return;
 
   event.preventDefault();
   credits.classList.add("is-closing");
@@ -302,7 +512,7 @@ if (archiveStack && archiveCards.length > 1) {
     const activeCard = archiveCards[activeArchiveIndex];
     const nextIndex = (activeArchiveIndex + indexDelta + archiveCards.length) % archiveCards.length;
 
-    if (reducedMotion.matches) {
+    if (motionIsReduced()) {
       activeArchiveIndex = nextIndex;
       renderArchiveStack({ focus: true, announce: true });
       return;
