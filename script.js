@@ -10,14 +10,13 @@ const themeColor = document.querySelector('meta[name="theme-color"]');
 const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 const systemReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+const compactEventTicket = window.matchMedia("(max-width: 700px)");
 const validThemeModes = new Set(["system", "light", "dark"]);
 const validMotionModes = new Set(["system", "reduced"]);
 const headerInkSurfaces = Array.from(document.querySelectorAll("[data-header-ink]"));
 const credits = document.querySelector(".credits");
 const creditsSummary = credits?.querySelector("summary");
 const cursorTrail = document.querySelector("[data-cursor-trail]");
-const cometCursor = document.querySelector("[data-comet-cursor]");
-const customCursorLayer = [cursorTrail, cometCursor].filter(Boolean);
 const eventTicket = document.querySelector("[data-event-ticket]");
 const eventTicketDismiss = document.querySelector("[data-event-ticket-dismiss]");
 const heroSection = document.querySelector("#top");
@@ -80,16 +79,9 @@ const readSavedMotionMode = () => {
 
 const motionIsReduced = () => root.dataset.motion === "reduced";
 
-const syncCustomCursorState = () => {
-  const customCursorIsActive = Boolean(cometCursor && !motionIsReduced() && finePointer.matches);
-
-  root.classList.toggle("has-custom-cursor", customCursorIsActive);
-  if (!customCursorIsActive) cometCursor?.classList.remove("is-visible", "is-interactive", "is-pressed");
-};
-
-const moveCustomCursorLayer = (target) => {
-  if (!target) return;
-  customCursorLayer.forEach((element) => target.append(element));
+const moveCursorTrail = (target) => {
+  if (!target || !cursorTrail) return;
+  target.append(cursorTrail);
 };
 
 const applyMotion = (motionMode, { save = false } = {}) => {
@@ -98,7 +90,6 @@ const applyMotion = (motionMode, { save = false } = {}) => {
 
   root.dataset.motionMode = nextMotionMode;
   root.dataset.motion = nextMotion;
-  syncCustomCursorState();
 
   motionChoices.forEach((choice) => {
     choice.setAttribute("aria-pressed", String(choice.dataset.motionChoice === nextMotionMode));
@@ -187,8 +178,6 @@ systemReducedMotion.addEventListener?.("change", () => {
   if ((root.dataset.motionMode || readSavedMotionMode()) === "system") applyMotion("system");
 });
 
-finePointer.addEventListener?.("change", syncCustomCursorState);
-
 let eventTicketDismissed = false;
 
 try {
@@ -201,6 +190,8 @@ const eventTicketHasExpired = () => {
   const endTime = Date.parse(eventTicket?.dataset.eventUntil || "");
   return Number.isFinite(endTime) && Date.now() >= endTime;
 };
+
+root.classList.toggle("has-active-event", Boolean(eventTicket && !eventTicketDismissed && !eventTicketHasExpired()));
 
 const hideEventTicket = ({ immediate = false } = {}) => {
   if (!eventTicket || eventTicket.hidden) return;
@@ -244,6 +235,7 @@ const updateEventTicketVisibility = () => {
   if (!eventTicket || !heroSection || !upcomingSection || !contactSection) return;
 
   if (eventTicketDismissed || eventTicketHasExpired()) {
+    root.classList.remove("has-active-event");
     hideEventTicket({ immediate: true });
     return;
   }
@@ -252,7 +244,9 @@ const updateEventTicketVisibility = () => {
   const upcomingBounds = upcomingSection.getBoundingClientRect();
   const contactBounds = contactSection.getBoundingClientRect();
   const headerClearance = (header?.getBoundingClientRect().height || 0) + 8;
-  const introIsVisible = heroBounds.bottom > window.innerHeight * 0.48 && upcomingBounds.top > window.innerHeight;
+  const introIsVisible = compactEventTicket.matches
+    ? upcomingBounds.top > window.innerHeight * 0.9
+    : heroBounds.bottom > window.innerHeight * 0.48 && upcomingBounds.top > window.innerHeight;
   const reminderIsVisible =
     upcomingBounds.bottom <= headerClearance && contactBounds.top > window.innerHeight * 0.82;
 
@@ -267,6 +261,7 @@ const updateEventTicketVisibility = () => {
 
 eventTicketDismiss?.addEventListener("click", () => {
   eventTicketDismissed = true;
+  root.classList.remove("has-active-event");
 
   try {
     sessionStorage.setItem("olga-event-ticket-dismissed", "true");
@@ -433,54 +428,14 @@ if (cursorTrail) {
   resizeTrail();
 }
 
-if (cometCursor) {
-  let cursorFrame = 0;
-  let cursorX = -48;
-  let cursorY = -48;
-
-  const renderCursor = () => {
-    cursorFrame = 0;
-    cometCursor.style.setProperty("--cursor-x", `${cursorX - 3}px`);
-    cometCursor.style.setProperty("--cursor-y", `${cursorY - 3}px`);
-  };
-
-  window.addEventListener(
-    "pointermove",
-    (event) => {
-      if (motionIsReduced() || !finePointer.matches || (event.pointerType && event.pointerType !== "mouse")) return;
-
-      cursorX = event.clientX;
-      cursorY = event.clientY;
-      cometCursor.classList.add("is-visible");
-      if (!cursorFrame) cursorFrame = window.requestAnimationFrame(renderCursor);
-    },
-    { passive: true },
-  );
-
-  window.addEventListener(
-    "pointerover",
-    (event) => {
-      const interactiveTarget = event.target.closest?.("a, button, summary, [role='button'], [tabindex='0']");
-      cometCursor.classList.toggle("is-interactive", Boolean(interactiveTarget));
-    },
-    { passive: true },
-  );
-
-  window.addEventListener("pointerdown", () => cometCursor.classList.add("is-pressed"), { passive: true });
-  window.addEventListener("pointerup", () => cometCursor.classList.remove("is-pressed"), { passive: true });
-  window.addEventListener("blur", () => cometCursor.classList.remove("is-visible", "is-interactive", "is-pressed"));
-  document.documentElement.addEventListener("mouseleave", () => cometCursor.classList.remove("is-visible"));
-}
-
 const openMenu = () => {
   if (!menu || typeof menu.showModal !== "function") return;
 
   window.clearTimeout(menuCloseTimer);
   menu.classList.remove("is-closing");
   menu.showModal();
-  moveCustomCursorLayer(menu);
+  moveCursorTrail(menu);
   document.body.classList.add("menu-open");
-  syncCustomCursorState();
   menuButton?.setAttribute("aria-expanded", "true");
 };
 
@@ -529,8 +484,7 @@ menu?.addEventListener("close", () => {
   menu.removeEventListener("animationend", handleMenuExit);
   menu.classList.remove("is-closing");
   document.body.classList.remove("menu-open");
-  moveCustomCursorLayer(document.body);
-  syncCustomCursorState();
+  moveCursorTrail(document.body);
   menuButton?.setAttribute("aria-expanded", "false");
   menuButton?.focus();
 });

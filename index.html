@@ -81,7 +81,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260722-23" />
+    <link rel="stylesheet" href="styles.css?v=20260722-37" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -119,14 +119,20 @@
     </script>
   </head>
   <body>
+    <svg class="icon-sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-arrow-ne" viewBox="0 0 16 16">
+        <path d="M4 12 12 4M6 4h6v6" />
+      </symbol>
+      <symbol id="icon-arrow-right" viewBox="0 0 16 16">
+        <path d="M3 8h10M9 4l4 4-4 4" />
+      </symbol>
+      <symbol id="icon-arrow-up" viewBox="0 0 16 16">
+        <path d="M8 13V3M4 7l4-4 4 4" />
+      </symbol>
+    </svg>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="reading-progress" aria-hidden="true"><span></span></div>
     <canvas class="cursor-trail" data-cursor-trail aria-hidden="true"></canvas>
-    <span class="comet-cursor" data-comet-cursor aria-hidden="true">
-      <svg viewBox="0 0 22 29" focusable="false">
-        <path d="M3 2.5v20l5.1-4.8 4.1 8.2 3.2-1.6-4-7.9h7.2L3 2.5Z" />
-      </svg>
-    </span>
 
     <header class="site-header" data-header>
       <a class="brand" href="#top" aria-label="Olga Shirokostup, home">
@@ -191,7 +197,10 @@
                 target="_blank"
                 rel="noopener"
                 aria-label="Open Olga Shirokostup’s CV as a PDF"
-              ><span class="professional-contact__cv-label">CV</span><span class="professional-contact__cv-arrow" aria-hidden="true">↗</span></a>
+              ><span class="professional-contact__cv-label">CV</span
+              ><span class="professional-contact__cv-arrow" aria-hidden="true"
+                ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false">
+                  <use href="#icon-arrow-ne"></use></svg></span></a>
             </div>
             <span class="professional-contact__note">Research&nbsp;· exhibitions&nbsp;· teaching</span>
           </div>
@@ -273,13 +282,18 @@
       >
         <time class="event-ticket__date" datetime="2026-08-13T18:00:00+02:00">
           <strong>13</strong>
-          <span>Aug<small>18:00</small></span>
+          <span>Aug</span>
         </time>
         <span class="event-ticket__copy">
-          <span>Next event&nbsp;· Kiruna</span>
-          <strong id="event-ticket-title">Olga Shirokostup &amp; Tanja Muravskaja</strong>
+          <span>
+            <span class="event-ticket__status">Upcoming</span>
+            <span class="event-ticket__details">Kiruna&nbsp;· <time datetime="18:00">18:00</time></span>
+          </span>
+          <strong id="event-ticket-title">In conversation with Tanja&nbsp;Muravskaja</strong>
         </span>
-        <span class="event-ticket__arrow" aria-hidden="true">↗</span>
+        <span class="event-ticket__arrow" aria-hidden="true"
+          ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+        ></span>
       </a>
       <button
         class="event-ticket__dismiss"
@@ -312,7 +326,9 @@
         </div>
         <a class="scroll-cue" href="#practice">
           <span>Explore the practice</span>
-          <i aria-hidden="true">→</i>
+          <i aria-hidden="true"
+            ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-right"></use></svg
+          ></i>
         </a>
       </section>
 
@@ -352,7 +368,9 @@
             <p>Talk&nbsp;· Kin Museum of Contemporary Art, Kiruna</p>
             <h2 id="now-title">Conversation with Olga Shirokostup and Tanja Muravskaja</h2>
           </div>
-          <span class="round-arrow" aria-hidden="true">↗</span>
+          <span class="round-arrow" aria-hidden="true"
+            ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+          ></span>
         </a>
       </section>
 
@@ -387,7 +405,10 @@
               </p>
             </div>
             <a class="text-link" href="https://kinmuseum.se/en/events/kvinnor-i-norr-kajsa-zetterquist-i-fokus">
-              View the project <span aria-hidden="true">↗</span>
+              View the project
+              <span aria-hidden="true"
+                ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+              ></span>
             </a>
           </div>
           <figure class="project__visual project__visual--collage" data-reveal>
@@ -470,7 +491,10 @@
               class="text-link"
               href="https://russianartarchive.net/en/catalogue/institution/archive-of-artistic-life-in-zapolyarye"
             >
-              Enter the archive <span aria-hidden="true">↗</span>
+              Enter the archive
+              <span aria-hidden="true"
+                ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+              ></span>
             </a>
           </div>
           <figure class="project__visual project__visual--archive" data-reveal>
@@ -559,7 +583,7 @@
             </div>
             <figcaption class="archive-stack__instructions" id="archive-stack-instructions">
               <span data-archive-counter aria-hidden="true">01 / 04</span>
-              <span>Drag the top photograph&nbsp;· Use ← → on a keyboard</span>
+              <span>Drag the top photograph&nbsp;· Use the Left and Right arrow keys</span>
             </figcaption>
             <p class="archive-stack__status" data-archive-status aria-live="polite" aria-atomic="true"></p>
           </figure>
@@ -577,7 +601,10 @@
               space for thinking about cultural and ecological change in the North.
             </p>
             <a class="text-link" href="https://www.nhm.uio.no/utstillinger/x-utstillinger/e-arctic/">
-              Visit the exhibition <span aria-hidden="true">↗</span>
+              Visit the exhibition
+              <span aria-hidden="true"
+                ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+              ></span>
             </a>
           </div>
           <figure class="project__visual project__visual--forum" data-reveal>
@@ -708,22 +735,30 @@
           <a data-reveal href="https://en.highnorthnews.com/arctic-living/the-arctic-is-a-mirror-of-what-happens-around-the-world/1107650">
             <span class="texts__meta">Interview&nbsp;· High North News</span>
             <strong>The Arctic Is a Mirror of What Happens Around the World</strong>
-            <span class="texts__arrow" aria-hidden="true">↗</span>
+            <span class="texts__arrow" aria-hidden="true"
+              ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+            ></span>
           </a>
           <a data-reveal href="https://www.arctictoday.com/arctic-artists-draw-attention-to-how-climate-change-impacts-local-life/">
             <span class="texts__meta">Conversation&nbsp;· Arctic Today</span>
             <strong>Arctic Artists Draw Attention to How Climate Change Impacts Local Life</strong>
-            <span class="texts__arrow" aria-hidden="true">↗</span>
+            <span class="texts__arrow" aria-hidden="true"
+              ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+            ></span>
           </a>
           <a data-reveal href="https://russianartarchive.net/en/research/art-practices-and-a-public-of-svoi-the-local-history-of-the-art-scene-in-apatity">
             <span class="texts__meta">Essay&nbsp;· Russian Art Archive Network</span>
             <strong>Art Practices and a Public of “Svoi”: The Local History of the Art Scene in Apatity</strong>
-            <span class="texts__arrow" aria-hidden="true">↗</span>
+            <span class="texts__arrow" aria-hidden="true"
+              ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+            ></span>
           </a>
           <a data-reveal href="https://www.e-flux.com/announcements/582787/konstfest">
             <span class="texts__meta">Programme&nbsp;· e&#8209;flux</span>
             <strong>Konstfest: The Observatory—Art and Life in the Critical Zone</strong>
-            <span class="texts__arrow" aria-hidden="true">↗</span>
+            <span class="texts__arrow" aria-hidden="true"
+              ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
+            ></span>
           </a>
         </div>
       </section>
@@ -762,7 +797,10 @@
                 target="_blank"
                 rel="noopener"
                 aria-label="Open Olga Shirokostup’s CV as a PDF"
-              ><span class="professional-contact__cv-label">CV</span><span class="professional-contact__cv-arrow" aria-hidden="true">↗</span></a>
+              ><span class="professional-contact__cv-label">CV</span
+              ><span class="professional-contact__cv-arrow" aria-hidden="true"
+                ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false">
+                  <use href="#icon-arrow-ne"></use></svg></span></a>
             </div>
             <span class="professional-contact__note">Research&nbsp;· exhibitions&nbsp;· teaching</span>
           </div>
@@ -772,7 +810,9 @@
               <a class="site-credit" href="https://anton-gorokhovatsky.github.io/design/">Design &amp; development</a>
               <a class="back-to-top" href="#top">
                 <span class="back-to-top__label">Back to top</span>
-                <span class="back-to-top__arrow" aria-hidden="true">↑</span>
+                <span class="back-to-top__arrow" aria-hidden="true"
+                  ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-up"></use></svg
+                ></span>
               </a>
             </div>
           </div>
@@ -789,6 +829,6 @@
       </section>
     </main>
 
-    <script src="script.js?v=20260722-10"></script>
+    <script src="script.js?v=20260722-15"></script>
   </body>
 </html>
