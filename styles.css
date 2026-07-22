@@ -58,6 +58,7 @@
   --duration-responsive: 260ms;
   --duration-medium: 420ms;
   --duration-slow: 680ms;
+  /* Entry decelerates, exit accelerates, and visible-state movement stays balanced. */
   --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
@@ -265,6 +266,10 @@ button {
   outline-offset: 4px;
 }
 
+:root.is-pointer-navigation :focus-visible {
+  outline: none;
+}
+
 .skip-link {
   position: fixed;
   top: 1rem;
@@ -374,14 +379,10 @@ button {
   transform: scale(0.92);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  :root[data-motion="full"] body:not(.menu-open),
-  :root[data-motion="full"] body:not(.menu-open) a,
-  :root[data-motion="full"] body:not(.menu-open) button,
-  :root[data-motion="full"] body:not(.menu-open) summary,
-  :root[data-motion="full"] body:not(.menu-open) [tabindex] {
-    cursor: none;
-  }
+:root.has-custom-cursor,
+:root.has-custom-cursor body,
+:root.has-custom-cursor body * {
+  cursor: none !important;
 }
 
 .site-header {
@@ -552,7 +553,7 @@ button {
   border-radius: 0.35rem;
   cursor: pointer;
   opacity: 0.62;
-  transition: color var(--duration-fast) var(--ease-move), opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-enter);
+  transition: color var(--duration-fast) var(--ease-move), opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-move);
 }
 
 .theme-choice:hover {
@@ -562,25 +563,12 @@ button {
 .theme-choice[aria-pressed="true"] {
   background: transparent;
   box-shadow: none;
+  font-weight: 600;
   opacity: 1;
 }
 
 .theme-choice::after {
-  position: absolute;
-  right: 9px;
-  bottom: 3px;
-  left: 9px;
-  height: 1px;
-  background: currentColor;
-  content: "";
-  opacity: 0;
-  transform: scaleX(0);
-  transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-responsive) var(--ease-settle);
-}
-
-.theme-choice[aria-pressed="true"]::after {
-  opacity: 0.5;
-  transform: scaleX(1);
+  content: none;
 }
 
 .theme-choice:active {
@@ -599,7 +587,7 @@ button {
   flex: 0 0 auto;
   border-radius: 50%;
   scale: 1;
-  transition: scale var(--duration-responsive) var(--ease-settle), opacity var(--duration-fast) var(--ease-move);
+  transition: scale var(--duration-responsive) var(--ease-move), opacity var(--duration-fast) var(--ease-move);
 }
 
 .theme-choice[aria-pressed="true"] .theme-choice__icon {
@@ -650,7 +638,7 @@ button {
   padding: 0 0.25rem 0 0.5rem;
   justify-content: center;
   border-radius: 999px;
-  transition: transform var(--duration-responsive) var(--ease-settle);
+  transition: transform var(--duration-responsive) var(--ease-move);
 }
 
 .index-button::before {
@@ -666,7 +654,7 @@ button {
   -webkit-backdrop-filter: blur(14px) saturate(118%);
   backdrop-filter: blur(14px) saturate(118%);
   transition: background-color var(--duration-fast) var(--ease-move), border-color var(--duration-fast) var(--ease-move),
-    transform var(--duration-responsive) var(--ease-settle);
+    transform var(--duration-responsive) var(--ease-move);
 }
 
 .index-button:hover {
@@ -907,7 +895,7 @@ button {
   background-repeat: no-repeat;
   background-size: 100% 1px, 0 2px;
   text-decoration: none;
-  transition: background-size var(--duration-responsive) var(--ease-enter);
+  transition: background-size var(--duration-responsive) var(--ease-move);
 }
 
 .professional-contact__actions {
@@ -919,15 +907,36 @@ button {
 
 .professional-contact__actions a:last-child {
   gap: 0.3rem;
+  background-image: none;
 }
 
-.professional-contact__actions a:last-child span {
-  transition: transform var(--duration-responsive) var(--ease-settle);
+.professional-contact__cv-label {
+  display: inline-block;
+  padding-bottom: 0.12rem;
+  background-image: linear-gradient(
+      90deg,
+      color-mix(in srgb, currentColor 46%, transparent),
+      color-mix(in srgb, currentColor 46%, transparent)
+    ),
+    var(--aurora-sweep);
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 1px, 0 2px;
+  transition: background-size var(--duration-responsive) var(--ease-move);
 }
 
-.professional-contact__actions a:last-child:hover span,
-.professional-contact__actions a:last-child:focus-visible span {
+.professional-contact__cv-arrow {
+  transition: transform var(--duration-responsive) var(--ease-move);
+}
+
+.professional-contact__actions a:last-child:hover .professional-contact__cv-arrow,
+.professional-contact__actions a:last-child:focus-visible .professional-contact__cv-arrow {
   transform: translate(0.12rem, -0.12rem);
+}
+
+.professional-contact__actions a:last-child:hover .professional-contact__cv-label,
+.professional-contact__actions a:last-child:focus-visible .professional-contact__cv-label {
+  background-size: 0 1px, 100% 2px;
 }
 
 .professional-contact a:hover,
@@ -999,20 +1008,11 @@ button {
   cursor: pointer;
   font-size: 0.72rem;
   opacity: 0.62;
-  transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-enter);
+  transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-move);
 }
 
 .motion-choice::after {
-  position: absolute;
-  right: 0.45rem;
-  bottom: 3px;
-  left: 0.45rem;
-  height: 1px;
-  background: currentColor;
-  content: "";
-  opacity: 0;
-  transform: scaleX(0.35);
-  transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-responsive) var(--ease-settle);
+  content: none;
 }
 
 .motion-choice:hover {
@@ -1020,12 +1020,8 @@ button {
 }
 
 .motion-choice[aria-pressed="true"] {
+  font-weight: 600;
   opacity: 1;
-}
-
-.motion-choice[aria-pressed="true"]::after {
-  opacity: 0.66;
-  transform: scaleX(1);
 }
 
 .motion-choice:active {
@@ -1104,7 +1100,7 @@ button {
 }
 
 .site-index[open]:not(.is-closing) .site-index__top {
-  animation: index-top-in var(--duration-responsive) var(--ease-move) 30ms both;
+  animation: index-top-in var(--duration-responsive) var(--ease-enter) 30ms both;
 }
 
 .site-index[open]:not(.is-closing) .index-nav li,
@@ -1559,7 +1555,7 @@ button {
   text-decoration-color: transparent;
   text-decoration-thickness: 0.04em;
   text-underline-offset: 0.09em;
-  transition: text-decoration-color var(--duration-responsive) var(--ease-enter);
+  transition: text-decoration-color var(--duration-responsive) var(--ease-move);
 }
 
 .project h3 a:hover,
@@ -1686,11 +1682,11 @@ button {
   background-size: 100% 1px, 0 2px;
   font-size: 0.82rem;
   text-decoration: none;
-  transition: background-size var(--duration-responsive) var(--ease-enter);
+  transition: background-size var(--duration-responsive) var(--ease-move);
 }
 
 .text-link span {
-  transition: transform var(--duration-responsive) var(--ease-settle);
+  transition: transform var(--duration-responsive) var(--ease-move);
 }
 
 .text-link:hover span,
@@ -2186,7 +2182,7 @@ button {
   text-decoration: none;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-  transition: background-size var(--duration-responsive) var(--ease-enter);
+  transition: background-size var(--duration-responsive) var(--ease-move);
 }
 
 .about__biography a:hover,
@@ -2473,16 +2469,30 @@ button {
 }
 
 .contact h2 a {
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 0.035em;
-  text-underline-offset: 0.08em;
-  transition: text-decoration-color var(--duration-responsive) var(--ease-enter);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.16em;
+  text-decoration: none;
 }
 
-.contact h2 a:hover,
-.contact h2 a:focus-visible {
-  text-decoration-color: currentColor;
+.contact h2 a::after {
+  position: absolute;
+  bottom: 0.01em;
+  left: 0;
+  width: clamp(4rem, 8vw, 6rem);
+  height: max(2px, 0.025em);
+  background: var(--aurora-sweep);
+  content: "";
+  opacity: 0.58;
+  transform: scaleX(0.58);
+  transform-origin: left;
+  transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-responsive) var(--ease-move);
+}
+
+.contact h2 a:hover::after,
+.contact h2 a:focus-visible::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 .contact__footer {
@@ -2561,16 +2571,17 @@ button {
 
 .contact__closing {
   display: grid;
-  gap: 0.25rem;
+  gap: 0.15rem;
+  align-content: start;
   align-items: flex-end;
   justify-self: end;
   text-align: right;
 }
 
 .contact__closing > p {
-  min-height: 44px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  line-height: 1.3;
   opacity: 0.74;
 }
 
@@ -2596,7 +2607,7 @@ button {
   background-repeat: no-repeat;
   background-size: 100% 1px, 0 2px;
   text-decoration: none;
-  transition: background-size var(--duration-responsive) var(--ease-enter);
+  transition: background-size var(--duration-responsive) var(--ease-move);
 }
 
 .site-credit:hover,
@@ -2622,13 +2633,13 @@ button {
   background-position: left bottom;
   background-repeat: no-repeat;
   background-size: 100% 1px, 0 2px;
-  transition: background-size var(--duration-responsive) var(--ease-enter);
+  transition: background-size var(--duration-responsive) var(--ease-move);
 }
 
 .back-to-top__arrow {
   display: inline-block;
   line-height: 1;
-  transition: transform var(--duration-responsive) var(--ease-settle);
+  transition: transform var(--duration-responsive) var(--ease-move);
 }
 
 .back-to-top:hover .back-to-top__arrow,
@@ -2897,6 +2908,56 @@ button {
 
   .credits {
     grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 900px) {
+  .timeline li {
+    grid-template-columns: 5.8rem minmax(0, 1fr);
+    gap: 1rem;
+  }
+
+  .timeline__role {
+    grid-template-columns: minmax(0, 1fr) 3.6rem;
+    gap: 0.7rem;
+  }
+
+  .arca-network {
+    width: 3.6rem;
+  }
+
+  .timeline__period {
+    flex-direction: row;
+    gap: 0.45rem;
+    align-items: center;
+  }
+
+  .timeline .ongoing-status,
+  :root[data-theme="dark"] .timeline .ongoing-status {
+    justify-content: center;
+    width: 1rem;
+    height: 1rem;
+    padding: 0;
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .timeline .ongoing-status i {
+    width: 0.5rem;
+    height: 0.5rem;
+    box-shadow: 0 0 0.7rem color-mix(in srgb, var(--aurora-green) 36%, transparent);
+  }
+
+  .timeline .ongoing-status__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
   }
 }
 
@@ -3360,6 +3421,38 @@ button {
   .credits li {
     grid-template-columns: 1fr;
     gap: 0.25rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .site-index__body {
+    gap: 0.75rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .index-nav a {
+    font-size: clamp(2.8rem, 13.5vw, 3.05rem);
+  }
+
+  .site-index__meta {
+    gap: 0.55rem;
+    padding-bottom: 0;
+  }
+
+  .professional-contact--index,
+  .site-index__preferences {
+    margin-top: 0;
+  }
+
+  .site-index__preferences {
+    gap: 0.45rem;
+    padding-top: 0.75rem;
+  }
+
+  .site-index__theme,
+  .site-index__motion {
+    gap: 0.2rem;
   }
 }
 
