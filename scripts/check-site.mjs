@@ -61,6 +61,10 @@ for (const reference of new Set(localReferences)) {
 
 const externalLinks = [...html.matchAll(/\bhref="(https?:\/\/[^"]+)"/gi)].map((match) => match[1]);
 assert(externalLinks.every((link) => link.startsWith("https://")), "External links must use HTTPS.");
+assert(
+  count(html, /href="https:[/][/]kinmuseum[.]se[/]en[/]events[/]samtal-med-olga-shirokostup-och-tanja-muravskaja"/gi) === 2,
+  "The fixed invitation and full event card must share one destination.",
+);
 
 const professionalContacts = count(html, /class="professional-contact(?:\s[^"]*)?"/gi);
 assert(professionalContacts === 2, "Professional contact must be available in both Index and footer.");
@@ -88,6 +92,18 @@ assert(!html.includes(" · "), "Middle-dot separators must stay attached to the 
 assert(css.includes(":root.has-custom-cursor body *"), "The native cursor must be hidden while the custom cursor is active.");
 assert(script.includes("showModal"), "The Index must retain modal-dialog behaviour.");
 assert(script.includes("focus"), "Interactive scripts must retain focus management.");
+assert(
+  /<aside\b[^>]*data-event-ticket[^>]*data-event-until="2026-08-14T00:00:00\+02:00"/i.test(html),
+  "The upcoming-event ticket needs an automatic expiry date.",
+);
+assert(
+  /<time\b[^>]*datetime="2026-08-13T18:00:00\+02:00"/i.test(html),
+  "The upcoming-event ticket needs a machine-readable date and time.",
+);
+assert(
+  script.includes("olga-event-ticket-dismissed") && script.includes("updateEventTicketVisibility"),
+  "The upcoming-event ticket must remain dismissible and viewport-aware.",
+);
 assert(
   script.includes("moveCustomCursorLayer(menu)") && script.includes("moveCustomCursorLayer(document.body)"),
   "The custom cursor layer must move into the Index top layer and return to the page.",

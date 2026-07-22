@@ -18,9 +18,15 @@ const creditsSummary = credits?.querySelector("summary");
 const cursorTrail = document.querySelector("[data-cursor-trail]");
 const cometCursor = document.querySelector("[data-comet-cursor]");
 const customCursorLayer = [cursorTrail, cometCursor].filter(Boolean);
+const eventTicket = document.querySelector("[data-event-ticket]");
+const eventTicketDismiss = document.querySelector("[data-event-ticket-dismiss]");
+const heroSection = document.querySelector("#top");
+const upcomingSection = document.querySelector("#now");
+const contactSection = document.querySelector("#contact");
 let menuCloseTimer = 0;
 let creditsCloseTimer = 0;
 let themeTransitionTimer = 0;
+let eventTicketHideTimer = 0;
 
 document.addEventListener(
   "pointerdown",
@@ -183,6 +189,94 @@ systemReducedMotion.addEventListener?.("change", () => {
 
 finePointer.addEventListener?.("change", syncCustomCursorState);
 
+let eventTicketDismissed = false;
+
+try {
+  eventTicketDismissed = sessionStorage.getItem("olga-event-ticket-dismissed") === "true";
+} catch (error) {
+  eventTicketDismissed = false;
+}
+
+const eventTicketHasExpired = () => {
+  const endTime = Date.parse(eventTicket?.dataset.eventUntil || "");
+  return Number.isFinite(endTime) && Date.now() >= endTime;
+};
+
+const hideEventTicket = ({ immediate = false } = {}) => {
+  if (!eventTicket || eventTicket.hidden) return;
+
+  window.clearTimeout(eventTicketHideTimer);
+  eventTicket.classList.remove("is-visible");
+
+  const finishHide = () => {
+    eventTicket.hidden = true;
+    eventTicket.classList.remove("event-ticket--intro", "event-ticket--reminder");
+  };
+
+  if (immediate || motionIsReduced()) {
+    finishHide();
+    return;
+  }
+
+  eventTicketHideTimer = window.setTimeout(finishHide, 280);
+};
+
+const showEventTicket = (mode) => {
+  if (!eventTicket || eventTicketDismissed || eventTicketHasExpired()) return;
+
+  window.clearTimeout(eventTicketHideTimer);
+  eventTicket.classList.toggle("event-ticket--intro", mode === "intro");
+  eventTicket.classList.toggle("event-ticket--reminder", mode === "reminder");
+
+  if (!eventTicket.hidden && eventTicket.classList.contains("is-visible")) return;
+
+  eventTicket.hidden = false;
+
+  if (motionIsReduced()) {
+    eventTicket.classList.add("is-visible");
+    return;
+  }
+
+  window.requestAnimationFrame(() => eventTicket.classList.add("is-visible"));
+};
+
+const updateEventTicketVisibility = () => {
+  if (!eventTicket || !heroSection || !upcomingSection || !contactSection) return;
+
+  if (eventTicketDismissed || eventTicketHasExpired()) {
+    hideEventTicket({ immediate: true });
+    return;
+  }
+
+  const heroBounds = heroSection.getBoundingClientRect();
+  const upcomingBounds = upcomingSection.getBoundingClientRect();
+  const contactBounds = contactSection.getBoundingClientRect();
+  const headerClearance = (header?.getBoundingClientRect().height || 0) + 8;
+  const introIsVisible = heroBounds.bottom > window.innerHeight * 0.48 && upcomingBounds.top > window.innerHeight;
+  const reminderIsVisible =
+    upcomingBounds.bottom <= headerClearance && contactBounds.top > window.innerHeight * 0.82;
+
+  if (introIsVisible) {
+    showEventTicket("intro");
+  } else if (reminderIsVisible) {
+    showEventTicket("reminder");
+  } else {
+    hideEventTicket();
+  }
+};
+
+eventTicketDismiss?.addEventListener("click", () => {
+  eventTicketDismissed = true;
+
+  try {
+    sessionStorage.setItem("olga-event-ticket-dismissed", "true");
+  } catch (error) {
+    // Dismissal still applies for the current page when storage is unavailable.
+  }
+
+  hideEventTicket({ immediate: motionIsReduced() });
+});
+
 const updateScrollUI = () => {
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
   const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
@@ -193,6 +287,8 @@ const updateScrollUI = () => {
   if (progressBar) {
     progressBar.style.transform = `scaleX(${progress})`;
   }
+
+  updateEventTicketVisibility();
 };
 
 let scrollFrame = 0;
@@ -210,6 +306,7 @@ window.addEventListener(
 );
 
 updateScrollUI();
+window.addEventListener("resize", updateScrollUI, { passive: true });
 
 if (cursorTrail) {
   const trailContext = cursorTrail.getContext("2d", { alpha: true });
