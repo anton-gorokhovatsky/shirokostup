@@ -77,7 +77,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260722-7" />
+    <link rel="stylesheet" href="styles.css?v=20260722-8" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -249,11 +249,17 @@
           class="now__card"
           href="https://kinmuseum.se/en/events/samtal-med-olga-shirokostup-och-tanja-muravskaja"
           aria-label="Conversation with Olga Shirokostup and Tanja Muravskaja at Kin Museum of Contemporary Art"
+          data-reveal
         >
           <div class="now__date" aria-hidden="true">
             <strong>13</strong>
             <span>Aug<br />18:00</span>
           </div>
+          <span class="dialogue-field" aria-hidden="true">
+            <i class="dialogue-field__voice dialogue-field__voice--olga"></i>
+            <b class="dialogue-field__line"></b>
+            <i class="dialogue-field__voice dialogue-field__voice--tanja"></i>
+          </span>
           <div class="now__copy">
             <p>Talk · Kin Museum of Contemporary Art, Kiruna</p>
             <h2 id="now-title">Conversation with Olga Shirokostup and Tanja Muravskaja</h2>
@@ -380,18 +386,24 @@
             </a>
           </div>
           <figure class="project__visual project__visual--archive" data-reveal>
-            <div class="archive-stamp" aria-hidden="true">
-              <span>67°35′N</span><span>33°24′E</span>
+            <div class="archive-layers" aria-hidden="true">
+              <span class="archive-layer archive-layer--materials">Testimonies · artworks · documents</span>
+              <span class="archive-layer archive-layer--range">Apatity · mid-1970s—2000s</span>
             </div>
-            <img
-              class="project__image"
-              src="assets/images/apatity-archive.jpg"
-              alt="Apatity town square with the Khibiny Mountains in the distance, photographed in the 1970s or 1980s"
-              width="800"
-              height="507"
-              loading="lazy"
-            />
-            <figcaption>Apatity, Murmansk Region, 1970s–80s · Archival image, original source unknown</figcaption>
+            <div class="archive-surface">
+              <div class="archive-stamp" aria-hidden="true">
+                <span>67°35′N</span><span>33°24′E</span>
+              </div>
+              <img
+                class="project__image"
+                src="assets/images/apatity-archive.jpg"
+                alt="Apatity town square with the Khibiny Mountains in the distance, photographed in the 1970s or 1980s"
+                width="800"
+                height="507"
+                loading="lazy"
+              />
+              <figcaption>Apatity, Murmansk Region, 1970s–80s · Archival image, original source unknown</figcaption>
+            </div>
           </figure>
         </article>
 
@@ -419,6 +431,31 @@
               height="563"
               loading="lazy"
             />
+            <svg
+              class="climate-field"
+              viewBox="0 0 1000 563"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <g class="climate-field__traces">
+                <path
+                  class="climate-field__trace climate-field__trace--baseline"
+                  pathLength="1"
+                  d="M-40 482C60 468 108 476 163 459C209 445 252 469 301 452C354 435 377 420 426 429C474 438 516 405 550 386C581 368 606 361 636 332C678 294 713 309 751 299C804 286 835 313 873 327C919 344 959 316 1040 303"
+                />
+                <path
+                  class="climate-field__trace climate-field__trace--observed"
+                  pathLength="1"
+                  d="M-40 491C62 477 110 485 166 468C211 454 255 479 304 462C359 443 382 432 431 441C479 449 521 417 556 397C588 379 613 373 643 344C684 306 720 321 758 311C810 298 842 325 880 339C925 356 965 329 1040 317"
+                />
+              </g>
+              <g class="climate-field__stations">
+                <line x1="301" y1="452" x2="304" y2="462" />
+                <line x1="636" y1="332" x2="643" y2="344" />
+                <line x1="873" y1="327" x2="880" y2="339" />
+              </g>
+            </svg>
             <div class="forum-overlay" aria-hidden="true">
               <span>Climate</span><span>Microchanges</span><span>7—26.03.26</span>
             </div>
@@ -454,7 +491,24 @@
             </p>
           </div>
           <ol class="timeline" aria-label="Selected roles and projects" data-reveal>
-            <li><time>2024—27</time><span>Curator, ARCA European research project</span></li>
+            <li class="timeline__item--arca">
+              <time>2024—27</time>
+              <span class="timeline__role">
+                Curator, ARCA European research project
+                <svg class="arca-network" viewBox="0 0 72 42" aria-hidden="true" focusable="false">
+                  <g class="arca-network__links">
+                    <path pathLength="1" d="M7 29C19 8 34 8 43 20S58 37 67 12" />
+                    <path pathLength="1" d="M7 29C25 37 46 38 67 12" />
+                  </g>
+                  <g class="arca-network__places">
+                    <circle cx="7" cy="29" r="3" />
+                    <circle cx="29" cy="12" r="2.6" />
+                    <circle cx="43" cy="20" r="3.4" />
+                    <circle cx="67" cy="12" r="2.8" />
+                  </g>
+                </svg>
+              </span>
+            </li>
             <li><time>2026</time><span>Co-curator, Arctic Art Forum V, Oslo</span></li>
             <li>
               <span class="timeline__period">
@@ -482,22 +536,22 @@
         </div>
         <h2 id="texts-title" data-reveal>Reading room</h2>
         <div class="texts__list">
-          <a href="https://en.highnorthnews.com/arctic-living/the-arctic-is-a-mirror-of-what-happens-around-the-world/1107650">
+          <a data-reveal href="https://en.highnorthnews.com/arctic-living/the-arctic-is-a-mirror-of-what-happens-around-the-world/1107650">
             <span class="texts__meta">Interview · High North News</span>
             <strong>The Arctic Is a Mirror of What Happens Around the World</strong>
             <span class="texts__arrow" aria-hidden="true">↗</span>
           </a>
-          <a href="https://www.arctictoday.com/arctic-artists-draw-attention-to-how-climate-change-impacts-local-life/">
+          <a data-reveal href="https://www.arctictoday.com/arctic-artists-draw-attention-to-how-climate-change-impacts-local-life/">
             <span class="texts__meta">Conversation · Arctic Today</span>
             <strong>Arctic Artists Draw Attention to How Climate Change Impacts Local Life</strong>
             <span class="texts__arrow" aria-hidden="true">↗</span>
           </a>
-          <a href="https://russianartarchive.net/en/research/art-practices-and-a-public-of-svoi-the-local-history-of-the-art-scene-in-apatity">
+          <a data-reveal href="https://russianartarchive.net/en/research/art-practices-and-a-public-of-svoi-the-local-history-of-the-art-scene-in-apatity">
             <span class="texts__meta">Essay · Russian Art Archive Network</span>
             <strong>Art Practices and a Public of “Svoi”: The Local History of the Art Scene in Apatity</strong>
             <span class="texts__arrow" aria-hidden="true">↗</span>
           </a>
-          <a href="https://www.e-flux.com/announcements/582787/konstfest">
+          <a data-reveal href="https://www.e-flux.com/announcements/582787/konstfest">
             <span class="texts__meta">Programme · e&#8209;flux</span>
             <strong>Konstfest: The Observatory—Art and Life in the Critical Zone</strong>
             <span class="texts__arrow" aria-hidden="true">↗</span>
