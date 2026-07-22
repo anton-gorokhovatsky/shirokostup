@@ -97,10 +97,36 @@ assert(
 );
 assert(!html.includes(" · "), "Middle-dot separators must stay attached to the preceding phrase.");
 assert(
-  !html.includes("data-comet-cursor") && !script.includes("cometCursor") && !css.includes("has-custom-cursor"),
-  "The interface must not render a second pointer alongside the native cursor.",
+  !html.includes("data-comet-cursor") &&
+    !script.includes("cometCursor") &&
+    !css.includes("has-custom-cursor") &&
+    css.includes("--site-cursor-default: url") &&
+    css.includes("--site-cursor-action: url") &&
+    css.includes("@media (hover: hover) and (pointer: fine)"),
+  "The custom pointer must use the browser cursor layer so a second DOM pointer cannot appear.",
 );
 assert(!css.includes("cursor: none !important"), "The native cursor must remain visible and predictable.");
+assert(
+  !html.includes("event-ticket__arrow") &&
+    css.includes("width: min(28.5rem") &&
+    css.includes("width: min(18rem") &&
+    css.includes("position: absolute") &&
+    css.includes("top: var(--event-ticket-inset)") &&
+    css.includes("width: 44px"),
+  "The compact event ticket must prioritise its calendar and copy while keeping a 44px top-corner dismiss target.",
+);
+assert(
+  css.includes("background-color: var(--glass-background-dense)") &&
+    css.includes("border: var(--event-ticket-border-width) solid var(--glass-border)") &&
+    css.includes("box-shadow: var(--glass-shadow)") &&
+    css.includes("backdrop-filter: blur(24px) saturate(116%)"),
+  "The event ticket and Index must retain the same material system.",
+);
+assert(
+  css.includes(":root:not(.is-pointer-navigation) .index-button:focus-visible::before") &&
+    css.includes(":root.is-pointer-navigation :focus-visible"),
+  "Focus styling must stay keyboard-visible without persisting after pointer input.",
+);
 assert(script.includes("showModal"), "The Index must retain modal-dialog behaviour.");
 assert(script.includes("focus"), "Interactive scripts must retain focus management.");
 assert(
@@ -116,13 +142,36 @@ assert(
   "The upcoming-event ticket must remain dismissible and viewport-aware.",
 );
 assert(
-  script.includes('compactEventTicket = window.matchMedia("(max-width: 700px)")') &&
-    script.includes("upcomingBounds.top > window.innerHeight * 0.9"),
-  "The compact event ticket must remain visible until the full event card approaches.",
+  !script.includes("compactEventTicket") && script.includes("upcomingBounds.top > window.innerHeight * 0.9"),
+  "The event ticket must remain visible at every width until the full event card approaches.",
+);
+assert(
+  script.includes("heroSection.getBoundingClientRect().bottom > headerHeight") &&
+    !script.includes('classList.toggle("is-scrolled", window.scrollY > 24)'),
+  "The header identity must remain visible throughout the hero instead of collapsing after a tiny restored scroll.",
+);
+assert(
+  /<section\b[^>]*class="about"[^>]*data-header-ink="theme"/i.test(html) &&
+    css.includes(".about {") &&
+    css.includes("background: var(--paper)"),
+  "The About section must follow the active colour theme.",
 );
 assert(
   script.includes("moveCursorTrail(menu)") && script.includes("moveCursorTrail(document.body)"),
   "The decorative cursor trail must move into the Index top layer and return to the page.",
+);
+assert(
+  count(html, /data-archive-stack\b/gi) === 2 &&
+    count(html, /data-archive-card\b/gi) === 8 &&
+    script.includes('document.querySelectorAll("[data-archive-stack]")') &&
+    script.includes('archiveStack.closest("figure")'),
+  "Both project image stacks must retain independent drag, keyboard, counter, and live-region behaviour.",
+);
+assert(
+  html.includes('class="women-route"') &&
+    css.includes(".archive-stack--women .women-route") &&
+    css.includes("pointer-events: none"),
+  "The Women in the North route must remain visible without intercepting photo dragging.",
 );
 assert(!/[←↑→↓↗↘↙↖]/u.test(html), "Directional actions must use the shared vector-arrow system.");
 

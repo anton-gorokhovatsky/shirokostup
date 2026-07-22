@@ -10,7 +10,6 @@ const themeColor = document.querySelector('meta[name="theme-color"]');
 const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 const systemReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
-const compactEventTicket = window.matchMedia("(max-width: 700px)");
 const validThemeModes = new Set(["system", "light", "dark"]);
 const validMotionModes = new Set(["system", "reduced"]);
 const headerInkSurfaces = Array.from(document.querySelectorAll("[data-header-ink]"));
@@ -240,13 +239,10 @@ const updateEventTicketVisibility = () => {
     return;
   }
 
-  const heroBounds = heroSection.getBoundingClientRect();
   const upcomingBounds = upcomingSection.getBoundingClientRect();
   const contactBounds = contactSection.getBoundingClientRect();
   const headerClearance = (header?.getBoundingClientRect().height || 0) + 8;
-  const introIsVisible = compactEventTicket.matches
-    ? upcomingBounds.top > window.innerHeight * 0.9
-    : heroBounds.bottom > window.innerHeight * 0.48 && upcomingBounds.top > window.innerHeight;
+  const introIsVisible = upcomingBounds.top > window.innerHeight * 0.9;
   const reminderIsVisible =
     upcomingBounds.bottom <= headerClearance && contactBounds.top > window.innerHeight * 0.82;
 
@@ -275,8 +271,12 @@ eventTicketDismiss?.addEventListener("click", () => {
 const updateScrollUI = () => {
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
   const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
+  const headerHeight = header?.getBoundingClientRect().height || 0;
+  const heroIsUnderHeader = heroSection
+    ? heroSection.getBoundingClientRect().bottom > headerHeight
+    : window.scrollY <= 24;
 
-  header?.classList.toggle("is-scrolled", window.scrollY > 24);
+  header?.classList.toggle("is-scrolled", !heroIsUnderHeader);
   updateHeaderInk();
 
   if (progressBar) {
@@ -528,12 +528,16 @@ if ("IntersectionObserver" in window) {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
 
-const archiveStack = document.querySelector("[data-archive-stack]");
-const archiveCards = archiveStack ? Array.from(archiveStack.querySelectorAll("[data-archive-card]")) : [];
-const archiveCounter = document.querySelector("[data-archive-counter]");
-const archiveStatus = document.querySelector("[data-archive-status]");
+const archiveStacks = Array.from(document.querySelectorAll("[data-archive-stack]"));
 
-if (archiveStack && archiveCards.length > 1) {
+archiveStacks.forEach((archiveStack) => {
+  const archiveFigure = archiveStack.closest("figure");
+  const archiveCards = Array.from(archiveStack.querySelectorAll("[data-archive-card]"));
+  const archiveCounter = archiveFigure?.querySelector("[data-archive-counter]");
+  const archiveStatus = archiveFigure?.querySelector("[data-archive-status]");
+
+  if (archiveCards.length <= 1) return;
+
   let activeArchiveIndex = 0;
   let archiveIsAnimating = false;
   let archiveAnimationTimer = 0;
@@ -710,4 +714,4 @@ if (archiveStack && archiveCards.length > 1) {
   });
 
   renderArchiveStack();
-}
+});

@@ -81,7 +81,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260722-37" />
+    <link rel="stylesheet" href="styles.css?v=20260722-44" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -291,9 +291,6 @@
           </span>
           <strong id="event-ticket-title">In conversation with Tanja&nbsp;Muravskaja</strong>
         </span>
-        <span class="event-ticket__arrow" aria-hidden="true"
-          ><svg class="arrow-icon" viewBox="0 0 16 16" focusable="false"><use href="#icon-arrow-ne"></use></svg
-        ></span>
       </a>
       <button
         class="event-ticket__dismiss"
@@ -411,61 +408,132 @@
               ></span>
             </a>
           </div>
-          <figure class="project__visual project__visual--collage" data-reveal>
-            <img
-              class="project__image project__image--main"
-              src="assets/images/women-house.jpg"
-              alt="Kajsa Zetterquist walking between timber buildings at her home on Saltfjellet"
-              width="1800"
-              height="1006"
-              loading="lazy"
-            />
-            <img
-              class="project__image project__image--inset"
-              src="assets/images/women-painting.jpg"
-              alt="An abstract painting by Kajsa Zetterquist in muted earth, black, green, and yellow tones"
-              width="1800"
-              height="1198"
-              loading="lazy"
-            />
-            <svg
-              class="women-route"
-              viewBox="0 0 520 1000"
-              preserveAspectRatio="xMidYMid meet"
-              aria-hidden="true"
-              focusable="false"
+          <figure class="project__visual project__visual--women-stack" data-reveal>
+            <div
+              class="archive-stack archive-stack--women"
+              data-archive-stack
+              role="group"
+              aria-label="Four photographs from Women in the North"
+              aria-describedby="women-stack-instructions"
             >
-              <path
-                class="women-route__underlay"
-                pathLength="1"
-                vector-effect="non-scaling-stroke"
-                d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
-              />
-              <path
-                class="women-route__line"
-                pathLength="1"
-                vector-effect="non-scaling-stroke"
-                d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
-              />
-              <g class="women-route__points">
-                <circle vector-effect="non-scaling-stroke" cx="378" cy="91" r="4.3" />
-                <circle vector-effect="non-scaling-stroke" cx="369" cy="80" r="2.4" />
-                <circle vector-effect="non-scaling-stroke" cx="389" cy="84" r="2.8" />
-                <circle vector-effect="non-scaling-stroke" cx="367" cy="99" r="2" />
-                <circle vector-effect="non-scaling-stroke" cx="391" cy="104" r="2.2" />
-                <circle vector-effect="non-scaling-stroke" cx="226" cy="438" r="4.8" />
-                <circle vector-effect="non-scaling-stroke" cx="214" cy="431" r="2.2" />
-                <circle vector-effect="non-scaling-stroke" cx="236" cy="427" r="2.6" />
-                <circle vector-effect="non-scaling-stroke" cx="217" cy="450" r="2" />
-                <circle vector-effect="non-scaling-stroke" cx="239" cy="445" r="1.8" />
-                <circle vector-effect="non-scaling-stroke" cx="157" cy="780" r="4.4" />
-                <circle vector-effect="non-scaling-stroke" cx="146" cy="772" r="2.4" />
-                <circle vector-effect="non-scaling-stroke" cx="169" cy="770" r="2.1" />
-                <circle vector-effect="non-scaling-stroke" cx="147" cy="790" r="1.9" />
-                <circle vector-effect="non-scaling-stroke" cx="171" cy="793" r="2.7" />
-              </g>
-            </svg>
-            <figcaption>Kajsa Zetterquist in focus&nbsp;· Images courtesy of Kin Museum of Contemporary Art</figcaption>
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="Still from The Calm Steps Behind by Ingela Johansson"
+                data-stack-depth="0"
+                role="button"
+                tabindex="0"
+              >
+                <img
+                  src="assets/images/women-house.jpg"
+                  alt="Kajsa Zetterquist walking between timber buildings at her home on Saltfjellet"
+                  width="1800"
+                  height="1006"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Still from <cite>The Calm Steps Behind</cite>&nbsp;· Ingela Johansson</p>
+              </div>
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="Second still from The Calm Steps Behind by Ingela Johansson"
+                data-stack-depth="1"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/women-window.jpg"
+                  alt="A multi-pane window in the timber wall of Kajsa Zetterquist’s home on Saltfjellet"
+                  width="1800"
+                  height="1011"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Still from <cite>The Calm Steps Behind</cite>&nbsp;· Ingela Johansson</p>
+              </div>
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="Exhibition view photographed by Johan Ylitalo"
+                data-stack-depth="2"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/women-installation.jpg"
+                  alt="Installation view of Kajsa Zetterquist’s paintings arranged across a gallery wall"
+                  width="1800"
+                  height="1234"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Exhibition view&nbsp;· Photo: Johan Ylitalo</p>
+              </div>
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="Felicias dans, 2005 to 2006, by Kajsa Zetterquist"
+                data-stack-depth="3"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/women-painting.jpg"
+                  alt="Felicias dans by Kajsa Zetterquist, an abstract painting in muted earth, black, green, and yellow tones"
+                  width="1800"
+                  height="1197"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption"><cite>Felicias dans</cite>, 2005–2006&nbsp;· Kajsa Zetterquist</p>
+              </div>
+              <svg
+                class="women-route"
+                viewBox="0 0 520 1000"
+                preserveAspectRatio="xMidYMid meet"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  class="women-route__underlay"
+                  pathLength="1"
+                  vector-effect="non-scaling-stroke"
+                  d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
+                />
+                <path
+                  class="women-route__line"
+                  pathLength="1"
+                  vector-effect="non-scaling-stroke"
+                  d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
+                />
+                <g class="women-route__points">
+                  <circle vector-effect="non-scaling-stroke" cx="378" cy="91" r="4.3" />
+                  <circle vector-effect="non-scaling-stroke" cx="369" cy="80" r="2.4" />
+                  <circle vector-effect="non-scaling-stroke" cx="389" cy="84" r="2.8" />
+                  <circle vector-effect="non-scaling-stroke" cx="367" cy="99" r="2" />
+                  <circle vector-effect="non-scaling-stroke" cx="391" cy="104" r="2.2" />
+                  <circle vector-effect="non-scaling-stroke" cx="226" cy="438" r="4.8" />
+                  <circle vector-effect="non-scaling-stroke" cx="214" cy="431" r="2.2" />
+                  <circle vector-effect="non-scaling-stroke" cx="236" cy="427" r="2.6" />
+                  <circle vector-effect="non-scaling-stroke" cx="217" cy="450" r="2" />
+                  <circle vector-effect="non-scaling-stroke" cx="239" cy="445" r="1.8" />
+                  <circle vector-effect="non-scaling-stroke" cx="157" cy="780" r="4.4" />
+                  <circle vector-effect="non-scaling-stroke" cx="146" cy="772" r="2.4" />
+                  <circle vector-effect="non-scaling-stroke" cx="169" cy="770" r="2.1" />
+                  <circle vector-effect="non-scaling-stroke" cx="147" cy="790" r="1.9" />
+                  <circle vector-effect="non-scaling-stroke" cx="171" cy="793" r="2.7" />
+                </g>
+              </svg>
+            </div>
+            <figcaption class="archive-stack__instructions" id="women-stack-instructions">
+              <span data-archive-counter aria-hidden="true">01 / 04</span>
+              <span>Drag the top photograph&nbsp;· Use the Left and Right arrow keys</span>
+            </figcaption>
+            <p class="archive-stack__status" data-archive-status aria-live="polite" aria-atomic="true"></p>
           </figure>
         </article>
 
@@ -649,8 +717,8 @@
         </article>
       </section>
 
-      <section class="about" id="about" aria-labelledby="about-title" data-header-ink="inverse">
-        <div class="section-label section-label--light">
+      <section class="about" id="about" aria-labelledby="about-title" data-header-ink="theme">
+        <div class="section-label">
           <span>About</span><span>03 / 05</span>
         </div>
         <div class="about__intro">
@@ -829,6 +897,6 @@
       </section>
     </main>
 
-    <script src="script.js?v=20260722-15"></script>
+    <script src="script.js?v=20260722-18"></script>
   </body>
 </html>
