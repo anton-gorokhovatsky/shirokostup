@@ -17,9 +17,22 @@ const credits = document.querySelector(".credits");
 const creditsSummary = credits?.querySelector("summary");
 const cursorTrail = document.querySelector("[data-cursor-trail]");
 const cometCursor = document.querySelector("[data-comet-cursor]");
+const customCursorLayer = [cursorTrail, cometCursor].filter(Boolean);
 let menuCloseTimer = 0;
 let creditsCloseTimer = 0;
 let themeTransitionTimer = 0;
+
+document.addEventListener(
+  "pointerdown",
+  () => root.classList.add("is-pointer-navigation"),
+  { capture: true, passive: true },
+);
+
+document.addEventListener(
+  "keydown",
+  () => root.classList.remove("is-pointer-navigation"),
+  { capture: true },
+);
 
 const resolveHeaderInk = (inkMode) => {
   const isDarkTheme = document.documentElement.dataset.theme === "dark";
@@ -61,13 +74,25 @@ const readSavedMotionMode = () => {
 
 const motionIsReduced = () => root.dataset.motion === "reduced";
 
+const syncCustomCursorState = () => {
+  const customCursorIsActive = Boolean(cometCursor && !motionIsReduced() && finePointer.matches);
+
+  root.classList.toggle("has-custom-cursor", customCursorIsActive);
+  if (!customCursorIsActive) cometCursor?.classList.remove("is-visible", "is-interactive", "is-pressed");
+};
+
+const moveCustomCursorLayer = (target) => {
+  if (!target) return;
+  customCursorLayer.forEach((element) => target.append(element));
+};
+
 const applyMotion = (motionMode, { save = false } = {}) => {
   const nextMotionMode = validMotionModes.has(motionMode) ? motionMode : "system";
   const nextMotion = nextMotionMode === "reduced" || systemReducedMotion.matches ? "reduced" : "full";
 
   root.dataset.motionMode = nextMotionMode;
   root.dataset.motion = nextMotion;
-  if (nextMotion === "reduced") cometCursor?.classList.remove("is-visible", "is-interactive", "is-pressed");
+  syncCustomCursorState();
 
   motionChoices.forEach((choice) => {
     choice.setAttribute("aria-pressed", String(choice.dataset.motionChoice === nextMotionMode));
@@ -155,6 +180,8 @@ systemTheme.addEventListener?.("change", () => {
 systemReducedMotion.addEventListener?.("change", () => {
   if ((root.dataset.motionMode || readSavedMotionMode()) === "system") applyMotion("system");
 });
+
+finePointer.addEventListener?.("change", syncCustomCursorState);
 
 const updateScrollUI = () => {
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
@@ -354,7 +381,9 @@ const openMenu = () => {
   window.clearTimeout(menuCloseTimer);
   menu.classList.remove("is-closing");
   menu.showModal();
+  moveCustomCursorLayer(menu);
   document.body.classList.add("menu-open");
+  syncCustomCursorState();
   menuButton?.setAttribute("aria-expanded", "true");
 };
 
@@ -403,6 +432,8 @@ menu?.addEventListener("close", () => {
   menu.removeEventListener("animationend", handleMenuExit);
   menu.classList.remove("is-closing");
   document.body.classList.remove("menu-open");
+  moveCustomCursorLayer(document.body);
+  syncCustomCursorState();
   menuButton?.setAttribute("aria-expanded", "false");
   menuButton?.focus();
 });

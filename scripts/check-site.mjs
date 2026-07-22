@@ -84,8 +84,14 @@ assert(css.includes("@media (prefers-reduced-motion: reduce)"), "CSS must respec
 assert(css.includes(':root[data-motion="reduced"]'), "CSS must support the manual reduced-motion mode.");
 assert(css.includes(":focus-visible"), "Visible keyboard focus styles are required.");
 assert(css.includes("@media (max-width: 700px)"), "The mobile reflow breakpoint is missing.");
+assert(!html.includes(" · "), "Middle-dot separators must stay attached to the preceding phrase.");
+assert(css.includes(":root.has-custom-cursor body *"), "The native cursor must be hidden while the custom cursor is active.");
 assert(script.includes("showModal"), "The Index must retain modal-dialog behaviour.");
 assert(script.includes("focus"), "Interactive scripts must retain focus management.");
+assert(
+  script.includes("moveCustomCursorLayer(menu)") && script.includes("moveCustomCursorLayer(document.body)"),
+  "The custom cursor layer must move into the Index top layer and return to the page.",
+);
 
 if (failures.length) {
   console.error(`Site quality check failed (${failures.length}):`);
