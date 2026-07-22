@@ -8,7 +8,28 @@ const themeColor = document.querySelector('meta[name="theme-color"]');
 const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const validThemeModes = new Set(["system", "light", "dark"]);
+const headerInkSurfaces = Array.from(document.querySelectorAll("[data-header-ink]"));
 let menuCloseTimer = 0;
+
+const resolveHeaderInk = (inkMode) => {
+  const isDarkTheme = document.documentElement.dataset.theme === "dark";
+
+  if (inkMode === "dark" || inkMode === "light") return inkMode;
+  if (inkMode === "inverse") return isDarkTheme ? "dark" : "light";
+  return isDarkTheme ? "light" : "dark";
+};
+
+const updateHeaderInk = () => {
+  if (!header) return;
+
+  const sampleY = Math.max(1, Math.min(window.innerHeight - 1, header.getBoundingClientRect().height / 2));
+  const activeSurface = headerInkSurfaces.find((surface) => {
+    const bounds = surface.getBoundingClientRect();
+    return bounds.top <= sampleY && bounds.bottom > sampleY;
+  });
+
+  header.dataset.headerInk = resolveHeaderInk(activeSurface?.dataset.headerInk || "theme");
+};
 
 const readSavedThemeMode = () => {
   try {
@@ -44,6 +65,8 @@ const applyTheme = (themeMode, { save = false } = {}) => {
     choice.setAttribute("aria-pressed", String(isSelected));
   });
 
+  updateHeaderInk();
+
   if (save) {
     try {
       localStorage.setItem("olga-theme", nextThemeMode);
@@ -72,6 +95,7 @@ const updateScrollUI = () => {
   const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
 
   header?.classList.toggle("is-scrolled", window.scrollY > 24);
+  updateHeaderInk();
 
   if (progressBar) {
     progressBar.style.transform = `scaleX(${progress})`;
