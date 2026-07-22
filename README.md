@@ -19,6 +19,12 @@ There is no build step or runtime dependency. The repository can be published di
 - `script.js` — index dialog, scroll progress, and restrained reveal motion
 - `assets/images` — locally stored project imagery
 
+## Accessibility
+
+Accessibility is a release metric for every change. The site targets WCAG 2.2 Level AA, provides an explicit System · Light · Dark theme control, keyboard navigation, visible focus, reduced motion, semantic reading order, and responsive text reflow. The permanent release checklist is in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
+
+The companion interaction rule is consistency as predictability rather than sameness; see [`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md).
+
 ## Content sources
 
 The first prototype is based on Olga’s supplied website materials and the public project pages linked from that document. Image provenance is recorded in [`assets/images/CREDITS.md`](assets/images/CREDITS.md).
