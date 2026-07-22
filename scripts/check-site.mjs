@@ -88,8 +88,19 @@ assert(css.includes("@media (prefers-reduced-motion: reduce)"), "CSS must respec
 assert(css.includes(':root[data-motion="reduced"]'), "CSS must support the manual reduced-motion mode.");
 assert(css.includes(":focus-visible"), "Visible keyboard focus styles are required.");
 assert(css.includes("@media (max-width: 700px)"), "The mobile reflow breakpoint is missing.");
+assert(
+  css.includes("var(--event-ticket-radius) - var(--event-ticket-inset) - var(--event-ticket-border-width)") &&
+    css.includes("--event-ticket-corner-shape: superellipse(1.55)") &&
+    css.includes("--event-ticket-tile-size: 3.15rem") &&
+    css.includes("corner-shape: var(--event-ticket-corner-shape)"),
+  "The event ticket must retain its continuous, concentric corner system.",
+);
 assert(!html.includes(" · "), "Middle-dot separators must stay attached to the preceding phrase.");
-assert(css.includes(":root.has-custom-cursor body *"), "The native cursor must be hidden while the custom cursor is active.");
+assert(
+  !html.includes("data-comet-cursor") && !script.includes("cometCursor") && !css.includes("has-custom-cursor"),
+  "The interface must not render a second pointer alongside the native cursor.",
+);
+assert(!css.includes("cursor: none !important"), "The native cursor must remain visible and predictable.");
 assert(script.includes("showModal"), "The Index must retain modal-dialog behaviour.");
 assert(script.includes("focus"), "Interactive scripts must retain focus management.");
 assert(
@@ -105,9 +116,15 @@ assert(
   "The upcoming-event ticket must remain dismissible and viewport-aware.",
 );
 assert(
-  script.includes("moveCustomCursorLayer(menu)") && script.includes("moveCustomCursorLayer(document.body)"),
-  "The custom cursor layer must move into the Index top layer and return to the page.",
+  script.includes('compactEventTicket = window.matchMedia("(max-width: 700px)")') &&
+    script.includes("upcomingBounds.top > window.innerHeight * 0.9"),
+  "The compact event ticket must remain visible until the full event card approaches.",
 );
+assert(
+  script.includes("moveCursorTrail(menu)") && script.includes("moveCursorTrail(document.body)"),
+  "The decorative cursor trail must move into the Index top layer and return to the page.",
+);
+assert(!/[←↑→↓↗↘↙↖]/u.test(html), "Directional actions must use the shared vector-arrow system.");
 
 if (failures.length) {
   console.error(`Site quality check failed (${failures.length}):`);
