@@ -49,6 +49,8 @@
   --archive-line: rgba(16, 24, 32, 0.3);
   --archive-frame: #0e1317;
   --archive-caption: #f2efe7;
+  --site-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='30' viewBox='0 0 24 30'%3E%3Cpath d='M3 2.5v20l5.1-4.8 4.1 8.2 3.2-1.6-4-7.9h7.2L3 2.5Z' fill='%23111310' stroke='%23f3f0e8' stroke-width='1.5' stroke-linejoin='round' paint-order='stroke'/%3E%3Ccircle cx='3' cy='2.5' r='1.35' fill='%23c9e876'/%3E%3C/svg%3E") 3 3, default;
+  --site-cursor-action: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='30' viewBox='0 0 24 30'%3E%3Cpath d='M3 2.5v20l5.1-4.8 4.1 8.2 3.2-1.6-4-7.9h7.2L3 2.5Z' fill='%236a5076' stroke='%23f3f0e8' stroke-width='1.5' stroke-linejoin='round' paint-order='stroke'/%3E%3Ccircle cx='3' cy='2.5' r='1.7' fill='%23c9e876'/%3E%3C/svg%3E") 3 3, pointer;
   --forum-ink: #1e2737;
   --forum-label: rgba(250, 249, 245, 0.76);
   --forum-label-line: rgba(30, 39, 55, 0.2);
@@ -282,8 +284,8 @@ button {
 }
 
 :focus-visible {
-  outline: 3px solid currentColor;
-  outline-offset: 4px;
+  outline: 1px solid color-mix(in srgb, currentColor 78%, transparent);
+  outline-offset: 3px;
 }
 
 :root.is-pointer-navigation :focus-visible {
@@ -398,7 +400,7 @@ button {
 
 .brand:focus-visible {
   border-radius: 999px;
-  outline-width: 2px;
+  outline-width: 1px;
   outline-offset: 2px;
 }
 
@@ -523,7 +525,7 @@ button {
 }
 
 .theme-choice:focus-visible {
-  outline-width: 2px;
+  outline-width: 1px;
   outline-offset: 0;
 }
 
@@ -618,8 +620,12 @@ button {
 }
 
 .index-button:focus-visible {
-  outline-width: 2px;
-  outline-offset: 2px;
+  outline: none;
+}
+
+:root:not(.is-pointer-navigation) .index-button:focus-visible::before {
+  border-color: color-mix(in srgb, currentColor 64%, transparent);
+  box-shadow: var(--index-material-shadow), inset 0 0 0 1px color-mix(in srgb, currentColor 34%, transparent);
 }
 
 .index-button__label {
@@ -740,7 +746,7 @@ button {
 }
 
 .index-close:focus-visible {
-  outline-width: 2px;
+  outline-width: 1px;
   outline-offset: -3px;
 }
 
@@ -984,7 +990,7 @@ button {
 
 .motion-choice:focus-visible {
   border-radius: 0.35rem;
-  outline-width: 2px;
+  outline-width: 1px;
   outline-offset: -2px;
 }
 
@@ -1276,29 +1282,30 @@ button {
 }
 
 .event-ticket {
-  --event-ticket-accent: #6a5076;
+  --event-ticket-accent: var(--menu-accent);
   --event-ticket-border-width: 1px;
   --event-ticket-corner-shape: superellipse(1.55);
   --event-ticket-inset: 0.42rem;
   --event-ticket-inner-radius: calc(
     var(--event-ticket-radius) - var(--event-ticket-inset) - var(--event-ticket-border-width)
   );
-  --event-ticket-ink: #111310;
+  --event-ticket-ink: var(--ink);
   --event-ticket-radius: 1.5rem;
-  --event-ticket-surface: #f5f3ed;
   --event-ticket-tile: #e7efbd;
+  --event-ticket-tile-accent: #6a5076;
+  --event-ticket-tile-ink: #111310;
   --event-ticket-tile-size: 4.75rem;
   position: fixed;
   z-index: 85;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 3.25rem;
-  width: min(31rem, calc(100vw - (2 * var(--gutter))));
+  display: block;
+  width: min(28.5rem, calc(100vw - (2 * var(--gutter))));
   overflow: hidden;
   color: var(--event-ticket-ink);
-  background: var(--event-ticket-surface);
-  border: var(--event-ticket-border-width) solid rgba(255, 255, 255, 0.72);
+  background-color: var(--glass-background-dense);
+  background-image: none;
+  border: var(--event-ticket-border-width) solid var(--glass-border);
   border-radius: var(--event-ticket-radius);
-  box-shadow: 0 14px 38px rgba(17, 19, 16, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  box-shadow: var(--glass-shadow);
   corner-shape: var(--event-ticket-corner-shape);
   opacity: 0;
   pointer-events: none;
@@ -1306,6 +1313,8 @@ button {
   transition: opacity var(--duration-fast) var(--ease-exit), transform var(--duration-responsive) var(--ease-exit),
     visibility 0s linear var(--duration-responsive);
   visibility: hidden;
+  -webkit-backdrop-filter: blur(24px) saturate(116%);
+  backdrop-filter: blur(24px) saturate(116%);
 }
 
 .event-ticket::before {
@@ -1341,24 +1350,24 @@ button {
 
 .event-ticket__link {
   display: grid;
-  grid-template-columns: var(--event-ticket-tile-size) minmax(0, 1fr) 1.75rem;
+  grid-template-columns: var(--event-ticket-tile-size) minmax(0, 1fr);
   gap: 0.9rem;
   align-items: center;
   min-width: 0;
   min-height: 5.6rem;
-  padding: 0.42rem 0.55rem 0.42rem 0.42rem;
+  padding: 0.42rem 3.55rem 0.42rem 0.42rem;
   text-decoration: none;
   transition: background-color var(--duration-fast) var(--ease-move);
 }
 
 .event-ticket__link:hover,
 .event-ticket__link:focus-visible {
-  background: rgba(255, 255, 255, 0.42);
+  background: var(--glass-control);
 }
 
-.event-ticket__link:focus-visible {
-  border-radius: calc(var(--event-ticket-radius) - 1px) 0 0 calc(var(--event-ticket-radius) - 1px);
-  box-shadow: inset 0 0 0 3px var(--event-ticket-ink);
+:root:not(.is-pointer-navigation) .event-ticket__link:focus-visible {
+  border-radius: calc(var(--event-ticket-radius) - 1px);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--event-ticket-ink) 72%, transparent);
   corner-shape: var(--event-ticket-corner-shape);
   outline: none;
 }
@@ -1371,6 +1380,7 @@ button {
   align-self: stretch;
   width: var(--event-ticket-tile-size);
   padding: 0.62rem 0.62rem 0.48rem;
+  color: var(--event-ticket-tile-ink);
   background: var(--event-ticket-tile);
   border-radius: var(--event-ticket-inner-radius);
   corner-shape: var(--event-ticket-corner-shape);
@@ -1390,7 +1400,7 @@ button {
   grid-row: 1;
   display: block;
   padding: 0;
-  color: var(--event-ticket-accent);
+  color: var(--event-ticket-tile-accent);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -1438,35 +1448,18 @@ button {
   -webkit-line-clamp: 2;
 }
 
-.event-ticket__arrow {
-  display: grid;
-  width: 1.75rem;
-  height: 1.75rem;
-  color: var(--event-ticket-accent);
-  border: 0;
-  border-radius: 50%;
-  place-items: center;
-  transition: color var(--duration-fast) var(--ease-move), transform var(--duration-responsive) var(--ease-settle);
-}
-
-.event-ticket__link:hover .event-ticket__arrow,
-.event-ticket__link:focus-visible .event-ticket__arrow {
-  color: var(--event-ticket-ink);
-  transform: translate(0.12rem, -0.12rem);
-}
-
 .event-ticket__dismiss {
-  position: relative;
+  position: absolute;
+  top: var(--event-ticket-inset);
+  right: var(--event-ticket-inset);
   display: grid;
   width: 44px;
   min-width: 44px;
   height: 44px;
   min-height: 44px;
-  align-self: center;
-  justify-self: center;
   padding: 0;
-  color: rgba(17, 19, 16, 0.54);
-  background: rgba(17, 19, 16, 0.045);
+  color: color-mix(in srgb, var(--event-ticket-ink) 54%, transparent);
+  background: transparent;
   border: 0;
   border-radius: 0.85rem;
   corner-shape: var(--event-ticket-corner-shape);
@@ -1478,11 +1471,10 @@ button {
 .event-ticket__dismiss:hover,
 .event-ticket__dismiss:focus-visible {
   color: var(--event-ticket-ink);
-  background: rgba(17, 19, 16, 0.09);
 }
 
-.event-ticket__dismiss:focus-visible {
-  box-shadow: inset 0 0 0 3px var(--event-ticket-ink);
+:root:not(.is-pointer-navigation) .event-ticket__dismiss:focus-visible {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--event-ticket-ink) 72%, transparent);
   outline: none;
 }
 
@@ -1909,13 +1901,36 @@ body.menu-open .event-ticket {
   margin-top: 0.75rem;
 }
 
-.project__visual--collage {
-  padding-bottom: 16%;
+.project--archive {
+  color: var(--archive-ink);
+  background: var(--ice);
+  border-color: var(--archive-line);
 }
 
-.women-route {
+.project--archive .project__years {
+  border-color: var(--archive-line);
+}
+
+.project__visual--women-stack,
+.project__visual--archive {
+  isolation: isolate;
+  padding: clamp(1.1rem, 2vw, 2rem) 0 clamp(3.2rem, 5vw, 4.6rem);
+}
+
+.archive-stack {
+  position: relative;
+  width: calc(100% - clamp(1.4rem, 2.6vw, 2.5rem));
+  aspect-ratio: 1.36;
+  margin: 0 auto;
+}
+
+.archive-stack--women {
+  aspect-ratio: 1.3;
+}
+
+.archive-stack--women .women-route {
   position: absolute;
-  z-index: 3;
+  z-index: 5;
   top: -7%;
   right: -5%;
   width: 70%;
@@ -1932,7 +1947,7 @@ body.menu-open .event-ticket {
 }
 
 .women-route__underlay {
-  stroke: rgba(250, 249, 245, 0.88);
+  stroke: rgba(250, 249, 245, 0.9);
   stroke-width: 3.2px;
 }
 
@@ -1948,8 +1963,8 @@ body.menu-open .event-ticket {
   transition: stroke-dashoffset 1.35s var(--ease-enter) 180ms;
 }
 
-.js .project__visual--collage.is-visible .women-route__underlay,
-.js .project__visual--collage.is-visible .women-route__line {
+.js .project__visual--women-stack.is-visible .women-route__underlay,
+.js .project__visual--women-stack.is-visible .women-route__line {
   stroke-dashoffset: 0;
 }
 
@@ -1967,7 +1982,7 @@ body.menu-open .event-ticket {
   transition: opacity var(--duration-medium) var(--ease-enter), transform var(--duration-medium) var(--ease-settle);
 }
 
-.js .project__visual--collage.is-visible .women-route__points circle {
+.js .project__visual--women-stack.is-visible .women-route__points circle {
   opacity: 1;
   transform: scale(1);
 }
@@ -1982,49 +1997,6 @@ body.menu-open .event-ticket {
 
 .js .women-route__points circle:nth-child(n + 11) {
   transition-delay: 1.18s;
-}
-
-.project__visual--collage .project__image--main {
-  width: 90%;
-  aspect-ratio: 0.94;
-  object-fit: cover;
-}
-
-.project__image--inset {
-  position: absolute;
-  right: 0;
-  bottom: 2rem;
-  width: 43%;
-  height: auto;
-  object-fit: cover;
-  border: 0.7rem solid var(--paper);
-}
-
-.project__visual--collage figcaption {
-  max-width: 42%;
-  margin-left: auto;
-}
-
-.project--archive {
-  color: var(--archive-ink);
-  background: var(--ice);
-  border-color: var(--archive-line);
-}
-
-.project--archive .project__years {
-  border-color: var(--archive-line);
-}
-
-.project__visual--archive {
-  isolation: isolate;
-  padding: clamp(1.1rem, 2vw, 2rem) 0 clamp(3.2rem, 5vw, 4.6rem);
-}
-
-.archive-stack {
-  position: relative;
-  width: calc(100% - clamp(1.4rem, 2.6vw, 2.5rem));
-  aspect-ratio: 1.36;
-  margin: 0 auto;
 }
 
 .archive-card {
@@ -2083,9 +2055,9 @@ body.menu-open .event-ticket {
   box-shadow: 0 1.7rem 4rem rgba(13, 20, 28, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.archive-card:focus-visible {
-  outline: 3px solid var(--aurora-blue);
-  outline-offset: 4px;
+:root:not(.is-pointer-navigation) .archive-card:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--aurora-blue) 82%, currentColor);
+  outline-offset: 3px;
 }
 
 .archive-card > img {
@@ -2314,8 +2286,8 @@ body.menu-open .event-ticket {
 .about {
   min-height: 100svh;
   padding: var(--section-top-clearance) var(--gutter) clamp(5rem, 9vw, 9rem);
-  color: var(--paper);
-  background: var(--ink);
+  color: var(--ink);
+  background: var(--paper);
 }
 
 .about__intro {
@@ -2324,7 +2296,7 @@ body.menu-open .event-ticket {
   gap: var(--gutter);
   align-items: end;
   padding: clamp(6rem, 13vw, 13rem) 0 clamp(6rem, 11vw, 11rem);
-  border-bottom: 1px solid var(--inverse-line);
+  border-bottom: 1px solid var(--line);
 }
 
 .about__intro h2 {
@@ -2398,13 +2370,13 @@ body.menu-open .event-ticket {
   gap: 1.35rem;
   align-items: start;
   padding: 1.2rem 0;
-  border-top: 1px solid var(--inverse-line);
+  border-top: 1px solid var(--line);
   font-size: 0.88rem;
   line-height: 1.42;
 }
 
 .timeline time {
-  color: var(--inverse-accent);
+  color: var(--menu-accent);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -2419,7 +2391,7 @@ body.menu-open .event-ticket {
 .arca-network {
   width: 4.5rem;
   overflow: visible;
-  color: var(--inverse-accent);
+  color: var(--menu-accent);
 }
 
 .arca-network__links path {
@@ -2468,14 +2440,10 @@ body.menu-open .event-ticket {
 }
 
 .timeline .ongoing-status {
-  color: var(--inverse-accent);
-  background: rgba(242, 239, 231, 0.06);
-  border-color: var(--inverse-line);
+  color: var(--menu-accent);
+  background: var(--glass-control);
+  border-color: var(--line);
   font-size: 0.55rem;
-}
-
-:root[data-theme="dark"] .timeline .ongoing-status {
-  background: rgba(17, 19, 16, 0.06);
 }
 
 .timeline .ongoing-status i {
@@ -3070,10 +3038,6 @@ body.menu-open .event-ticket {
     min-height: 62vw;
   }
 
-  .project__visual--collage .project__image--main {
-    aspect-ratio: 1.2;
-  }
-
   .about__intro > p {
     max-width: 42rem;
   }
@@ -3245,13 +3209,6 @@ body.menu-open .event-ticket {
     gap: 0.7rem;
   }
 
-  .women-route {
-    top: -7%;
-    right: -17%;
-    width: 96%;
-    height: 110%;
-  }
-
   .site-index__body {
     align-items: center;
     padding-top: 2rem;
@@ -3344,9 +3301,8 @@ body.menu-open .event-ticket {
     --event-ticket-radius: 1.22rem;
     --event-ticket-tile-size: 3.15rem;
     right: auto;
-    left: 0.5rem;
-    grid-template-columns: minmax(0, 1fr) 3.25rem;
-    width: min(22rem, calc(100vw - 2rem));
+    left: 0.75rem;
+    width: min(18rem, calc(100vw - 1.5rem));
   }
 
   .event-ticket--intro {
@@ -3362,7 +3318,7 @@ body.menu-open .event-ticket {
     grid-template-columns: var(--event-ticket-tile-size) minmax(0, 1fr);
     gap: 0.6rem;
     min-height: 3.75rem;
-    padding: 0.3rem 0.45rem 0.3rem 0.3rem;
+    padding: 0.3rem 3.25rem 0.3rem 0.3rem;
   }
 
   .event-ticket__date {
@@ -3397,10 +3353,6 @@ body.menu-open .event-ticket {
   .event-ticket__copy strong {
     font-size: 0.84rem;
     line-height: 1.02;
-  }
-
-  .event-ticket__arrow {
-    display: none;
   }
 
   .now__card {
@@ -3470,40 +3422,7 @@ body.menu-open .event-ticket {
     font-size: 1rem;
   }
 
-  .project__visual--collage {
-    padding-bottom: 0;
-  }
-
-  .project__visual--collage .project__image--main {
-    width: 94%;
-    aspect-ratio: 0.88;
-  }
-
-  .project__image--inset {
-    position: relative;
-    z-index: 2;
-    right: auto;
-    bottom: auto;
-    display: block;
-    width: 54%;
-    margin: -3rem 0 0 auto;
-    border-width: 0.45rem;
-  }
-
-  .project__visual--collage figcaption {
-    position: relative;
-    z-index: 4;
-    max-width: 48%;
-    margin: 0.85rem 0 0;
-  }
-
-  .women-route {
-    top: -5%;
-    right: -12%;
-    width: 96%;
-    height: 104%;
-  }
-
+  .project__visual--women-stack,
   .project__visual--archive {
     padding: 0.6rem 0 3.2rem;
   }
@@ -3511,6 +3430,13 @@ body.menu-open .event-ticket {
   .archive-stack {
     width: calc(100% - 1rem);
     aspect-ratio: 1.16;
+  }
+
+  .archive-stack--women .women-route {
+    top: -7%;
+    right: -17%;
+    width: 96%;
+    height: 110%;
   }
 
   .archive-card {
@@ -3786,6 +3712,30 @@ body.menu-open .event-ticket {
 
 :root[data-motion="reduced"] .cursor-trail {
   display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  body * {
+    cursor: var(--site-cursor-default);
+  }
+
+  a,
+  button,
+  summary,
+  [role="button"],
+  [tabindex="0"] {
+    cursor: var(--site-cursor-action);
+  }
+
+  .archive-card[data-stack-depth="0"] {
+    cursor: grab;
+  }
+
+  .archive-card.is-dragging {
+    cursor: grabbing;
+  }
 }
 
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
