@@ -535,6 +535,8 @@ archiveStacks.forEach((archiveStack) => {
   const archiveCards = Array.from(archiveStack.querySelectorAll("[data-archive-card]"));
   const archiveCounter = archiveFigure?.querySelector("[data-archive-counter]");
   const archiveStatus = archiveFigure?.querySelector("[data-archive-status]");
+  const archiveItemName = archiveStack.dataset.archiveItemName || "image";
+  const archiveItemNameSentence = archiveItemName.replace(/^./, (character) => character.toUpperCase());
 
   if (archiveCards.length <= 1) return;
 
@@ -566,7 +568,7 @@ archiveStacks.forEach((archiveStack) => {
     activeCard.tabIndex = 0;
     activeCard.setAttribute(
       "aria-label",
-      `Image ${activeArchiveIndex + 1} of ${archiveCards.length}: ${activeLabel}. Drag horizontally, or use the Left and Right arrow keys.`,
+      `${archiveItemNameSentence} ${activeArchiveIndex + 1} of ${archiveCards.length}: ${activeLabel}. Drag horizontally, or use the Left and Right arrow keys.`,
     );
 
     if (focus) activeCard.focus({ preventScroll: true });
@@ -588,7 +590,7 @@ archiveStacks.forEach((archiveStack) => {
     }
 
     if (announce && archiveStatus) {
-      archiveStatus.textContent = `Showing image ${activeArchiveIndex + 1} of ${archiveCards.length}: ${activeLabel}.`;
+      archiveStatus.textContent = `Showing ${archiveItemName} ${activeArchiveIndex + 1} of ${archiveCards.length}: ${activeLabel}.`;
     }
   };
 

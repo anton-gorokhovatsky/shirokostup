@@ -81,7 +81,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260722-44" />
+    <link rel="stylesheet" href="styles.css?v=20260722-45" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -510,6 +510,18 @@
                   vector-effect="non-scaling-stroke"
                   d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
                 />
+                <path
+                  class="women-route__underlay women-route__branch"
+                  pathLength="1"
+                  vector-effect="non-scaling-stroke"
+                  d="M-96 676C26 617 90 701 170 660c80-41 103-110 179-84 62 21 54 98 137 118 67 16 98-33 156-74"
+                />
+                <path
+                  class="women-route__line women-route__branch"
+                  pathLength="1"
+                  vector-effect="non-scaling-stroke"
+                  d="M-96 676C26 617 90 701 170 660c80-41 103-110 179-84 62 21 54 98 137 118 67 16 98-33 156-74"
+                />
                 <g class="women-route__points">
                   <circle vector-effect="non-scaling-stroke" cx="378" cy="91" r="4.3" />
                   <circle vector-effect="non-scaling-stroke" cx="369" cy="80" r="2.4" />
@@ -526,6 +538,11 @@
                   <circle vector-effect="non-scaling-stroke" cx="169" cy="770" r="2.1" />
                   <circle vector-effect="non-scaling-stroke" cx="147" cy="790" r="1.9" />
                   <circle vector-effect="non-scaling-stroke" cx="171" cy="793" r="2.7" />
+                  <circle vector-effect="non-scaling-stroke" cx="220" cy="625" r="4.2" />
+                  <circle vector-effect="non-scaling-stroke" cx="209" cy="617" r="2.2" />
+                  <circle vector-effect="non-scaling-stroke" cx="232" cy="614" r="2.6" />
+                  <circle vector-effect="non-scaling-stroke" cx="211" cy="637" r="1.9" />
+                  <circle vector-effect="non-scaling-stroke" cx="234" cy="634" r="2.3" />
                 </g>
               </svg>
             </div>
@@ -569,8 +586,9 @@
             <div
               class="archive-stack"
               data-archive-stack
+              data-archive-item-name="archive record"
               role="group"
-              aria-label="Four photographs from the Archive of Artistic Life in Zapolyarye"
+              aria-label="Eight archival records from the Archive of Artistic Life in Zapolyarye"
               aria-describedby="archive-stack-instructions"
             >
               <div
@@ -592,10 +610,67 @@
                 <p class="archive-card__caption">Apatity, Murmansk Region, 1970s–80s&nbsp;· Original source unknown</p>
               </div>
               <div
+                class="archive-card archive-card--document"
+                data-archive-card
+                data-archive-label="Painting at a Time of Upheaval exhibition poster, Gallery M, 1991"
+                data-stack-depth="1"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/archive-painting-coup-poster.jpg"
+                  alt="A 1991 Gallery M exhibition poster with three black-and-white artist portraits and Russian typography"
+                  width="1273"
+                  height="1800"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Painting at a Time of Upheaval&nbsp;· Gallery “M”, 1991</p>
+              </div>
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="Artists and visitors at Gallery M in Apatity, 1991"
+                data-stack-depth="2"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/archive-gallery-m-1991.jpg"
+                  alt="Artists and visitors gathered informally around a table at Gallery M in Apatity in 1991"
+                  width="1800"
+                  height="1370"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Artists and visitors at Gallery “M”&nbsp;· Apatity, 1991</p>
+              </div>
+              <div
+                class="archive-card archive-card--document"
+                data-archive-card
+                data-archive-label="The Gallery of Modern Art leaflet, Gallery M, 1991"
+                data-stack-depth="3"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/archive-gallery-modern-art-leaflet.jpg"
+                  alt="A scanned Gallery M information leaflet with the gallery logo, English text, and an Apatity address"
+                  width="1273"
+                  height="1800"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">The Gallery of Modern Art&nbsp;· Gallery “M”, 1991</p>
+              </div>
+              <div
                 class="archive-card"
                 data-archive-card
                 data-archive-label="The art scene in Apatity, RAAN collection image"
-                data-stack-depth="1"
+                data-stack-depth="4"
                 role="button"
                 tabindex="-1"
                 aria-hidden="true"
@@ -611,10 +686,29 @@
                 <p class="archive-card__caption">The art scene in Apatity&nbsp;· RAAN collection image</p>
               </div>
               <div
+                class="archive-card archive-card--document"
+                data-archive-card
+                data-archive-label="Art from the Russian Arctic exhibition poster, Fairfield Gallery, Croydon, 1994"
+                data-stack-depth="5"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/archive-russian-arctic-poster.jpg"
+                  alt="A pink 1994 exhibition poster titled Art from the Russian Arctic with a high-contrast artwork reproduction"
+                  width="1273"
+                  height="1800"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Art from the Russian Arctic&nbsp;· Croydon, 1994</p>
+              </div>
+              <div
                 class="archive-card"
                 data-archive-card
                 data-archive-label="Igor Tchaikovsky and guests of Gallery M, 1996"
-                data-stack-depth="2"
+                data-stack-depth="6"
                 role="button"
                 tabindex="-1"
                 aria-hidden="true"
@@ -633,7 +727,7 @@
                 class="archive-card"
                 data-archive-card
                 data-archive-label="Installing the 13 Cosmonauts mosaic, 2019"
-                data-stack-depth="3"
+                data-stack-depth="7"
                 role="button"
                 tabindex="-1"
                 aria-hidden="true"
@@ -650,8 +744,8 @@
               </div>
             </div>
             <figcaption class="archive-stack__instructions" id="archive-stack-instructions">
-              <span data-archive-counter aria-hidden="true">01 / 04</span>
-              <span>Drag the top photograph&nbsp;· Use the Left and Right arrow keys</span>
+              <span data-archive-counter aria-hidden="true">01 / 08</span>
+              <span>Drag the top record&nbsp;· Use the Left and Right arrow keys</span>
             </figcaption>
             <p class="archive-stack__status" data-archive-status aria-live="polite" aria-atomic="true"></p>
           </figure>
@@ -897,6 +991,6 @@
       </section>
     </main>
 
-    <script src="script.js?v=20260722-18"></script>
+    <script src="script.js?v=20260722-19"></script>
   </body>
 </html>
