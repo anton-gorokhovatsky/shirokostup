@@ -77,7 +77,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260722-8" />
+    <link rel="stylesheet" href="styles.css?v=20260722-9" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -386,24 +386,94 @@
             </a>
           </div>
           <figure class="project__visual project__visual--archive" data-reveal>
-            <div class="archive-layers" aria-hidden="true">
-              <span class="archive-layer archive-layer--materials">Testimonies · artworks · documents</span>
-              <span class="archive-layer archive-layer--range">Apatity · mid-1970s—2000s</span>
-            </div>
-            <div class="archive-surface">
-              <div class="archive-stamp" aria-hidden="true">
-                <span>67°35′N</span><span>33°24′E</span>
+            <div
+              class="archive-stack"
+              data-archive-stack
+              role="group"
+              aria-label="Four photographs from the Archive of Artistic Life in Zapolyarye"
+              aria-describedby="archive-stack-instructions"
+            >
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="Apatity, Murmansk Region, 1970s–80s"
+                data-stack-depth="0"
+                role="button"
+                tabindex="0"
+              >
+                <img
+                  src="assets/images/apatity-archive.jpg"
+                  alt="Apatity town square with the Khibiny Mountains in the distance, photographed in the 1970s or 1980s"
+                  width="800"
+                  height="507"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Apatity, Murmansk Region, 1970s–80s · Original source unknown</p>
               </div>
-              <img
-                class="project__image"
-                src="assets/images/apatity-archive.jpg"
-                alt="Apatity town square with the Khibiny Mountains in the distance, photographed in the 1970s or 1980s"
-                width="800"
-                height="507"
-                loading="lazy"
-              />
-              <figcaption>Apatity, Murmansk Region, 1970s–80s · Archival image, original source unknown</figcaption>
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="The art scene in Apatity, RAAN collection image"
+                data-stack-depth="1"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/archive-gallery-banner.jpg"
+                  alt="Two people carrying a long hand-painted banner through an art gallery in Apatity"
+                  width="1081"
+                  height="800"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">The art scene in Apatity · RAAN collection image</p>
+              </div>
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="Igor Tchaikovsky and guests of Gallery M, 1996"
+                data-stack-depth="2"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/archive-gallery-guests.jpg"
+                  alt="A crowded gathering around a tea table at Gallery M in Apatity in 1996"
+                  width="1095"
+                  height="800"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Igor Tchaikovsky and guests of Gallery “M” · 1996</p>
+              </div>
+              <div
+                class="archive-card"
+                data-archive-card
+                data-archive-label="Installing the 13 Cosmonauts mosaic, 2019"
+                data-stack-depth="3"
+                role="button"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                <img
+                  src="assets/images/archive-mosaic-installation.jpg"
+                  alt="Two people on ladders installing a colourful cosmonaut mosaic on a brick wall in Apatity"
+                  width="1422"
+                  height="800"
+                  loading="lazy"
+                  draggable="false"
+                />
+                <p class="archive-card__caption">Installing the “13 Cosmonauts” mosaic · 2019</p>
+              </div>
             </div>
+            <figcaption class="archive-stack__instructions" id="archive-stack-instructions">
+              <span data-archive-counter aria-hidden="true">01 / 04</span>
+              <span>Drag the top photograph · Use ← → on a keyboard</span>
+            </figcaption>
+            <p class="archive-stack__status" data-archive-status aria-live="polite" aria-atomic="true"></p>
           </figure>
         </article>
 
@@ -431,36 +501,36 @@
               height="563"
               loading="lazy"
             />
-            <svg
-              class="climate-field"
-              viewBox="0 0 1000 563"
-              preserveAspectRatio="none"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <g class="climate-field__traces">
-                <path
-                  class="climate-field__trace climate-field__trace--baseline"
-                  pathLength="1"
-                  d="M-40 482C60 468 108 476 163 459C209 445 252 469 301 452C354 435 377 420 426 429C474 438 516 405 550 386C581 368 606 361 636 332C678 294 713 309 751 299C804 286 835 313 873 327C919 344 959 316 1040 303"
-                />
-                <path
-                  class="climate-field__trace climate-field__trace--observed"
-                  pathLength="1"
-                  d="M-40 491C62 477 110 485 166 468C211 454 255 479 304 462C359 443 382 432 431 441C479 449 521 417 556 397C588 379 613 373 643 344C684 306 720 321 758 311C810 298 842 325 880 339C925 356 965 329 1040 317"
-                />
-              </g>
-              <g class="climate-field__stations">
-                <line x1="301" y1="452" x2="304" y2="462" />
-                <line x1="636" y1="332" x2="643" y2="344" />
-                <line x1="873" y1="327" x2="880" y2="339" />
-              </g>
-            </svg>
             <div class="forum-overlay" aria-hidden="true">
               <span>Climate</span><span>Microchanges</span><span>7—26.03.26</span>
             </div>
             <figcaption>Climate Microchanges · Natural History Museum, Oslo</figcaption>
           </figure>
+          <svg
+            class="climate-field"
+            viewBox="0 0 1600 900"
+            preserveAspectRatio="none"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <g class="climate-field__traces">
+              <path
+                class="climate-field__trace climate-field__trace--baseline"
+                pathLength="1"
+                d="M-120 758C80 730 174 748 306 715C438 682 500 712 620 656C742 599 786 516 882 470C988 420 1047 442 1124 408C1207 372 1264 295 1362 282C1452 270 1510 318 1606 294C1662 280 1714 249 1760 228"
+              />
+              <path
+                class="climate-field__trace climate-field__trace--observed"
+                pathLength="1"
+                d="M-120 771C84 742 180 761 311 728C443 695 507 725 627 668C750 610 794 529 891 482C996 432 1054 455 1132 421C1216 385 1272 309 1370 296C1460 284 1518 333 1614 309C1670 295 1722 265 1760 244"
+              />
+            </g>
+            <g class="climate-field__stations">
+              <line x1="306" y1="715" x2="311" y2="728" />
+              <line x1="882" y1="470" x2="891" y2="482" />
+              <line x1="1362" y1="282" x2="1370" y2="296" />
+            </g>
+          </svg>
         </article>
       </section>
 
@@ -587,17 +657,18 @@
             </a>
           </div>
           <details class="credits">
-            <summary><span>Image credits</span><span class="credits__count">3 sources</span></summary>
+            <summary><span>Image credits</span><span class="credits__count">4 sources</span></summary>
             <ul>
               <li><span>Women in the North</span><span>Kin Museum of Contemporary Art</span></li>
               <li><span>Climate Microchanges</span><span>Natural History Museum, Oslo</span></li>
               <li><span>Apatity archival image</span><span>Original source currently unknown, via Kin Museum</span></li>
+              <li><span>Archive of Artistic Life in Zapolyarye</span><span>Russian Art Archive Network</span></li>
             </ul>
           </details>
         </div>
       </section>
     </main>
 
-    <script src="script.js?v=20260722-4"></script>
+    <script src="script.js?v=20260722-5"></script>
   </body>
 </html>

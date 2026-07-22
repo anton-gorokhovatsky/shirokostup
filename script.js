@@ -235,3 +235,187 @@ if ("IntersectionObserver" in window) {
 } else {
   revealItems.forEach((item) => item.classList.add("is-visible"));
 }
+
+const archiveStack = document.querySelector("[data-archive-stack]");
+const archiveCards = archiveStack ? Array.from(archiveStack.querySelectorAll("[data-archive-card]")) : [];
+const archiveCounter = document.querySelector("[data-archive-counter]");
+const archiveStatus = document.querySelector("[data-archive-status]");
+
+if (archiveStack && archiveCards.length > 1) {
+  let activeArchiveIndex = 0;
+  let archiveIsAnimating = false;
+  let archiveAnimationTimer = 0;
+  let activePointerId = null;
+  let draggedCard = null;
+  let dragStartX = 0;
+  let dragStartY = 0;
+  let dragX = 0;
+  let dragAxis = null;
+
+  const formatArchivePosition = (index) => String(index + 1).padStart(2, "0");
+
+  const clearArchiveDrag = (card) => {
+    card.classList.remove("is-dragging", "is-leaving");
+    card.style.removeProperty("--archive-drag-x");
+    card.style.removeProperty("--archive-drag-y");
+    card.style.removeProperty("--archive-drag-rotate");
+  };
+
+  const renderArchiveStack = ({ focus = false, announce = false } = {}) => {
+    const activeCard = archiveCards[activeArchiveIndex];
+    const activeLabel = activeCard.dataset.archiveLabel || "Archive photograph";
+
+    activeCard.dataset.stackDepth = "0";
+    activeCard.removeAttribute("aria-hidden");
+    activeCard.tabIndex = 0;
+    activeCard.setAttribute(
+      "aria-label",
+      `Image ${activeArchiveIndex + 1} of ${archiveCards.length}: ${activeLabel}. Drag horizontally, or use the Left and Right arrow keys.`,
+    );
+
+    if (focus) activeCard.focus({ preventScroll: true });
+
+    archiveCards.forEach((card, index) => {
+      clearArchiveDrag(card);
+      const depth = (index - activeArchiveIndex + archiveCards.length) % archiveCards.length;
+      card.dataset.stackDepth = String(depth);
+
+      if (depth !== 0) {
+        card.setAttribute("aria-hidden", "true");
+        card.removeAttribute("aria-label");
+        card.tabIndex = -1;
+      }
+    });
+
+    if (archiveCounter) {
+      archiveCounter.textContent = `${formatArchivePosition(activeArchiveIndex)} / ${formatArchivePosition(archiveCards.length - 1)}`;
+    }
+
+    if (announce && archiveStatus) {
+      archiveStatus.textContent = `Showing image ${activeArchiveIndex + 1} of ${archiveCards.length}: ${activeLabel}.`;
+    }
+  };
+
+  const cycleArchiveStack = (indexDelta) => {
+    if (archiveIsAnimating) return;
+
+    const activeCard = archiveCards[activeArchiveIndex];
+    const nextIndex = (activeArchiveIndex + indexDelta + archiveCards.length) % archiveCards.length;
+
+    if (reducedMotion.matches) {
+      activeArchiveIndex = nextIndex;
+      renderArchiveStack({ focus: true, announce: true });
+      return;
+    }
+
+    archiveIsAnimating = true;
+    activeCard.classList.remove("is-dragging");
+    activeCard.classList.add("is-leaving");
+    const exitDirection = indexDelta > 0 ? -1 : 1;
+    const exitDistance = activeCard.getBoundingClientRect().width + 96;
+
+    window.requestAnimationFrame(() => {
+      activeCard.style.setProperty("--archive-drag-x", `${exitDirection * exitDistance}px`);
+      activeCard.style.setProperty("--archive-drag-y", "12px");
+      activeCard.style.setProperty("--archive-drag-rotate", `${exitDirection * 3.5}deg`);
+    });
+
+    const finishCycle = () => {
+      if (!archiveIsAnimating) return;
+      window.clearTimeout(archiveAnimationTimer);
+      activeCard.removeEventListener("transitionend", handleArchiveExit);
+      activeArchiveIndex = nextIndex;
+      archiveIsAnimating = false;
+      renderArchiveStack({ focus: true, announce: true });
+    };
+
+    const handleArchiveExit = (event) => {
+      if (event.target !== activeCard || event.propertyName !== "transform") return;
+      finishCycle();
+    };
+
+    activeCard.addEventListener("transitionend", handleArchiveExit);
+    archiveAnimationTimer = window.setTimeout(finishCycle, 560);
+  };
+
+  const finishArchiveDrag = (event, { cancelled = false } = {}) => {
+    if (activePointerId === null || event.pointerId !== activePointerId || !draggedCard) return;
+
+    const card = draggedCard;
+    const threshold = Math.min(92, Math.max(48, card.getBoundingClientRect().width * 0.13));
+
+    if (card.hasPointerCapture?.(activePointerId)) card.releasePointerCapture(activePointerId);
+
+    activePointerId = null;
+    draggedCard = null;
+    card.classList.remove("is-dragging");
+
+    if (!cancelled && dragAxis === "horizontal" && Math.abs(dragX) >= threshold) {
+      cycleArchiveStack(dragX < 0 ? 1 : -1);
+    } else {
+      clearArchiveDrag(card);
+    }
+
+    dragX = 0;
+    dragAxis = null;
+  };
+
+  archiveCards.forEach((card) => {
+    card.addEventListener("keydown", (event) => {
+      if (card.dataset.stackDepth !== "0" || archiveIsAnimating) return;
+
+      if (event.key === "ArrowRight" || event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        cycleArchiveStack(1);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        cycleArchiveStack(-1);
+      }
+    });
+
+    card.addEventListener("pointerdown", (event) => {
+      if (card.dataset.stackDepth !== "0" || archiveIsAnimating || (event.pointerType === "mouse" && event.button !== 0)) {
+        return;
+      }
+
+      activePointerId = event.pointerId;
+      draggedCard = card;
+      dragStartX = event.clientX;
+      dragStartY = event.clientY;
+      dragX = 0;
+      dragAxis = null;
+      card.classList.add("is-dragging");
+      card.setPointerCapture?.(activePointerId);
+    });
+
+    card.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== activePointerId || draggedCard !== card) return;
+
+      const deltaX = event.clientX - dragStartX;
+      const deltaY = event.clientY - dragStartY;
+
+      if (!dragAxis && Math.max(Math.abs(deltaX), Math.abs(deltaY)) > 7) {
+        dragAxis = Math.abs(deltaX) > Math.abs(deltaY) ? "horizontal" : "vertical";
+      }
+
+      if (dragAxis === "vertical") {
+        finishArchiveDrag(event, { cancelled: true });
+        return;
+      }
+
+      if (dragAxis !== "horizontal") return;
+
+      if (event.cancelable) event.preventDefault();
+      dragX = deltaX;
+      const cardWidth = Math.max(card.getBoundingClientRect().width, 1);
+      card.style.setProperty("--archive-drag-x", `${deltaX}px`);
+      card.style.setProperty("--archive-drag-y", `${deltaY * 0.14}px`);
+      card.style.setProperty("--archive-drag-rotate", `${(deltaX / cardWidth) * 4}deg`);
+    });
+
+    card.addEventListener("pointerup", (event) => finishArchiveDrag(event));
+    card.addEventListener("pointercancel", (event) => finishArchiveDrag(event, { cancelled: true }));
+  });
+
+  renderArchiveStack();
+}
