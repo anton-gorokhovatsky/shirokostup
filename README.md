@@ -1,4 +1,4 @@
-# Olga Shirokostup — portfolio prototype
+# Olga Shirokostup — portfolio
 
 A static editorial portfolio for independent curator, researcher, and educator Olga Shirokostup.
 
@@ -11,6 +11,18 @@ python3 -m http.server 4173
 Then open `http://127.0.0.1:4173`.
 
 There is no build step or runtime dependency. The repository can be published directly with GitHub Pages.
+
+## Checks
+
+```bash
+npm run check
+```
+
+The automated gate verifies document landmarks, unique anchors, local assets, image alternatives and dimensions, sharing
+metadata, consistent contact actions, theme and motion controls, reduced-motion support, responsive CSS, and JavaScript
+syntax. It runs for every pull request and every push to `main`.
+
+Automation supports rather than replaces the focused real-browser release gate in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
 
 ## Structure
 
