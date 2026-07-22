@@ -1931,10 +1931,10 @@ body.menu-open .event-ticket {
 .archive-stack--women .women-route {
   position: absolute;
   z-index: 5;
-  top: -7%;
-  right: -5%;
-  width: 70%;
-  height: 112%;
+  top: -18%;
+  right: -9%;
+  width: 80%;
+  height: 140%;
   overflow: visible;
   pointer-events: none;
 }
@@ -1954,6 +1954,10 @@ body.menu-open .event-ticket {
 .women-route__line {
   stroke: #111310;
   stroke-width: 1.15px;
+}
+
+.women-route__branch {
+  opacity: 0.72;
 }
 
 .js .women-route__underlay,
@@ -2045,6 +2049,16 @@ body.menu-open .event-ticket {
   transform: translate3d(0.28rem, 2.5rem, 0) rotate(0.25deg);
 }
 
+.archive-card[data-stack-depth]:not([data-stack-depth="0"]):not([data-stack-depth="1"]):not(
+    [data-stack-depth="2"]
+  ):not([data-stack-depth="3"]) {
+  z-index: 0;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(0.28rem, 2.5rem, 0) scale(0.985);
+}
+
 .archive-card.is-dragging {
   cursor: grabbing;
   transition: none;
@@ -2067,6 +2081,13 @@ body.menu-open .event-ticket {
   object-fit: cover;
   filter: saturate(0.82) contrast(1.05);
   pointer-events: none;
+}
+
+.archive-card--document > img {
+  object-fit: contain;
+  object-position: center;
+  background: #e9e4d9;
+  filter: saturate(0.88) contrast(1.025);
 }
 
 .archive-card__caption {
@@ -2163,20 +2184,19 @@ body.menu-open .event-ticket {
 
 .climate-field__trace {
   fill: none;
-  stroke: rgba(23, 31, 47, 0.34);
+  stroke: color-mix(in srgb, var(--ink) 44%, transparent);
   stroke-width: 1.2px;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.58));
+  filter: none;
   transition: stroke var(--duration-medium) var(--ease-move), stroke-dashoffset 1.4s var(--ease-enter);
   vector-effect: non-scaling-stroke;
 }
 
 .climate-field__trace--observed {
-  stroke: rgba(250, 249, 245, 0.62);
-  filter: drop-shadow(0 1px 0 rgba(23, 31, 47, 0.28));
+  stroke: color-mix(in srgb, var(--ink) 72%, transparent);
   animation: climate-micro-shift 7.5s var(--ease-move) infinite alternate;
   animation-play-state: paused;
 }
@@ -2195,7 +2215,7 @@ body.menu-open .event-ticket {
 }
 
 .climate-field__stations line {
-  stroke: rgba(23, 31, 47, 0.56);
+  stroke: color-mix(in srgb, var(--ink) 58%, transparent);
   stroke-width: 2px;
   stroke-linecap: round;
   opacity: 0;
@@ -3433,10 +3453,10 @@ body.menu-open .event-ticket {
   }
 
   .archive-stack--women .women-route {
-    top: -7%;
-    right: -17%;
-    width: 96%;
-    height: 110%;
+    top: -16%;
+    right: -18%;
+    width: 104%;
+    height: 136%;
   }
 
   .archive-card {
@@ -3479,8 +3499,17 @@ body.menu-open .event-ticket {
     display: none;
   }
 
-  .climate-field__stations line:nth-child(1),
-  .climate-field__stations line:nth-child(3) {
+  .climate-field__trace {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+    transition: stroke var(--duration-medium) var(--ease-move);
+  }
+
+  .climate-field__trace--observed {
+    animation: none;
+  }
+
+  .climate-field__stations {
     display: none;
   }
 

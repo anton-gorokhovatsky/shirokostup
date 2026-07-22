@@ -162,16 +162,37 @@ assert(
 );
 assert(
   count(html, /data-archive-stack\b/gi) === 2 &&
-    count(html, /data-archive-card\b/gi) === 8 &&
+    count(html, /data-archive-card\b/gi) === 12 &&
     script.includes('document.querySelectorAll("[data-archive-stack]")') &&
     script.includes('archiveStack.closest("figure")'),
   "Both project image stacks must retain independent drag, keyboard, counter, and live-region behaviour.",
 );
 assert(
+  html.includes('aria-label="Eight archival records from the Archive of Artistic Life in Zapolyarye"') &&
+    html.includes('data-archive-item-name="archive record"') &&
+    count(html, /archive-(?:painting-coup-poster|gallery-m-1991|gallery-modern-art-leaflet|russian-arctic-poster)\.jpg/gi) === 4 &&
+    script.includes("archiveItemNameSentence") &&
+    css.includes(".archive-card--document > img"),
+  "The Apatity archive must retain its mixed eight-record dossier with accessible item naming.",
+);
+assert(
   html.includes('class="women-route"') &&
     css.includes(".archive-stack--women .women-route") &&
+    css.includes("height: 140%") &&
     css.includes("pointer-events: none"),
   "The Women in the North route must remain visible without intercepting photo dragging.",
+);
+assert(
+  count(html, /women-route__branch/gi) === 2,
+  "The Women in the North route must retain its restrained secondary branch.",
+);
+assert(
+  css.includes(".climate-field__trace") &&
+    css.includes("stroke: color-mix(in srgb, var(--ink) 44%, transparent)") &&
+    css.includes("stroke-dasharray: none") &&
+    css.includes(".climate-field__stations") &&
+    css.includes("animation: none"),
+  "The mobile climate route must render as stable theme-aware paths without Safari-fragile path animation.",
 );
 assert(!/[←↑→↓↗↘↙↖]/u.test(html), "Directional actions must use the shared vector-arrow system.");
 
