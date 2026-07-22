@@ -740,7 +740,7 @@ button {
   padding: 0;
   color: var(--ink);
   background-color: var(--glass-background-dense);
-  background-image: var(--glass-sheen);
+  background-image: none;
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   overflow: hidden;
