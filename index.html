@@ -77,18 +77,21 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260722-9" />
+    <link rel="stylesheet" href="styles.css?v=20260722-17" />
     <script>
       (() => {
         const root = document.documentElement;
         let savedTheme = null;
+        let savedMotion = null;
 
         root.classList.replace("no-js", "js");
 
         try {
           savedTheme = localStorage.getItem("olga-theme");
+          savedMotion = localStorage.getItem("olga-motion");
         } catch (error) {
           savedTheme = null;
+          savedMotion = null;
         }
 
         const themeMode = ["system", "light", "dark"].includes(savedTheme) ? savedTheme : "system";
@@ -98,9 +101,14 @@
               ? "dark"
               : "light"
             : themeMode;
+        const motionMode = savedMotion === "reduced" ? "reduced" : "system";
+        const motion =
+          motionMode === "reduced" || window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "reduced" : "full";
 
         root.dataset.themeMode = themeMode;
         root.dataset.theme = theme;
+        root.dataset.motionMode = motionMode;
+        root.dataset.motion = motion;
         root.style.colorScheme = theme;
         document.querySelector('meta[name="theme-color"]').content = theme === "dark" ? "#11130f" : "#f2efe7";
       })();
@@ -109,6 +117,12 @@
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div class="reading-progress" aria-hidden="true"><span></span></div>
+    <canvas class="cursor-trail" data-cursor-trail aria-hidden="true"></canvas>
+    <span class="comet-cursor" data-comet-cursor aria-hidden="true">
+      <svg viewBox="0 0 22 29" focusable="false">
+        <path d="M3 2.5v20l5.1-4.8 4.1 8.2 3.2-1.6-4-7.9h7.2L3 2.5Z" />
+      </svg>
+    </span>
 
     <header class="site-header" data-header>
       <a class="brand" href="#top" aria-label="Olga Shirokostup, home">
@@ -164,39 +178,64 @@
         <div class="site-index__meta">
           <p>Independent curator,<br />researcher &amp; educator</p>
           <p>Based in Lyon<br />Working across the European High North</p>
-          <div class="site-index__theme">
-            <span class="site-index__meta-label">Appearance</span>
-            <div class="theme-switcher" role="group" aria-label="Colour theme">
-              <button
-                class="theme-choice"
-                type="button"
-                data-theme-choice="system"
-                aria-pressed="true"
-                title="Follow system appearance"
-              >
-                <span class="theme-choice__icon theme-choice__icon--system" aria-hidden="true"></span>
-                <span class="theme-choice__label">System</span>
-              </button>
-              <button
-                class="theme-choice"
-                type="button"
-                data-theme-choice="light"
-                aria-pressed="false"
-                title="Use light theme"
-              >
-                <span class="theme-choice__icon theme-choice__icon--light" aria-hidden="true"></span>
-                <span class="theme-choice__label">Light</span>
-              </button>
-              <button
-                class="theme-choice"
-                type="button"
-                data-theme-choice="dark"
-                aria-pressed="false"
-                title="Use dark theme"
-              >
-                <span class="theme-choice__icon theme-choice__icon--dark" aria-hidden="true"></span>
-                <span class="theme-choice__label">Dark</span>
-              </button>
+          <div class="site-index__preferences">
+            <div class="site-index__theme">
+              <span class="site-index__meta-label">Appearance</span>
+              <div class="theme-switcher" role="group" aria-label="Colour theme">
+                <button
+                  class="theme-choice"
+                  type="button"
+                  data-theme-choice="system"
+                  aria-pressed="true"
+                  title="Follow system appearance"
+                >
+                  <span class="theme-choice__icon theme-choice__icon--system" aria-hidden="true"></span>
+                  <span class="theme-choice__label">System</span>
+                </button>
+                <button
+                  class="theme-choice"
+                  type="button"
+                  data-theme-choice="light"
+                  aria-pressed="false"
+                  title="Use light theme"
+                >
+                  <span class="theme-choice__icon theme-choice__icon--light" aria-hidden="true"></span>
+                  <span class="theme-choice__label">Light</span>
+                </button>
+                <button
+                  class="theme-choice"
+                  type="button"
+                  data-theme-choice="dark"
+                  aria-pressed="false"
+                  title="Use dark theme"
+                >
+                  <span class="theme-choice__icon theme-choice__icon--dark" aria-hidden="true"></span>
+                  <span class="theme-choice__label">Dark</span>
+                </button>
+              </div>
+            </div>
+            <div class="site-index__motion">
+              <span class="site-index__meta-label">Motion</span>
+              <div class="motion-switcher" role="group" aria-label="Motion preference">
+                <button
+                  class="motion-choice"
+                  type="button"
+                  data-motion-choice="system"
+                  aria-pressed="true"
+                  title="Follow system motion preference"
+                >
+                  System
+                </button>
+                <button
+                  class="motion-choice"
+                  type="button"
+                  data-motion-choice="reduced"
+                  aria-pressed="false"
+                  title="Reduce animation and movement"
+                >
+                  Reduced
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -224,7 +263,7 @@
         </div>
         <a class="scroll-cue" href="#practice">
           <span>Explore the practice</span>
-          <i aria-hidden="true">↓</i>
+          <i aria-hidden="true">→</i>
         </a>
       </section>
 
@@ -554,10 +593,11 @@
               Lind, since 2022.
             </p>
             <p>
-              Between 2021 and 2023, Olga served as Chief Curator of the Radiance Centre for Contemporary Art in Apatity.
-              Since 2023, she has curated the Archive of Artistic Life in Zapolyarye within RAAN. From 2020 to 2024, she was
-              a Research Course Leader at Garage Academy. She is a recipient of a Robert Bosch Stiftung grant and a former
-              participant in the Frame Curatorial Exchange Programme.
+              Between 2021 and 2023, Olga served as Chief Curator of the
+              <a href="https://radiancecca.com/">Radiance Centre for Contemporary Art</a> in Apatity. Since 2023, she has
+              curated the Archive of Artistic Life in Zapolyarye within RAAN. From 2020 to 2024, she was a Research Course
+              Leader at <a href="https://garagemca.academy/">Garage Academy</a>. She is a recipient of a Robert Bosch
+              Stiftung grant and a former participant in the Frame Curatorial Exchange Programme.
             </p>
           </div>
           <ol class="timeline" aria-label="Selected roles and projects" data-reveal>
@@ -594,8 +634,13 @@
               </span>
               <span>Women in the North, Kin Museum</span>
             </li>
-            <li><time>2021—23</time><span>Chief Curator, Radiance Centre, Apatity</span></li>
-            <li><time>2020—24</time><span>Research Course Leader, Garage Academy</span></li>
+            <li>
+              <time>2021—23</time><span>Chief Curator, <a href="https://radiancecca.com/">Radiance Centre</a>, Apatity</span>
+            </li>
+            <li>
+              <time>2020—24</time>
+              <span>Research Course Leader, <a href="https://garagemca.academy/">Garage Academy</a></span>
+            </li>
           </ol>
         </div>
       </section>
@@ -634,7 +679,11 @@
           <span>Contact</span><span>05 / 05</span>
         </div>
         <p class="contact__kicker">For research, exhibitions, teaching, and conversations</p>
-        <h2 id="contact-title"><a href="mailto:shirokostup@gmail.com">shirokostup<br />@gmail.com</a></h2>
+        <h2 id="contact-title">
+          <a href="mailto:shirokostup@gmail.com" aria-label="Email Olga Shirokostup to work together">
+            Let’s work<br />together
+          </a>
+        </h2>
         <div class="contact__footer">
           <div class="contact__signature">
             <svg class="contact__mark" viewBox="0 0 48 48" aria-hidden="true">
@@ -651,6 +700,7 @@
           </div>
           <div class="contact__closing">
             <p>© Olga Shirokostup, 2026</p>
+            <a class="site-credit" href="https://anton-gorokhovatsky.github.io/design/">Design &amp; development</a>
             <a class="back-to-top" href="#top">
               <span class="back-to-top__label">Back to top</span>
               <span class="back-to-top__arrow" aria-hidden="true">↑</span>
@@ -669,6 +719,6 @@
       </section>
     </main>
 
-    <script src="script.js?v=20260722-5"></script>
+    <script src="script.js?v=20260722-9"></script>
   </body>
 </html>
