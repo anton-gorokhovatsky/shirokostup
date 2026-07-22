@@ -81,7 +81,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260722-22" />
+    <link rel="stylesheet" href="styles.css?v=20260722-23" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -258,6 +258,38 @@
         </div>
       </div>
     </dialog>
+
+    <aside
+      class="event-ticket"
+      data-event-ticket
+      data-event-until="2026-08-14T00:00:00+02:00"
+      aria-labelledby="event-ticket-title"
+      hidden
+    >
+      <a
+        class="event-ticket__link"
+        href="https://kinmuseum.se/en/events/samtal-med-olga-shirokostup-och-tanja-muravskaja"
+        aria-label="Conversation with Olga Shirokostup and Tanja Muravskaja, 13 August 2026 at 18:00, Kin Museum of Contemporary Art, Kiruna"
+      >
+        <time class="event-ticket__date" datetime="2026-08-13T18:00:00+02:00">
+          <strong>13</strong>
+          <span>Aug<small>18:00</small></span>
+        </time>
+        <span class="event-ticket__copy">
+          <span>Next event&nbsp;· Kiruna</span>
+          <strong id="event-ticket-title">Olga Shirokostup &amp; Tanja Muravskaja</strong>
+        </span>
+        <span class="event-ticket__arrow" aria-hidden="true">↗</span>
+      </a>
+      <button
+        class="event-ticket__dismiss"
+        type="button"
+        data-event-ticket-dismiss
+        aria-label="Hide upcoming event invitation"
+      >
+        <span aria-hidden="true"></span>
+      </button>
+    </aside>
 
     <main id="main" tabindex="-1">
       <section class="hero" id="top" aria-labelledby="hero-title" data-header-ink="theme">
@@ -757,6 +789,6 @@
       </section>
     </main>
 
-    <script src="script.js?v=20260722-9"></script>
+    <script src="script.js?v=20260722-10"></script>
   </body>
 </html>
