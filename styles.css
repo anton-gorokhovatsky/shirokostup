@@ -1245,18 +1245,18 @@ button {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-width: 5;
-  opacity: 0.46;
+  opacity: 0.62;
   animation: hero-mark-glow 5.2s var(--ease-move) infinite;
 }
 
 @keyframes hero-mark-glow {
   0%,
   100% {
-    opacity: 0.36;
+    opacity: 0.52;
   }
 
   50% {
-    opacity: 0.68;
+    opacity: 0.84;
   }
 }
 
