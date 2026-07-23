@@ -50,10 +50,6 @@
   --archive-line: rgba(16, 24, 32, 0.3);
   --archive-frame: #0e1317;
   --archive-caption: #f2efe7;
-  --site-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='30' viewBox='0 0 24 30'%3E%3Cpath d='M3 2.5v20l5.1-4.8 4.1 8.2 3.2-1.6-4-7.9h7.2L3 2.5Z' fill='%23111310' stroke='%23f3f0e8' stroke-width='1.5' stroke-linejoin='round' paint-order='stroke'/%3E%3Ccircle cx='3' cy='2.5' r='1.35' fill='%23c9e876'/%3E%3C/svg%3E") 3 3, default;
-  --site-cursor-action: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='30' viewBox='0 0 28 30'%3E%3Cpath d='M10.5 27.5c-2.7 0-4.7-1.3-5.8-3.7l-3-6.4a2.1 2.1 0 0 1 3.8-1.8L7.4 19V5.2a2.1 2.1 0 0 1 4.2 0v8h.8V9.4a2 2 0 0 1 4 0v3.8h.8v-2.4a2 2 0 0 1 4 0v3h.7v-1.3a2 2 0 0 1 4 0v6.8c0 4.5-3.7 8.2-8.2 8.2h-7.2Z' fill='%236a5076' stroke='%23f3f0e8' stroke-width='1.5' stroke-linejoin='round' paint-order='stroke'/%3E%3Ccircle cx='9.5' cy='4.2' r='1.7' fill='%23c9e876'/%3E%3C/svg%3E") 9 4, pointer;
-  --site-cursor-drag: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='24' viewBox='0 0 34 24'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h28M3 12l5-5M3 12l5 5M31 12l-5-5M31 12l-5 5' stroke='%23f3f0e8' stroke-width='5'/%3E%3Cpath d='M3 12h28M3 12l5-5M3 12l5 5M31 12l-5-5M31 12l-5 5' stroke='%236a5076' stroke-width='2'/%3E%3C/g%3E%3Ccircle cx='17' cy='12' r='3.2' fill='%23c9e876' stroke='%23f3f0e8' stroke-width='1.5'/%3E%3C/svg%3E") 17 12, ew-resize;
-  --site-cursor-dragging: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='24' viewBox='0 0 34 24'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h28M3 12l5-5M3 12l5 5M31 12l-5-5M31 12l-5 5' stroke='%23f3f0e8' stroke-width='5'/%3E%3Cpath d='M3 12h28M3 12l5-5M3 12l5 5M31 12l-5-5M31 12l-5 5' stroke='%236a5076' stroke-width='2'/%3E%3C/g%3E%3Crect x='12' y='7' width='10' height='10' rx='3' fill='%236a5076' stroke='%23f3f0e8' stroke-width='1.5'/%3E%3C/svg%3E") 17 12, grabbing;
   --forum-ink: #1e2737;
   --forum-label: rgba(250, 249, 245, 0.76);
   --forum-label-line: rgba(30, 39, 55, 0.2);
@@ -469,7 +465,7 @@ button {
   padding: 0.65rem 0.15rem;
   background: none;
   border: 0;
-  cursor: var(--site-cursor-action);
+  cursor: pointer;
 }
 
 .no-js .theme-switcher {
@@ -506,7 +502,7 @@ button {
   background: transparent;
   border: 0;
   border-radius: 0.35rem;
-  cursor: var(--site-cursor-action);
+  cursor: pointer;
   opacity: 0.62;
   transition: color var(--duration-fast) var(--ease-move), opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-move);
 }
@@ -971,7 +967,7 @@ button {
   color: inherit;
   background: transparent;
   border: 0;
-  cursor: var(--site-cursor-action);
+  cursor: pointer;
   font-size: 0.72rem;
   opacity: 0.62;
   transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-move);
@@ -1122,7 +1118,7 @@ button {
 }
 
 :root.has-active-event .hero {
-  padding-bottom: 13.5rem;
+  padding-bottom: clamp(14.5rem, 24vh, 16rem);
 }
 
 .hero__content {
@@ -1248,19 +1244,19 @@ button {
 .hero__mark-aurora {
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 4.2;
-  opacity: 0.3;
+  stroke-width: 5;
+  opacity: 0.46;
   animation: hero-mark-glow 5.2s var(--ease-move) infinite;
 }
 
 @keyframes hero-mark-glow {
   0%,
   100% {
-    opacity: 0.24;
+    opacity: 0.36;
   }
 
   50% {
-    opacity: 0.46;
+    opacity: 0.68;
   }
 }
 
@@ -1485,7 +1481,7 @@ button {
   border: 0;
   border-radius: 0.85rem;
   corner-shape: var(--event-ticket-corner-shape);
-  cursor: var(--site-cursor-action);
+  cursor: pointer;
   place-items: center;
   transition: color var(--duration-fast) var(--ease-move), background-color var(--duration-fast) var(--ease-move);
 }
@@ -1687,7 +1683,7 @@ body.menu-open .event-ticket {
 }
 
 .work {
-  background: var(--paper);
+  background: transparent;
 }
 
 .section-heading {
@@ -2276,7 +2272,7 @@ body.menu-open .event-ticket {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: var(--paper-bright);
+  background: transparent;
 }
 
 .project--forum .project__information {
@@ -2294,7 +2290,7 @@ body.menu-open .event-ticket {
   position: absolute;
   z-index: -1;
   inset: -0.2em -0.4em;
-  background: color-mix(in srgb, var(--paper-bright) 94%, transparent);
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
   border-radius: 0.75rem;
   content: "";
   filter: blur(0.5rem);
@@ -2354,7 +2350,7 @@ body.menu-open .event-ticket {
 
 .climate-field__trace-underlay {
   fill: none;
-  stroke: var(--paper-bright);
+  stroke: var(--paper);
   stroke-width: 3.35px;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -2505,7 +2501,7 @@ body.menu-open .event-ticket {
   min-height: 100svh;
   padding: var(--section-top-clearance) var(--gutter) clamp(5rem, 9vw, 9rem);
   color: var(--ink);
-  background: var(--paper);
+  background: transparent;
 }
 
 .about__intro {
@@ -2691,7 +2687,7 @@ body.menu-open .event-ticket {
 
 .texts {
   padding: var(--section-top-clearance) var(--gutter) clamp(6rem, 10vw, 10rem);
-  background: var(--paper-bright);
+  background: transparent;
 }
 
 .texts > h2 {
@@ -3073,7 +3069,7 @@ body.menu-open .event-ticket {
   align-items: center;
   min-height: 64px;
   width: 100%;
-  cursor: var(--site-cursor-action);
+  cursor: pointer;
   list-style: none;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
@@ -3685,8 +3681,9 @@ body.menu-open .event-ticket {
     right: 0.35rem;
     width: auto;
     min-width: 7.3rem;
-    height: 1.75rem;
+    height: calc(100% + 1.72rem);
     padding: 0.38rem 0.52rem;
+    align-items: flex-start;
     flex-direction: row;
     border-left: 1px solid var(--archive-line);
     border-bottom: 0;
@@ -3926,6 +3923,91 @@ body.menu-open .event-ticket {
   }
 }
 
+@media (min-width: 701px) and (max-width: 800px) {
+  .event-ticket {
+    --event-ticket-inset: 0.3rem;
+    --event-ticket-radius: 1.22rem;
+    --event-ticket-tile-size: 3.15rem;
+    right: auto;
+    left: 0.75rem;
+    width: min(18rem, calc(100vw - 1.5rem));
+  }
+
+  .event-ticket--intro,
+  .event-ticket--reminder {
+    bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .event-ticket__link {
+    grid-template-columns: var(--event-ticket-tile-size) minmax(0, 1fr);
+    gap: 0.6rem;
+    min-height: 3.75rem;
+    padding: 0.3rem 3.25rem 0.3rem 0.3rem;
+  }
+
+  .event-ticket__date {
+    gap: 0.12rem;
+    width: var(--event-ticket-tile-size);
+    padding: 0.42rem 0.38rem 0.32rem;
+  }
+
+  .event-ticket__date strong {
+    font-size: 2.05rem;
+    line-height: 0.72;
+  }
+
+  .event-ticket__date span {
+    font-size: 0.46rem;
+    letter-spacing: 0.08em;
+  }
+
+  .event-ticket__copy {
+    gap: 0.18rem;
+  }
+
+  .event-ticket__copy > span {
+    overflow: hidden;
+    gap: 0.32rem;
+    font-size: 0.5rem;
+    letter-spacing: 0.08em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .event-ticket__copy strong {
+    font-size: 0.84rem;
+    line-height: 1.02;
+  }
+
+  .archive-register__spine {
+    right: -1rem;
+  }
+}
+
+@media (max-width: 700px) and (max-height: 720px) {
+  .hero__mark {
+    top: 4.25rem;
+    right: 1.25rem;
+    left: auto;
+    width: min(31vw, 7.5rem);
+    transform: none;
+  }
+
+  .eyebrow {
+    max-width: 10.5rem;
+  }
+
+  :root.has-active-event .eyebrow {
+    margin-bottom: 1.5rem;
+  }
+
+  :root.has-active-event .hero__details {
+    gap: 1.1rem;
+    margin-top: 1.75rem;
+    padding-top: 1rem;
+  }
+}
+
 @media (max-width: 360px) {
   .site-index__body {
     gap: 0.75rem;
@@ -4029,42 +4111,11 @@ body.menu-open .event-ticket {
 
 :root[data-motion="reduced"] .hero__mark-aurora {
   animation: none;
-  opacity: 0.34;
+  opacity: 0.52;
 }
 
 :root[data-motion="reduced"] .climate-field__path--observed {
   animation: none;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  html,
-  body,
-  body * {
-    cursor: var(--site-cursor-default);
-  }
-
-  a,
-  a *,
-  button,
-  button *,
-  summary,
-  summary *,
-  [role="button"],
-  [role="button"] *,
-  [tabindex="0"],
-  [tabindex="0"] * {
-    cursor: var(--site-cursor-action);
-  }
-
-  .archive-card[data-stack-depth="0"],
-  .archive-card[data-stack-depth="0"] * {
-    cursor: var(--site-cursor-drag);
-  }
-
-  .archive-card.is-dragging,
-  .archive-card.is-dragging * {
-    cursor: var(--site-cursor-dragging);
-  }
 }
 
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
