@@ -2374,8 +2374,23 @@ body.menu-open .event-ticket {
   font-variant-numeric: tabular-nums;
 }
 
-.archive-stack__instructions span:last-child {
+.archive-stack__instruction {
+  min-width: 0;
   text-align: right;
+}
+
+.archive-stack__instruction--touch {
+  display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .archive-stack__instruction--desktop {
+    display: none;
+  }
+
+  .archive-stack__instruction--touch {
+    display: inline;
+  }
 }
 
 .archive-stack__status {
@@ -3867,6 +3882,11 @@ body.menu-open .event-ticket {
 
   .archive-card {
     padding: 0.55rem;
+    box-shadow: 0 0.7rem 1.25rem rgba(13, 20, 28, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+
+  .archive-card.is-leaving {
+    box-shadow: 0 0.9rem 1.65rem rgba(13, 20, 28, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   .archive-card[data-stack-depth="1"] {
@@ -3893,13 +3913,28 @@ body.menu-open .event-ticket {
     font-size: 0.61rem !important;
   }
 
+  .project__visual--women-stack .archive-stack__instructions {
+    position: relative;
+    z-index: 6;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    width: calc(100% - 1rem);
+    margin: 3.5rem auto 0 !important;
+    background: var(--paper);
+  }
+
   .project__visual--archive .archive-stack__instructions {
     width: calc(100% - 1rem);
     margin-top: 1.35rem !important;
   }
 
-  .archive-stack__instructions span:last-child {
+  .archive-stack__instruction {
     max-width: 13rem;
+  }
+
+  .project__visual--women-stack .archive-stack__instruction {
+    justify-self: end;
+    max-width: 100%;
   }
 
   .forum-overlay {

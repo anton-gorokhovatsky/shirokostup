@@ -313,6 +313,16 @@ assert(
   "Both project image stacks must retain independent drag, keyboard, counter, and live-region behaviour.",
 );
 assert(
+  count(html, /archive-stack__instruction--desktop/g) === 2 &&
+    count(html, /archive-stack__instruction--touch/g) === 2 &&
+    count(html, /Swipe left or right/g) === 2 &&
+    css.includes("@media (hover: none), (pointer: coarse)") &&
+    css.includes("grid-template-columns: auto minmax(0, 1fr)") &&
+    css.includes("margin: 3.5rem auto 0 !important") &&
+    css.includes("box-shadow: 0 0.7rem 1.25rem rgba(13, 20, 28, 0.1)"),
+  "Archive instructions must use a short, stack-aligned touch prompt without removing desktop keyboard guidance.",
+);
+assert(
   html.includes('aria-label="Eight archival records from the Archive of Artistic Life in Zapolyarye"') &&
     html.includes('data-archive-item-name="archive record"') &&
     html.includes("data-archive-register") &&
