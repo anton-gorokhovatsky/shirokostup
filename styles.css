@@ -2182,7 +2182,7 @@ body.menu-open .event-ticket {
 
 .archive-stack--women .women-route {
   position: absolute;
-  z-index: 5;
+  z-index: 0;
   top: -18%;
   right: -9%;
   width: 80%;
@@ -2313,15 +2313,9 @@ body.menu-open .event-ticket {
   transform: translate3d(-0.7rem, 1.75rem, 0) rotate(-0.58deg) scale(0.98);
 }
 
-.archive-card[data-stack-depth="3"] {
-  z-index: 1;
-  pointer-events: none;
-  transform: translate3d(0.28rem, 2.5rem, 0) rotate(0.25deg) scale(0.97);
-}
-
 .archive-card[data-stack-depth]:not([data-stack-depth="0"]):not([data-stack-depth="1"]):not(
     [data-stack-depth="2"]
-  ):not([data-stack-depth="3"]):not(.is-leaving) {
+  ):not(.is-leaving) {
   z-index: 0;
   visibility: hidden;
   opacity: 0;
@@ -3943,10 +3937,6 @@ body.menu-open .event-ticket {
 
   .archive-card[data-stack-depth="2"] {
     transform: translate3d(-0.4rem, 1.15rem, 0) rotate(-0.48deg) scale(0.98);
-  }
-
-  .archive-card[data-stack-depth="3"] {
-    transform: translate3d(0.2rem, 1.68rem, 0) rotate(0.2deg) scale(0.97);
   }
 
   .archive-card__caption {
