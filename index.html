@@ -81,7 +81,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260722-45" />
+    <link rel="stylesheet" href="styles.css?v=20260723-47" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -304,7 +304,31 @@
 
     <main id="main" tabindex="-1">
       <section class="hero" id="top" aria-labelledby="hero-title" data-header-ink="theme">
-        <div class="aurora-orbit" aria-hidden="true"><span></span></div>
+        <div class="aurora-orbit" data-research-field aria-hidden="true">
+          <svg class="aurora-orbit__mark" viewBox="0 0 48 48">
+            <path
+              class="aurora-orbit__arc is-active"
+              data-research-arc
+              d="M4 24C10 8 31 4 43 16"
+            />
+            <path
+              class="aurora-orbit__arc"
+              data-research-arc
+              d="M6 31c9-16 28-18 38-7"
+            />
+            <path
+              class="aurora-orbit__arc"
+              data-research-arc
+              d="M11 38c8-12 24-15 32-6"
+            />
+            <path
+              class="aurora-orbit__route"
+              data-research-route
+              d="M4 24C10 8 31 4 43 16C45 18 46 21 44 24C34 13 15 15 6 31C7 34 8 36 11 38C19 26 35 23 43 32"
+            />
+            <circle class="aurora-orbit__focus" data-research-focus cx="4" cy="24" r="1.2" />
+          </svg>
+        </div>
         <div class="hero__content">
           <p class="eyebrow" data-reveal>Independent curator&nbsp;· researcher&nbsp;· educator</p>
           <h1 class="hero__title" id="hero-title">
@@ -523,26 +547,110 @@
                   d="M-96 676C26 617 90 701 170 660c80-41 103-110 179-84 62 21 54 98 137 118 67 16 98-33 156-74"
                 />
                 <g class="women-route__points">
-                  <circle vector-effect="non-scaling-stroke" cx="378" cy="91" r="4.3" />
-                  <circle vector-effect="non-scaling-stroke" cx="369" cy="80" r="2.4" />
-                  <circle vector-effect="non-scaling-stroke" cx="389" cy="84" r="2.8" />
-                  <circle vector-effect="non-scaling-stroke" cx="367" cy="99" r="2" />
-                  <circle vector-effect="non-scaling-stroke" cx="391" cy="104" r="2.2" />
-                  <circle vector-effect="non-scaling-stroke" cx="226" cy="438" r="4.8" />
-                  <circle vector-effect="non-scaling-stroke" cx="214" cy="431" r="2.2" />
-                  <circle vector-effect="non-scaling-stroke" cx="236" cy="427" r="2.6" />
-                  <circle vector-effect="non-scaling-stroke" cx="217" cy="450" r="2" />
-                  <circle vector-effect="non-scaling-stroke" cx="239" cy="445" r="1.8" />
-                  <circle vector-effect="non-scaling-stroke" cx="157" cy="780" r="4.4" />
-                  <circle vector-effect="non-scaling-stroke" cx="146" cy="772" r="2.4" />
-                  <circle vector-effect="non-scaling-stroke" cx="169" cy="770" r="2.1" />
-                  <circle vector-effect="non-scaling-stroke" cx="147" cy="790" r="1.9" />
-                  <circle vector-effect="non-scaling-stroke" cx="171" cy="793" r="2.7" />
-                  <circle vector-effect="non-scaling-stroke" cx="220" cy="625" r="4.2" />
-                  <circle vector-effect="non-scaling-stroke" cx="209" cy="617" r="2.2" />
-                  <circle vector-effect="non-scaling-stroke" cx="232" cy="614" r="2.6" />
-                  <circle vector-effect="non-scaling-stroke" cx="211" cy="637" r="1.9" />
-                  <circle vector-effect="non-scaling-stroke" cx="234" cy="634" r="2.3" />
+                  <g class="women-route__cluster women-route__cluster--north">
+                    <circle cx="378" cy="91" r="2.8" />
+                    <circle cx="371" cy="86" r="1.25" />
+                    <circle cx="384" cy="87" r="0.85" />
+                    <circle cx="389" cy="94" r="1.45" />
+                    <circle cx="373" cy="98" r="0.72" />
+                    <circle cx="382" cy="102" r="1.05" />
+                    <circle cx="393" cy="103" r="0.62" />
+                  </g>
+                  <g class="women-route__cluster women-route__cluster--waypoints">
+                    <circle cx="365" cy="169" r="1.05" />
+                    <circle cx="345" cy="231" r="0.72" />
+                    <circle cx="309" cy="294" r="1.35" />
+                    <circle cx="270" cy="365" r="0.7" />
+                    <circle cx="238" cy="400" r="0.92" />
+                    <circle cx="224" cy="507" r="1.25" />
+                    <circle cx="199" cy="552" r="0.68" />
+                    <circle cx="188" cy="702" r="1.15" />
+                    <circle cx="176" cy="734" r="0.65" />
+                    <circle cx="184" cy="843" r="1.1" />
+                  </g>
+                  <g class="women-route__cluster women-route__cluster--mid">
+                    <circle cx="226" cy="438" r="2.45" />
+                    <circle cx="218" cy="434" r="0.9" />
+                    <circle cx="231" cy="430" r="1.2" />
+                    <circle cx="237" cy="437" r="0.68" />
+                    <circle cx="216" cy="443" r="0.62" />
+                    <circle cx="222" cy="449" r="1.05" />
+                    <circle cx="234" cy="446" r="0.8" />
+                    <circle cx="240" cy="451" r="0.55" />
+                    <circle cx="211" cy="452" r="0.48" />
+                  </g>
+                  <g class="women-route__cluster women-route__cluster--junction">
+                    <path
+                      class="women-route__ink"
+                      d="M211 625c-1-4 2-8 7-8 2-5 9-4 10 1 5-2 10 3 7 8 5 4 1 10-5 10-2 5-8 6-12 2-5 3-11-1-11-6-5-1-8-5-7-9Z"
+                    />
+                    <circle cx="220" cy="625" r="3.5" />
+                    <circle cx="213" cy="618" r="2.1" />
+                    <circle cx="225" cy="617" r="1.65" />
+                    <circle cx="231" cy="622" r="2.4" />
+                    <circle cx="210" cy="627" r="1.1" />
+                    <circle cx="217" cy="632" r="1.75" />
+                    <circle cx="226" cy="632" r="2.15" />
+                    <circle cx="235" cy="630" r="0.78" />
+                    <circle cx="205" cy="634" r="0.62" />
+                    <circle cx="211" cy="640" r="1.3" />
+                    <circle cx="221" cy="640" r="0.85" />
+                    <circle cx="229" cy="639" r="1.45" />
+                    <circle cx="239" cy="637" r="0.55" />
+                    <circle cx="201" cy="620" r="0.72" />
+                    <circle cx="242" cy="625" r="0.96" />
+                    <circle cx="247" cy="631" r="0.5" />
+                    <circle cx="198" cy="641" r="0.46" />
+                    <circle cx="191" cy="613" r="0.72" />
+                    <circle cx="196" cy="605" r="0.46" />
+                    <circle cx="204" cy="608" r="0.9" />
+                    <circle cx="238" cy="607" r="0.58" />
+                    <circle cx="249" cy="614" r="0.78" />
+                    <circle cx="255" cy="622" r="0.52" />
+                    <circle cx="252" cy="642" r="0.68" />
+                    <circle cx="241" cy="648" r="0.46" />
+                    <circle cx="228" cy="651" r="0.74" />
+                    <circle cx="206" cy="650" r="0.58" />
+                  </g>
+                  <g class="women-route__cluster women-route__cluster--south">
+                    <circle cx="157" cy="780" r="2.65" />
+                    <circle cx="149" cy="776" r="0.82" />
+                    <circle cx="164" cy="773" r="1.35" />
+                    <circle cx="171" cy="779" r="0.62" />
+                    <circle cx="151" cy="786" r="0.55" />
+                    <circle cx="162" cy="790" r="1.05" />
+                  </g>
+                  <g class="women-route__cluster women-route__cluster--branch-end">
+                    <path
+                      class="women-route__ink"
+                      d="M479 695c-1-4 2-7 6-6 2-4 8-2 8 2 5-1 8 4 5 8 2 4-2 8-7 7-3 4-9 2-10-2-5 1-8-4-6-8Z"
+                    />
+                    <circle cx="486" cy="694" r="2.75" />
+                    <circle cx="478" cy="689" r="1.2" />
+                    <circle cx="494" cy="686" r="0.72" />
+                    <circle cx="501" cy="691" r="1.4" />
+                    <circle cx="475" cy="699" r="0.62" />
+                    <circle cx="482" cy="704" r="1.65" />
+                    <circle cx="492" cy="701" r="0.88" />
+                    <circle cx="500" cy="707" r="1.1" />
+                    <circle cx="507" cy="700" r="0.52" />
+                    <circle cx="511" cy="710" r="0.84" />
+                    <circle cx="472" cy="708" r="0.48" />
+                    <circle cx="489" cy="712" r="0.58" />
+                    <circle cx="462" cy="680" r="0.72" />
+                    <circle cx="469" cy="675" r="0.48" />
+                    <circle cx="480" cy="678" r="0.96" />
+                    <circle cx="492" cy="675" r="0.62" />
+                    <circle cx="505" cy="680" r="0.82" />
+                    <circle cx="516" cy="687" r="0.56" />
+                    <circle cx="520" cy="698" r="0.76" />
+                    <circle cx="517" cy="717" r="0.64" />
+                    <circle cx="505" cy="722" r="0.48" />
+                    <circle cx="493" cy="719" r="0.7" />
+                    <circle cx="479" cy="719" r="0.54" />
+                    <circle cx="466" cy="713" r="0.82" />
+                    <circle cx="459" cy="703" r="0.5" />
+                  </g>
                 </g>
               </svg>
             </div>
@@ -591,10 +699,30 @@
               aria-label="Eight archival records from the Archive of Artistic Life in Zapolyarye"
               aria-describedby="archive-stack-instructions"
             >
+              <div class="archive-register" data-archive-register aria-hidden="true">
+                <div class="archive-register__spine">
+                  <span>RAAN&nbsp;· Apatity</span>
+                </div>
+                <div class="archive-register__meta">
+                  <span>Archive register</span>
+                  <strong>
+                    <span data-archive-register-kind>Photograph</span>
+                    <span aria-hidden="true">·</span>
+                    <span data-archive-register-year>1970s–80s</span>
+                  </strong>
+                </div>
+                <div class="archive-register__rail">
+                  <i class="archive-register__marker"></i>
+                  <span>01</span><span>02</span><span>03</span><span>04</span>
+                  <span>05</span><span>06</span><span>07</span><span>08</span>
+                </div>
+              </div>
               <div
                 class="archive-card"
                 data-archive-card
                 data-archive-label="Apatity, Murmansk Region, 1970s–80s"
+                data-archive-kind="Photograph"
+                data-archive-year="1970s–80s"
                 data-stack-depth="0"
                 role="button"
                 tabindex="0"
@@ -613,6 +741,8 @@
                 class="archive-card archive-card--document"
                 data-archive-card
                 data-archive-label="Painting at a Time of Upheaval exhibition poster, Gallery M, 1991"
+                data-archive-kind="Poster"
+                data-archive-year="1991"
                 data-stack-depth="1"
                 role="button"
                 tabindex="-1"
@@ -632,6 +762,8 @@
                 class="archive-card"
                 data-archive-card
                 data-archive-label="Artists and visitors at Gallery M in Apatity, 1991"
+                data-archive-kind="Photograph"
+                data-archive-year="1991"
                 data-stack-depth="2"
                 role="button"
                 tabindex="-1"
@@ -651,6 +783,8 @@
                 class="archive-card archive-card--document"
                 data-archive-card
                 data-archive-label="The Gallery of Modern Art leaflet, Gallery M, 1991"
+                data-archive-kind="Leaflet"
+                data-archive-year="1991"
                 data-stack-depth="3"
                 role="button"
                 tabindex="-1"
@@ -670,6 +804,8 @@
                 class="archive-card"
                 data-archive-card
                 data-archive-label="The art scene in Apatity, RAAN collection image"
+                data-archive-kind="Collection image"
+                data-archive-year="Undated"
                 data-stack-depth="4"
                 role="button"
                 tabindex="-1"
@@ -689,6 +825,8 @@
                 class="archive-card archive-card--document"
                 data-archive-card
                 data-archive-label="Art from the Russian Arctic exhibition poster, Fairfield Gallery, Croydon, 1994"
+                data-archive-kind="Poster"
+                data-archive-year="1994"
                 data-stack-depth="5"
                 role="button"
                 tabindex="-1"
@@ -708,6 +846,8 @@
                 class="archive-card"
                 data-archive-card
                 data-archive-label="Igor Tchaikovsky and guests of Gallery M, 1996"
+                data-archive-kind="Photograph"
+                data-archive-year="1996"
                 data-stack-depth="6"
                 role="button"
                 tabindex="-1"
@@ -727,6 +867,8 @@
                 class="archive-card"
                 data-archive-card
                 data-archive-label="Installing the 13 Cosmonauts mosaic, 2019"
+                data-archive-kind="Documentation"
+                data-archive-year="2019"
                 data-stack-depth="7"
                 role="button"
                 tabindex="-1"
@@ -744,7 +886,6 @@
               </div>
             </div>
             <figcaption class="archive-stack__instructions" id="archive-stack-instructions">
-              <span data-archive-counter aria-hidden="true">01 / 08</span>
               <span>Drag the top record&nbsp;· Use the Left and Right arrow keys</span>
             </figcaption>
             <p class="archive-stack__status" data-archive-status aria-live="polite" aria-atomic="true"></p>
@@ -791,16 +932,30 @@
             focusable="false"
           >
             <g class="climate-field__traces">
-              <path
-                class="climate-field__trace climate-field__trace--baseline"
-                pathLength="1"
-                d="M-120 758C80 730 174 748 306 715C438 682 500 712 620 656C742 599 786 516 882 470C988 420 1047 442 1124 408C1207 372 1264 295 1362 282C1452 270 1510 318 1606 294C1662 280 1714 249 1760 228"
-              />
-              <path
-                class="climate-field__trace climate-field__trace--observed"
-                pathLength="1"
-                d="M-120 771C84 742 180 761 311 728C443 695 507 725 627 668C750 610 794 529 891 482C996 432 1054 455 1132 421C1216 385 1272 309 1370 296C1460 284 1518 333 1614 309C1670 295 1722 265 1760 244"
-              />
+              <g class="climate-field__path climate-field__path--baseline">
+                <path
+                  class="climate-field__trace-underlay"
+                  pathLength="1"
+                  d="M-120 758C80 730 174 748 306 715C438 682 500 712 620 656C742 599 786 516 882 470C988 420 1047 442 1124 408C1207 372 1264 295 1362 282C1452 270 1510 318 1606 294C1662 280 1714 249 1760 228"
+                />
+                <path
+                  class="climate-field__trace climate-field__trace--baseline"
+                  pathLength="1"
+                  d="M-120 758C80 730 174 748 306 715C438 682 500 712 620 656C742 599 786 516 882 470C988 420 1047 442 1124 408C1207 372 1264 295 1362 282C1452 270 1510 318 1606 294C1662 280 1714 249 1760 228"
+                />
+              </g>
+              <g class="climate-field__path climate-field__path--observed">
+                <path
+                  class="climate-field__trace-underlay"
+                  pathLength="1"
+                  d="M-120 771C84 742 180 761 311 728C443 695 507 725 627 668C750 610 794 529 891 482C996 432 1054 455 1132 421C1216 385 1272 309 1370 296C1460 284 1518 333 1614 309C1670 295 1722 265 1760 244"
+                />
+                <path
+                  class="climate-field__trace climate-field__trace--observed"
+                  pathLength="1"
+                  d="M-120 771C84 742 180 761 311 728C443 695 507 725 627 668C750 610 794 529 891 482C996 432 1054 455 1132 421C1216 385 1272 309 1370 296C1460 284 1518 333 1614 309C1670 295 1722 265 1760 244"
+                />
+              </g>
             </g>
             <g class="climate-field__stations">
               <line x1="306" y1="715" x2="311" y2="728" />
@@ -846,43 +1001,46 @@
           <ol class="timeline" aria-label="Selected roles and projects" data-reveal>
             <li class="timeline__item--arca">
               <time>2024—27</time>
-              <span class="timeline__role">
-                Curator, ARCA European research project
-                <svg class="arca-network" viewBox="0 0 72 42" aria-hidden="true" focusable="false">
-                  <g class="arca-network__links">
-                    <path pathLength="1" d="M7 29C19 8 34 8 43 20S58 37 67 12" />
-                    <path pathLength="1" d="M7 29C25 37 46 38 67 12" />
-                  </g>
-                  <g class="arca-network__places">
-                    <circle cx="7" cy="29" r="3" />
-                    <circle cx="29" cy="12" r="2.6" />
-                    <circle cx="43" cy="20" r="3.4" />
-                    <circle cx="67" cy="12" r="2.8" />
-                  </g>
-                </svg>
-              </span>
+              <span class="timeline__role">Curator, ARCA European research project</span>
+              <svg class="arca-network timeline__state" viewBox="0 0 72 42" aria-hidden="true" focusable="false">
+                <g class="arca-network__links">
+                  <path pathLength="1" d="M7 29C19 8 34 8 43 20S58 37 67 12" />
+                  <path pathLength="1" d="M7 29C25 37 46 38 67 12" />
+                </g>
+                <g class="arca-network__places">
+                  <circle cx="7" cy="29" r="3" />
+                  <circle cx="29" cy="12" r="2.6" />
+                  <circle cx="43" cy="20" r="3.4" />
+                  <circle cx="67" cy="12" r="2.8" />
+                </g>
+              </svg>
             </li>
-            <li><time>2026</time><span>Co-curator, Arctic Art Forum V, Oslo</span></li>
+            <li><time>2026</time><span class="timeline__role">Co-curator, Arctic Art Forum V, Oslo</span></li>
             <li>
-              <span class="timeline__period">
-                <time datetime="2023">2023</time>
-                <span class="ongoing-status"><i aria-hidden="true"></i><span class="ongoing-status__label">Ongoing</span></span>
-              </span>
-              <span>Archive of Artistic Life in Zapolyarye, RAAN</span>
+              <time datetime="2023">2023</time>
+              <span class="timeline__role">Archive of Artistic Life in Zapolyarye, RAAN</span>
+              <span class="ongoing-status timeline__state"
+                ><i aria-hidden="true"></i><span class="ongoing-status__label">Ongoing</span></span
+              >
             </li>
             <li>
-              <span class="timeline__period">
-                <time datetime="2022">2022</time>
-                <span class="ongoing-status"><i aria-hidden="true"></i><span class="ongoing-status__label">Ongoing</span></span>
-              </span>
-              <span>Women in the North, Kin Museum</span>
+              <time datetime="2022">2022</time>
+              <span class="timeline__role">Women in the North, Kin Museum</span>
+              <span class="ongoing-status timeline__state"
+                ><i aria-hidden="true"></i><span class="ongoing-status__label">Ongoing</span></span
+              >
             </li>
             <li>
-              <time>2021—23</time><span>Chief Curator, <a href="https://radiancecca.com/">Radiance Centre</a>, Apatity</span>
+              <time>2021—23</time
+              ><span class="timeline__role"
+                >Chief Curator, <a href="https://radiancecca.com/">Radiance Centre</a>, Apatity</span
+              >
             </li>
             <li>
               <time>2020—24</time>
-              <span>Research Course Leader, <a href="https://garagemca.academy/">Garage Academy</a></span>
+              <span class="timeline__role"
+                >Research Course Leader, <a href="https://garagemca.academy/">Garage Academy</a></span
+              >
             </li>
           </ol>
         </div>
@@ -991,6 +1149,6 @@
       </section>
     </main>
 
-    <script src="script.js?v=20260722-19"></script>
+    <script src="script.js?v=20260723-21"></script>
   </body>
 </html>

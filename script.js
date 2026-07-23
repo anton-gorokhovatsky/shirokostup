@@ -19,6 +19,10 @@ const cursorTrail = document.querySelector("[data-cursor-trail]");
 const eventTicket = document.querySelector("[data-event-ticket]");
 const eventTicketDismiss = document.querySelector("[data-event-ticket-dismiss]");
 const heroSection = document.querySelector("#top");
+const researchField = document.querySelector("[data-research-field]");
+const researchRoute = researchField?.querySelector("[data-research-route]");
+const researchFocus = researchField?.querySelector("[data-research-focus]");
+const researchArcs = Array.from(researchField?.querySelectorAll("[data-research-arc]") || []);
 const upcomingSection = document.querySelector("#now");
 const contactSection = document.querySelector("#contact");
 let menuCloseTimer = 0;
@@ -164,7 +168,10 @@ themeChoices.forEach((choice) => {
 });
 
 motionChoices.forEach((choice) => {
-  choice.addEventListener("click", () => applyMotion(choice.dataset.motionChoice, { save: true }));
+  choice.addEventListener("click", () => {
+    applyMotion(choice.dataset.motionChoice, { save: true });
+    updateScrollUI();
+  });
 });
 
 systemTheme.addEventListener?.("change", () => {
@@ -174,7 +181,10 @@ systemTheme.addEventListener?.("change", () => {
 });
 
 systemReducedMotion.addEventListener?.("change", () => {
-  if ((root.dataset.motionMode || readSavedMotionMode()) === "system") applyMotion("system");
+  if ((root.dataset.motionMode || readSavedMotionMode()) === "system") {
+    applyMotion("system");
+    updateScrollUI();
+  }
 });
 
 let eventTicketDismissed = false;
@@ -272,8 +282,9 @@ const updateScrollUI = () => {
   const scrollable = document.documentElement.scrollHeight - window.innerHeight;
   const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0;
   const headerHeight = header?.getBoundingClientRect().height || 0;
+  const heroBounds = heroSection?.getBoundingClientRect();
   const heroIsUnderHeader = heroSection
-    ? heroSection.getBoundingClientRect().bottom > headerHeight
+    ? heroBounds.bottom > headerHeight
     : window.scrollY <= 24;
 
   header?.classList.toggle("is-scrolled", !heroIsUnderHeader);
@@ -281,6 +292,20 @@ const updateScrollUI = () => {
 
   if (progressBar) {
     progressBar.style.transform = `scaleX(${progress})`;
+  }
+
+  if (researchRoute && researchFocus && heroBounds) {
+    const heroTravel = Math.max(heroBounds.height - headerHeight, 1);
+    const heroProgress = motionIsReduced()
+      ? 0.08
+      : Math.min(Math.max(-heroBounds.top / heroTravel, 0), 1);
+    const routeLength = researchRoute.getTotalLength();
+    const focusPoint = researchRoute.getPointAtLength(routeLength * heroProgress);
+    const activeArc = Math.min(Math.floor(heroProgress * researchArcs.length), researchArcs.length - 1);
+
+    researchFocus.setAttribute("cx", focusPoint.x.toFixed(3));
+    researchFocus.setAttribute("cy", focusPoint.y.toFixed(3));
+    researchArcs.forEach((arc, index) => arc.classList.toggle("is-active", index === activeArc));
   }
 
   updateEventTicketVisibility();
@@ -537,6 +562,9 @@ archiveStacks.forEach((archiveStack) => {
   const archiveStatus = archiveFigure?.querySelector("[data-archive-status]");
   const archiveItemName = archiveStack.dataset.archiveItemName || "image";
   const archiveItemNameSentence = archiveItemName.replace(/^./, (character) => character.toUpperCase());
+  const archiveRegister = archiveStack.querySelector("[data-archive-register]");
+  const archiveRegisterKind = archiveRegister?.querySelector("[data-archive-register-kind]");
+  const archiveRegisterYear = archiveRegister?.querySelector("[data-archive-register-year]");
 
   if (archiveCards.length <= 1) return;
 
@@ -587,6 +615,12 @@ archiveStacks.forEach((archiveStack) => {
 
     if (archiveCounter) {
       archiveCounter.textContent = `${formatArchivePosition(activeArchiveIndex)} / ${formatArchivePosition(archiveCards.length - 1)}`;
+    }
+
+    if (archiveRegister) {
+      archiveRegister.style.setProperty("--archive-register-position", String(activeArchiveIndex));
+      if (archiveRegisterKind) archiveRegisterKind.textContent = activeCard.dataset.archiveKind || "Archive record";
+      if (archiveRegisterYear) archiveRegisterYear.textContent = activeCard.dataset.archiveYear || "Undated";
     }
 
     if (announce && archiveStatus) {

@@ -146,9 +146,19 @@ assert(
   "The event ticket must remain visible at every width until the full event card approaches.",
 );
 assert(
-  script.includes("heroSection.getBoundingClientRect().bottom > headerHeight") &&
+  script.includes("const heroBounds = heroSection?.getBoundingClientRect()") &&
+    script.includes("heroBounds.bottom > headerHeight") &&
     !script.includes('classList.toggle("is-scrolled", window.scrollY > 24)'),
   "The header identity must remain visible throughout the hero instead of collapsing after a tiny restored scroll.",
+);
+assert(
+  count(html, /data-research-arc\b/gi) === 3 &&
+    html.includes("data-research-route") &&
+    html.includes("data-research-focus") &&
+    script.includes("researchRoute.getPointAtLength") &&
+    css.includes(".aurora-orbit__arc.is-active") &&
+    !css.includes("@keyframes orbit"),
+  "The hero research field must expand the three open logo arcs and move its focus with scroll without autonomous orbiting.",
 );
 assert(
   /<section\b[^>]*class="about"[^>]*data-header-ink="theme"/i.test(html) &&
@@ -170,10 +180,18 @@ assert(
 assert(
   html.includes('aria-label="Eight archival records from the Archive of Artistic Life in Zapolyarye"') &&
     html.includes('data-archive-item-name="archive record"') &&
+    html.includes("data-archive-register") &&
+    count(html, /data-archive-kind=/gi) === 8 &&
+    count(html, /data-archive-year=/gi) === 8 &&
+    count(html, /data-archive-counter\b/gi) === 1 &&
+    !html.includes("data-archive-register-number") &&
+    !script.includes("archiveRegisterNumber") &&
     count(html, /archive-(?:painting-coup-poster|gallery-m-1991|gallery-modern-art-leaflet|russian-arctic-poster)\.jpg/gi) === 4 &&
     script.includes("archiveItemNameSentence") &&
+    script.includes("--archive-register-position") &&
+    css.includes(".archive-register__marker") &&
     css.includes(".archive-card--document > img"),
-  "The Apatity archive must retain its mixed eight-record dossier with accessible item naming.",
+  "The Apatity archive must retain its mixed eight-record dossier, accessible item naming, and linked catalogue register.",
 );
 assert(
   html.includes('class="women-route"') &&
@@ -183,16 +201,39 @@ assert(
   "The Women in the North route must remain visible without intercepting photo dragging.",
 );
 assert(
-  count(html, /women-route__branch/gi) === 2,
-  "The Women in the North route must retain its restrained secondary branch.",
+  count(html, /women-route__branch/gi) === 2 &&
+    count(html, /women-route__cluster--/gi) === 6 &&
+    html.includes("women-route__cluster--waypoints") &&
+    html.includes("women-route__cluster--junction") &&
+    css.includes("stroke-width: 0.62px"),
+  "The Women in the North route must retain its branch and source-faithful mix of sparse, dense, and waypoint clusters.",
 );
 assert(
   css.includes(".climate-field__trace") &&
-    css.includes("stroke: color-mix(in srgb, var(--ink) 44%, transparent)") &&
+    count(html, /climate-field__trace-underlay/gi) === 2 &&
+    css.includes("stroke: #263448") &&
+    css.includes("stroke: #6a5076") &&
+    css.includes("stroke: rgba(250, 249, 245, 0.9)") &&
     css.includes("stroke-dasharray: none") &&
     css.includes(".climate-field__stations") &&
-    css.includes("animation: none"),
-  "The mobile climate route must render as stable theme-aware paths without Safari-fragile path animation.",
+    css.includes(".climate-field__path--observed") &&
+    css.includes("animation: none") &&
+    !css.includes(".project--forum:hover .climate-field__trace--baseline"),
+  "The climate route must keep fixed double-stroke colours across image boundaries and avoid Safari-fragile mobile animation.",
+);
+assert(
+  css.includes("aspect-ratio: 1.58") &&
+    css.includes("object-position: 68% center") &&
+    css.includes("transform-origin: 68% center"),
+  "The Arctic Art Forum image must keep its meaningful right-edge forms in view.",
+);
+assert(
+  count(html, /class="ongoing-status timeline__state"/gi) === 2 &&
+    count(html, /class="timeline__role"/gi) === 6 &&
+    !html.includes("timeline__period") &&
+    css.includes("grid-template-columns: 7rem minmax(0, 1fr) minmax(5.8rem, auto)") &&
+    css.includes(".timeline__state"),
+  "The selected-roles table must keep year, role, and status in predictable columns.",
 );
 assert(!/[←↑→↓↗↘↙↖]/u.test(html), "Directional actions must use the shared vector-arrow system.");
 
