@@ -557,8 +557,10 @@ archiveStacks.forEach((archiveStack) => {
   let draggedCard = null;
   let dragStartX = 0;
   let dragStartY = 0;
+  let dragStartTime = 0;
   let dragX = 0;
   let dragAxis = null;
+  let dragPreviewDirection = 1;
 
   const formatArchivePosition = (index) => String(index + 1).padStart(2, "0");
 
@@ -567,6 +569,20 @@ archiveStacks.forEach((archiveStack) => {
     card.style.removeProperty("--archive-drag-x");
     card.style.removeProperty("--archive-drag-y");
     card.style.removeProperty("--archive-drag-rotate");
+  };
+
+  const previewArchiveDirection = (direction) => {
+    if (direction === dragPreviewDirection) return;
+
+    archiveCards.forEach((card, index) => {
+      const depth =
+        direction < 0
+          ? (activeArchiveIndex - index + archiveCards.length) % archiveCards.length
+          : (index - activeArchiveIndex + archiveCards.length) % archiveCards.length;
+      card.dataset.stackDepth = String(depth);
+    });
+
+    dragPreviewDirection = direction;
   };
 
   const renderArchiveStack = ({ focus = false, announce = false } = {}) => {
@@ -594,6 +610,7 @@ archiveStacks.forEach((archiveStack) => {
         card.tabIndex = -1;
       }
     });
+    dragPreviewDirection = 1;
 
     if (archiveCounter) {
       archiveCounter.textContent = `${formatArchivePosition(activeArchiveIndex)} / ${formatArchivePosition(archiveCards.length - 1)}`;
@@ -623,10 +640,21 @@ archiveStacks.forEach((archiveStack) => {
     }
 
     archiveIsAnimating = true;
-    activeCard.classList.remove("is-dragging");
-    activeCard.classList.add("is-leaving");
     const exitDirection = indexDelta > 0 ? -1 : 1;
     const exitDistance = activeCard.getBoundingClientRect().width + 96;
+    const exitStartX = indexDelta < 0 ? Math.max(dragX, 0) : Math.min(dragX, 0);
+
+    if (indexDelta < 0) {
+      activeArchiveIndex = nextIndex;
+      renderArchiveStack();
+    }
+
+    activeCard.classList.remove("is-dragging");
+    activeCard.classList.add("is-leaving");
+    activeCard.style.setProperty("--archive-drag-x", `${exitStartX}px`);
+    activeCard.style.setProperty("--archive-drag-y", "0px");
+    activeCard.style.setProperty("--archive-drag-rotate", "0deg");
+    activeCard.getBoundingClientRect();
 
     window.requestAnimationFrame(() => {
       activeCard.style.setProperty("--archive-drag-x", `${exitDirection * exitDistance}px`);
@@ -638,7 +666,7 @@ archiveStacks.forEach((archiveStack) => {
       if (!archiveIsAnimating) return;
       window.clearTimeout(archiveAnimationTimer);
       activeCard.removeEventListener("transitionend", handleArchiveExit);
-      activeArchiveIndex = nextIndex;
+      if (indexDelta > 0) activeArchiveIndex = nextIndex;
       archiveIsAnimating = false;
       renderArchiveStack({ focus: true, announce: true });
     };
@@ -657,6 +685,8 @@ archiveStacks.forEach((archiveStack) => {
 
     const card = draggedCard;
     const threshold = Math.min(92, Math.max(48, card.getBoundingClientRect().width * 0.13));
+    const dragDuration = Math.max(performance.now() - dragStartTime, 1);
+    const isIntentionalFlick = Math.abs(dragX) >= 24 && Math.abs(dragX) / dragDuration >= 0.32;
 
     if (card.hasPointerCapture?.(activePointerId)) card.releasePointerCapture(activePointerId);
 
@@ -664,10 +694,10 @@ archiveStacks.forEach((archiveStack) => {
     draggedCard = null;
     card.classList.remove("is-dragging");
 
-    if (!cancelled && dragAxis === "horizontal" && Math.abs(dragX) >= threshold) {
+    if (!cancelled && dragAxis === "horizontal" && (Math.abs(dragX) >= threshold || isIntentionalFlick)) {
       cycleArchiveStack(dragX < 0 ? 1 : -1);
     } else {
-      clearArchiveDrag(card);
+      renderArchiveStack();
     }
 
     dragX = 0;
@@ -696,8 +726,10 @@ archiveStacks.forEach((archiveStack) => {
       draggedCard = card;
       dragStartX = event.clientX;
       dragStartY = event.clientY;
+      dragStartTime = performance.now();
       dragX = 0;
       dragAxis = null;
+      dragPreviewDirection = 1;
       card.classList.add("is-dragging");
       card.setPointerCapture?.(activePointerId);
     });
@@ -721,6 +753,7 @@ archiveStacks.forEach((archiveStack) => {
 
       if (event.cancelable) event.preventDefault();
       dragX = deltaX;
+      previewArchiveDirection(deltaX > 0 ? -1 : 1);
       const cardWidth = Math.max(card.getBoundingClientRect().width, 1);
       card.style.setProperty("--archive-drag-x", `${deltaX}px`);
       card.style.setProperty("--archive-drag-y", `${deltaY * 0.14}px`);
