@@ -102,8 +102,18 @@ assert(
     !css.includes("has-custom-cursor") &&
     css.includes("--site-cursor-default: url") &&
     css.includes("--site-cursor-action: url") &&
+    css.includes("--site-cursor-drag: url") &&
+    css.includes("--site-cursor-dragging: url") &&
+    css.includes("width='28' height='30'") &&
+    css.includes(") 9 4, pointer") &&
+    css.includes("a *") &&
+    css.includes(".archive-card[data-stack-depth=\"0\"] *") &&
+    css.includes(".archive-card.is-dragging *") &&
+    css.includes("cursor: var(--site-cursor-drag)") &&
+    css.includes("cursor: var(--site-cursor-dragging)") &&
+    !css.includes("cursor: pointer") &&
     css.includes("@media (hover: hover) and (pointer: fine)"),
-  "The custom pointer must use the browser cursor layer so a second DOM pointer cannot appear.",
+  "The custom pointer must use distinct default, action, drag, and active-drag silhouettes so interaction is not signalled by colour alone.",
 );
 assert(!css.includes("cursor: none !important"), "The native cursor must remain visible and predictable.");
 assert(
@@ -134,6 +144,15 @@ assert(
   "The upcoming-event ticket needs an automatic expiry date.",
 );
 assert(
+  /<a\b[^>]*class="event-ticket__link"[\s\S]*?<strong\b[^>]*class="event-ticket__title"[^>]*id="event-ticket-title"/i.test(
+    html,
+  ) &&
+    css.includes(".event-ticket__link:hover .event-ticket__title") &&
+    css.includes(".now__card:hover .now__copy h2") &&
+    css.includes(".now__card:focus-visible .now__copy h2"),
+  "Both event titles must remain inside their links with non-colour hover and keyboard-focus cues.",
+);
+assert(
   /<time\b[^>]*datetime="2026-08-13T18:00:00\+02:00"/i.test(html),
   "The upcoming-event ticket needs a machine-readable date and time.",
 );
@@ -149,16 +168,33 @@ assert(
   script.includes("const heroBounds = heroSection?.getBoundingClientRect()") &&
     script.includes("heroBounds.bottom > headerHeight") &&
     !script.includes('classList.toggle("is-scrolled", window.scrollY > 24)'),
-  "The header identity must remain visible throughout the hero instead of collapsing after a tiny restored scroll.",
+  "The header state must remain tied to the hero instead of changing after a tiny restored scroll.",
 );
 assert(
-  count(html, /data-research-arc\b/gi) === 3 &&
-    html.includes("data-research-route") &&
-    html.includes("data-research-focus") &&
-    script.includes("researchRoute.getPointAtLength") &&
-    css.includes(".aurora-orbit__arc.is-active") &&
-    !css.includes("@keyframes orbit"),
-  "The hero research field must expand the three open logo arcs and move its focus with scroll without autonomous orbiting.",
+  /<svg\b[^>]*class="hero__mark"[^>]*aria-hidden="true"[^>]*focusable="false"/i.test(html) &&
+    count(html.match(/<g\b[^>]*class="hero__mark-ink"[\s\S]*?<\/g>/i)?.[0] ?? "", /<path\b/gi) === 3 &&
+    count(html.match(/<g\b[^>]*class="hero__mark-ink"[\s\S]*?<\/g>/i)?.[0] ?? "", /<circle\b/gi) === 1 &&
+    count(html.match(/<g\b[^>]*class="hero__mark-aurora"[\s\S]*?<\/g>/i)?.[0] ?? "", /<path\b/gi) === 3 &&
+    /<radialGradient\b[^>]*id="hero-mark-aurora-gradient"[^>]*cx="8"[^>]*cy="12"[^>]*r="42"/i.test(html) &&
+    /<circle\b[^>]*cx="8"[^>]*cy="12"[^>]*r="3\.5"/i.test(
+      html.match(/<g\b[^>]*class="hero__mark-ink"[\s\S]*?<\/g>/i)?.[0] ?? "",
+    ) &&
+    !html.includes("data-research-field") &&
+    !script.includes("researchRoute") &&
+    css.includes(".hero__mark") &&
+    css.includes("color: var(--ink)") &&
+    css.includes("stroke-width: 2.2") &&
+    css.includes("stroke-width: 4.2") &&
+    css.includes("@keyframes hero-mark-glow") &&
+    css.includes(":root[data-motion=\"reduced\"] .hero__mark-aurora") &&
+    css.includes(":root[data-motion=\"reduced\"] .climate-field__path--observed"),
+  "The hero must keep one literal monochrome identity mark above a reduced-motion-safe aurora underlay that radiates from its focus point.",
+);
+assert(
+  css.includes(".scroll-cue i {") &&
+    css.includes("background: var(--paper)") &&
+    css.includes("box-shadow: 0 0 0 0.42rem var(--paper)"),
+  "The hero divider must leave a clean background break around the vertical scroll cue arrow.",
 );
 assert(
   /<section\b[^>]*class="about"[^>]*data-header-ink="theme"/i.test(html) &&
@@ -215,8 +251,10 @@ assert(
     /timeline__date[\s\S]*?<time datetime="2023">2023<\/time>[\s\S]*?ongoing-status/i.test(html) &&
     /timeline__date[\s\S]*?<time datetime="2022">2022<\/time>[\s\S]*?ongoing-status/i.test(html) &&
     css.includes(".timeline .ongoing-status__label") &&
-    css.includes("width: 0.72rem"),
-  "Ongoing project states must remain accessible as compact pulsing markers beside their corresponding years.",
+    css.includes("width: 0.72rem") &&
+    css.includes("background: var(--aurora-green)") &&
+    css.includes("@keyframes ongoing-pulse"),
+  "Ongoing project states must remain accessible as consistent pulsing markers beside their corresponding years.",
 );
 assert(
   css.includes(".climate-field__trace") &&
@@ -233,10 +271,19 @@ assert(
   "The climate route must keep theme-aware double-stroke colours, soften beneath copy, and avoid Safari-fragile mobile animation.",
 );
 assert(
-  css.includes("aspect-ratio: 1.58") &&
+    css.includes("aspect-ratio: 1.58") &&
     css.includes("object-position: 68% center") &&
-    css.includes("transform-origin: 68% center"),
-  "The Arctic Art Forum image must keep its meaningful right-edge forms in view.",
+    css.includes("transform-origin: 68% center") &&
+    /<figcaption\b[^>]*class="forum-caption__semantic"/i.test(html) &&
+    /<p\b[^>]*class="forum-caption"[^>]*aria-hidden="true"/i.test(html) &&
+    css.includes(".forum-caption {") &&
+    css.includes(".project--forum .project__information") &&
+    css.includes(".project__visual--forum {") &&
+    css.includes("z-index: 3") &&
+    css.includes("grid-column: 2") &&
+    css.includes("rgba(250, 249, 245, 0.98) 18%") &&
+    css.includes("text-shadow: 0 0 0.6rem"),
+  "The Arctic Art Forum image must keep its meaningful right-edge forms in view while a semantic caption and a separate top-layer plaque keep the route physically below its material.",
 );
 assert(
   count(html, /class="timeline__date"/gi) === 6 &&
@@ -246,6 +293,13 @@ assert(
     css.includes(".timeline__date") &&
     css.includes(".timeline__state"),
   "The selected-roles table must keep each ongoing state grouped with its year while preserving predictable role columns.",
+);
+assert(
+  css.includes(".project__information {") &&
+    css.includes("position: relative") &&
+    css.includes(".js .project__information[data-reveal]") &&
+    css.includes("transition: opacity 560ms"),
+  "Project copy must move continuously with document scrolling instead of snapping into a sticky position or adding a competing vertical reveal.",
 );
 assert(!/[←↑→↓↗↘↙↖]/u.test(html), "Directional actions must use the shared vector-arrow system.");
 

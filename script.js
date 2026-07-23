@@ -19,10 +19,6 @@ const cursorTrail = document.querySelector("[data-cursor-trail]");
 const eventTicket = document.querySelector("[data-event-ticket]");
 const eventTicketDismiss = document.querySelector("[data-event-ticket-dismiss]");
 const heroSection = document.querySelector("#top");
-const researchField = document.querySelector("[data-research-field]");
-const researchRoute = researchField?.querySelector("[data-research-route]");
-const researchFocus = researchField?.querySelector("[data-research-focus]");
-const researchArcs = Array.from(researchField?.querySelectorAll("[data-research-arc]") || []);
 const upcomingSection = document.querySelector("#now");
 const contactSection = document.querySelector("#contact");
 let menuCloseTimer = 0;
@@ -292,20 +288,6 @@ const updateScrollUI = () => {
 
   if (progressBar) {
     progressBar.style.transform = `scaleX(${progress})`;
-  }
-
-  if (researchRoute && researchFocus && heroBounds) {
-    const heroTravel = Math.max(heroBounds.height - headerHeight, 1);
-    const heroProgress = motionIsReduced()
-      ? 0.08
-      : Math.min(Math.max(-heroBounds.top / heroTravel, 0), 1);
-    const routeLength = researchRoute.getTotalLength();
-    const focusPoint = researchRoute.getPointAtLength(routeLength * heroProgress);
-    const activeArc = Math.min(Math.floor(heroProgress * researchArcs.length), researchArcs.length - 1);
-
-    researchFocus.setAttribute("cx", focusPoint.x.toFixed(3));
-    researchFocus.setAttribute("cy", focusPoint.y.toFixed(3));
-    researchArcs.forEach((arc, index) => arc.classList.toggle("is-active", index === activeArc));
   }
 
   updateEventTicketVisibility();
