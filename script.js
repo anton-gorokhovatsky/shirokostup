@@ -602,7 +602,6 @@ archiveStacks.forEach((archiveStack) => {
   let dragStartTime = 0;
   let dragX = 0;
   let dragAxis = null;
-  let dragPreviewDirection = 1;
 
   const formatArchivePosition = (index) => String(index + 1).padStart(2, "0");
 
@@ -613,21 +612,7 @@ archiveStacks.forEach((archiveStack) => {
     card.style.removeProperty("--archive-drag-rotate");
   };
 
-  const previewArchiveDirection = (direction) => {
-    if (direction === dragPreviewDirection) return;
-
-    archiveCards.forEach((card, index) => {
-      const depth =
-        direction < 0
-          ? (activeArchiveIndex - index + archiveCards.length) % archiveCards.length
-          : (index - activeArchiveIndex + archiveCards.length) % archiveCards.length;
-      card.dataset.stackDepth = String(depth);
-    });
-
-    dragPreviewDirection = direction;
-  };
-
-  const renderArchiveStack = ({ focus = false, announce = false } = {}) => {
+  const renderArchiveStack = ({ focus = false, announce = false, departingCard = null } = {}) => {
     const activeCard = archiveCards[activeArchiveIndex];
     const activeLabel = activeCard.dataset.archiveLabel || "Archive photograph";
 
@@ -636,13 +621,13 @@ archiveStacks.forEach((archiveStack) => {
     activeCard.tabIndex = 0;
     activeCard.setAttribute(
       "aria-label",
-      `${archiveItemNameSentence} ${activeArchiveIndex + 1} of ${archiveCards.length}: ${activeLabel}. Drag horizontally, or use the Left and Right arrow keys.`,
+      `${archiveItemNameSentence} ${activeArchiveIndex + 1} of ${archiveCards.length}: ${activeLabel}. Swipe or drag either way, or press either arrow key, to move it to the bottom of the stack.`,
     );
 
     if (focus) activeCard.focus({ preventScroll: true });
 
     archiveCards.forEach((card, index) => {
-      clearArchiveDrag(card);
+      if (card !== departingCard) clearArchiveDrag(card);
       const depth = (index - activeArchiveIndex + archiveCards.length) % archiveCards.length;
       card.dataset.stackDepth = String(depth);
 
@@ -652,7 +637,6 @@ archiveStacks.forEach((archiveStack) => {
         card.tabIndex = -1;
       }
     });
-    dragPreviewDirection = 1;
 
     if (archiveCounter) {
       archiveCounter.textContent = `${formatArchivePosition(activeArchiveIndex)} / ${formatArchivePosition(archiveCards.length - 1)}`;
@@ -669,57 +653,55 @@ archiveStacks.forEach((archiveStack) => {
     }
   };
 
-  const cycleArchiveStack = (indexDelta) => {
+  const cycleArchiveStack = (exitDirection = -1, { focus = false } = {}) => {
     if (archiveIsAnimating) return;
 
-    const activeCard = archiveCards[activeArchiveIndex];
-    const nextIndex = (activeArchiveIndex + indexDelta + archiveCards.length) % archiveCards.length;
+    const departingCard = archiveCards[activeArchiveIndex];
+    const nextIndex = (activeArchiveIndex + 1) % archiveCards.length;
 
     if (motionIsReduced()) {
       activeArchiveIndex = nextIndex;
-      renderArchiveStack({ focus: true, announce: true });
+      renderArchiveStack({ focus, announce: true });
       return;
     }
 
     archiveIsAnimating = true;
-    const exitDirection = indexDelta > 0 ? -1 : 1;
-    const exitDistance = activeCard.getBoundingClientRect().width + 96;
-    const exitStartX = indexDelta < 0 ? Math.max(dragX, 0) : Math.min(dragX, 0);
+    const cardWidth = departingCard.getBoundingClientRect().width;
+    const exitStartX = exitDirection < 0 ? Math.min(dragX, 0) : Math.max(dragX, 0);
+    const exitDistance = Math.max(Math.abs(exitStartX) + 72, Math.min(cardWidth * 0.62, 220));
 
-    if (indexDelta < 0) {
-      activeArchiveIndex = nextIndex;
-      renderArchiveStack();
-    }
+    departingCard.classList.remove("is-dragging");
+    departingCard.style.setProperty("--archive-drag-x", `${exitStartX}px`);
+    departingCard.style.setProperty("--archive-drag-y", "0px");
+    departingCard.style.setProperty("--archive-drag-rotate", `${(exitStartX / Math.max(cardWidth, 1)) * 2.4}deg`);
+    departingCard.getBoundingClientRect();
 
-    activeCard.classList.remove("is-dragging");
-    activeCard.classList.add("is-leaving");
-    activeCard.style.setProperty("--archive-drag-x", `${exitStartX}px`);
-    activeCard.style.setProperty("--archive-drag-y", "0px");
-    activeCard.style.setProperty("--archive-drag-rotate", "0deg");
-    activeCard.getBoundingClientRect();
-
-    window.requestAnimationFrame(() => {
-      activeCard.style.setProperty("--archive-drag-x", `${exitDirection * exitDistance}px`);
-      activeCard.style.setProperty("--archive-drag-y", "12px");
-      activeCard.style.setProperty("--archive-drag-rotate", `${exitDirection * 3.5}deg`);
-    });
+    departingCard.classList.add("is-leaving");
+    activeArchiveIndex = nextIndex;
+    renderArchiveStack({ announce: true, departingCard });
+    departingCard.style.setProperty("--archive-drag-x", `${exitDirection * exitDistance}px`);
+    departingCard.style.setProperty("--archive-drag-y", "16px");
+    departingCard.style.setProperty("--archive-drag-rotate", `${exitDirection * 2.4}deg`);
 
     const finishCycle = () => {
       if (!archiveIsAnimating) return;
       window.clearTimeout(archiveAnimationTimer);
-      activeCard.removeEventListener("transitionend", handleArchiveExit);
-      if (indexDelta > 0) activeArchiveIndex = nextIndex;
+      departingCard.removeEventListener("transitionend", handleArchiveExit);
+      departingCard.classList.add("is-recycling");
+      clearArchiveDrag(departingCard);
+      departingCard.getBoundingClientRect();
+      departingCard.classList.remove("is-recycling");
       archiveIsAnimating = false;
-      renderArchiveStack({ focus: true, announce: true });
+      if (focus) archiveCards[activeArchiveIndex].focus({ preventScroll: true });
     };
 
     const handleArchiveExit = (event) => {
-      if (event.target !== activeCard || event.propertyName !== "transform") return;
+      if (event.target !== departingCard || event.propertyName !== "transform") return;
       finishCycle();
     };
 
-    activeCard.addEventListener("transitionend", handleArchiveExit);
-    archiveAnimationTimer = window.setTimeout(finishCycle, 560);
+    departingCard.addEventListener("transitionend", handleArchiveExit);
+    archiveAnimationTimer = window.setTimeout(finishCycle, 360);
   };
 
   const finishArchiveDrag = (event, { cancelled = false } = {}) => {
@@ -737,7 +719,7 @@ archiveStacks.forEach((archiveStack) => {
     card.classList.remove("is-dragging");
 
     if (!cancelled && dragAxis === "horizontal" && (Math.abs(dragX) >= threshold || isIntentionalFlick)) {
-      cycleArchiveStack(dragX < 0 ? 1 : -1);
+      cycleArchiveStack(dragX < 0 ? -1 : 1);
     } else {
       renderArchiveStack();
     }
@@ -752,10 +734,10 @@ archiveStacks.forEach((archiveStack) => {
 
       if (event.key === "ArrowRight" || event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        cycleArchiveStack(1);
+        cycleArchiveStack(-1, { focus: true });
       } else if (event.key === "ArrowLeft") {
         event.preventDefault();
-        cycleArchiveStack(-1);
+        cycleArchiveStack(1, { focus: true });
       }
     });
 
@@ -771,8 +753,6 @@ archiveStacks.forEach((archiveStack) => {
       dragStartTime = performance.now();
       dragX = 0;
       dragAxis = null;
-      dragPreviewDirection = 1;
-      card.classList.add("is-dragging");
       card.setPointerCapture?.(activePointerId);
     });
 
@@ -794,8 +774,8 @@ archiveStacks.forEach((archiveStack) => {
       if (dragAxis !== "horizontal") return;
 
       if (event.cancelable) event.preventDefault();
+      card.classList.add("is-dragging");
       dragX = deltaX;
-      previewArchiveDirection(deltaX > 0 ? -1 : 1);
       const cardWidth = Math.max(card.getBoundingClientRect().width, 1);
       card.style.setProperty("--archive-drag-x", `${deltaX}px`);
       card.style.setProperty("--archive-drag-y", `${deltaY * 0.14}px`);
