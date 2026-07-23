@@ -65,9 +65,16 @@ for (const tag of imageTags) {
   assert(Boolean(attribute(tag, "width")) && Boolean(attribute(tag, "height")), `Image needs intrinsic dimensions: ${src}`);
 }
 
-const localReferences = [...html.matchAll(/\b(?:href|src)="([^"]+)"/gi)]
+const directLocalReferences = [...html.matchAll(/\b(?:href|src)="([^"]+)"/gi)]
   .map((match) => match[1])
-  .filter((value) => !/^(?:https?:|mailto:|tel:|#|data:)/i.test(value))
+  .filter((value) => !/^(?:https?:|mailto:|tel:|#|data:)/i.test(value));
+const srcsetReferences = [...html.matchAll(/\bsrcset="([^"]+)"/gi)].flatMap((match) =>
+  match[1]
+    .split(",")
+    .map((candidate) => candidate.trim().split(/\s+/)[0])
+    .filter(Boolean),
+);
+const localReferences = [...directLocalReferences, ...srcsetReferences]
   .map((value) => value.split(/[?#]/)[0])
   .map((value) => value.replace(/^\/+/, ""))
   .filter(Boolean);
@@ -127,10 +134,15 @@ assert(
     css.includes("cursor: grab") &&
     css.includes("cursor: grabbing") &&
     html.includes("data-cursor-trail") &&
-    script.includes("drawTrail"),
+    script.includes("drawTrail") &&
+    css.includes(".cursor-trail"),
   "The site must use predictable native cursors while retaining the non-interactive aurora trail.",
 );
 assert(!css.includes("cursor: none !important"), "The native cursor must remain visible and predictable.");
+assert(
+  !css.includes("cursor: revert !important"),
+  "High-contrast mode must retain explicit pointer and drag cursors for interactive elements.",
+);
 assert(
   !html.includes("event-ticket__arrow") &&
     css.includes("width: min(28.5rem") &&
@@ -245,17 +257,21 @@ assert(
     count(css, /--editorial-frame-solid: var\(--paper\)/g) >= 2 &&
     count(css, /background-color: var\(--editorial-frame\)/g) === 2 &&
     count(css, /background: color-mix\(in srgb, var\(--editorial-frame-solid\)/g) === 2 &&
+    css.includes("--forum-art-lift: clamp(1.5rem, 2vw, 2.5rem)") &&
+    css.includes("translate: 0 calc(-1 * var(--forum-art-lift))") &&
     css.includes("background-image: radial-gradient(var(--texture-dot) 0.65px, transparent 0.65px)"),
-  "Forum and Texts must recover their light editorial frames, with route masks matched to the actual surface in both themes.",
+  "Forum and Texts must recover their light editorial frames, with the desktop forum artwork lifted clear of the copy.",
 );
 assert(
-  script.includes("moveCursorTrail(menu)") && script.includes("moveCursorTrail(document.body)"),
+  script.includes("moveCursorTrail(menu)") &&
+    script.includes("moveCursorTrail(document.body)"),
   "The decorative cursor trail must move into the Index top layer and return to the page.",
 );
 assert(
   script.includes("interactivePointerSelector") &&
     script.includes('cursorTrail.classList.toggle("is-over-interactive"') &&
     css.includes(".cursor-trail.is-over-interactive") &&
+    css.includes("pointer-events: none") &&
     css.includes("button:not(:disabled)") &&
     css.includes('[role="button"]') &&
     css.includes('[role="link"]'),
@@ -272,12 +288,15 @@ assert(
   "The Index must expose all five numbered sections, identify the current section, and remain scrollable on short screens.",
 );
 assert(
-  count(html, /\bsrcset=/gi) === 13 &&
-    count(html, /\bsizes=/gi) === 14 &&
+  count(html, /<picture\b/gi) === 13 &&
+    count(html, /<source\b[^>]*type="image\/avif"/gi) === 13 &&
+    count(html, /<source\b[^>]*type="image\/webp"/gi) === 13 &&
+    count(html, /\bsrcset=/gi) === 39 &&
+    count(html, /\bsizes=/gi) === 40 &&
     count(html, /decoding="async"/gi) === 13 &&
-    html.includes("assets/images/responsive/women-house-480.jpg") &&
-    html.includes("assets/images/responsive/arctic-forum-800.jpg"),
-  "All editorial images must retain responsive source candidates and asynchronous decoding.",
+    html.includes("assets/images/responsive/women-house-480.avif") &&
+    html.includes("assets/images/responsive/arctic-forum-800.webp"),
+  "All editorial images must provide AVIF and WebP sources with responsive JPEG fallbacks.",
 );
 assert(
   css.includes("@media (min-width: 701px) and (max-width: 1180px)") &&
@@ -309,7 +328,7 @@ assert(
     script.includes("archiveItemNameSentence") &&
     script.includes("--archive-register-position") &&
     css.includes(".archive-register__marker") &&
-    css.includes(".archive-card--document > img") &&
+    css.includes(".archive-card--document img") &&
     css.includes("height: calc(100% + 2.05rem)") &&
     css.includes("align-items: flex-start") &&
     css.includes("@media (min-width: 701px) and (max-width: 800px)") &&
