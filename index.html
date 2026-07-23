@@ -5,20 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Olga Shirokostup is an independent curator, researcher, and educator whose work connects artistic research, archives, and exhibition-making."
+      content="Independent curator, researcher, and educator connecting artistic research, archival work, and exhibition-making across the European High North."
     />
     <meta name="author" content="Olga Shirokostup" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f2efe7" />
     <title>Olga Shirokostup — Curator, Researcher &amp; Educator</title>
-    <link rel="canonical" href="https://anton-gorokhovatsky.github.io/shirokostup/" />
-    <link rel="icon" href="assets/mark.svg?v=2" type="image/svg+xml" />
+    <link rel="canonical" href="https://shirokostup.site/" />
+    <link rel="icon" href="/assets/mark.svg?v=3" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png?v=1" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Olga Shirokostup" />
     <meta property="og:locale" content="en_GB" />
-    <meta property="og:url" content="https://anton-gorokhovatsky.github.io/shirokostup/" />
+    <meta property="og:url" content="https://shirokostup.site/" />
     <meta property="og:title" content="Olga Shirokostup — Curator, Researcher &amp; Educator" />
     <meta
       property="og:description"
@@ -26,11 +27,11 @@
     />
     <meta
       property="og:image"
-      content="https://anton-gorokhovatsky.github.io/shirokostup/assets/og-card.jpg?v=20260722-3"
+      content="https://shirokostup.site/assets/og-card.jpg?v=20260723-1"
     />
     <meta
       property="og:image:secure_url"
-      content="https://anton-gorokhovatsky.github.io/shirokostup/assets/og-card.jpg?v=20260722-3"
+      content="https://shirokostup.site/assets/og-card.jpg?v=20260723-1"
     />
     <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
@@ -48,7 +49,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://anton-gorokhovatsky.github.io/shirokostup/assets/og-card.jpg?v=20260722-3"
+      content="https://shirokostup.site/assets/og-card.jpg?v=20260723-1"
     />
     <meta
       name="twitter:image:alt"
@@ -58,30 +59,55 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Olga Shirokostup",
-        "url": "https://anton-gorokhovatsky.github.io/shirokostup/",
-        "email": "mailto:shirokostup@gmail.com",
-        "jobTitle": "Independent curator, researcher, and educator",
-        "birthPlace": {
-          "@type": "Place",
-          "name": "Severomorsk, Kola Peninsula"
-        },
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Lyon",
-          "addressCountry": "FR"
-        },
-        "knowsAbout": [
-          "Artistic research",
-          "Archives",
-          "Exhibition-making",
-          "European High North",
-          "Contemporary art"
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://shirokostup.site/#website",
+            "url": "https://shirokostup.site/",
+            "name": "Olga Shirokostup",
+            "description": "Independent curator, researcher, and educator connecting artistic research, archival work, and exhibition-making across the European High North.",
+            "inLanguage": "en-GB",
+            "publisher": {
+              "@id": "https://shirokostup.site/#olga-shirokostup"
+            }
+          },
+          {
+            "@type": "Person",
+            "@id": "https://shirokostup.site/#olga-shirokostup",
+            "name": "Olga Shirokostup",
+            "url": "https://shirokostup.site/",
+            "mainEntityOfPage": {
+              "@id": "https://shirokostup.site/#website"
+            },
+            "image": {
+              "@type": "ImageObject",
+              "url": "https://shirokostup.site/assets/og-card.jpg?v=20260723-1",
+              "width": 1200,
+              "height": 630
+            },
+            "email": "mailto:shirokostup@gmail.com",
+            "jobTitle": "Independent curator, researcher, and educator",
+            "birthPlace": {
+              "@type": "Place",
+              "name": "Severomorsk, Kola Peninsula"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": "Lyon",
+              "addressCountry": "FR"
+            },
+            "knowsAbout": [
+              "Artistic research",
+              "Archives",
+              "Exhibition-making",
+              "European High North",
+              "Contemporary art"
+            ]
+          }
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=20260723-69" />
+    <link rel="stylesheet" href="styles.css?v=20260723-74" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -305,7 +331,7 @@
               <stop offset="1" stop-color="#c9b2d6" stop-opacity="0" />
             </radialGradient>
             <filter id="hero-mark-aurora-blur" x="-40%" y="-40%" width="180%" height="180%">
-              <feGaussianBlur stdDeviation="1.7" />
+              <feGaussianBlur stdDeviation="2.05" />
             </filter>
           </defs>
           <g

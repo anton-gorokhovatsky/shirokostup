@@ -1,39 +1,51 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
   <title id="title">Olga Shirokostup</title>
-  <desc id="desc">Independent curator, researcher, and educator</desc>
+  <desc id="desc">Independent curator, researcher, and educator working across the European High North</desc>
   <defs>
     <pattern id="paper-dots" width="7" height="7" patternUnits="userSpaceOnUse">
-      <circle cx="1" cy="1" r="0.7" fill="#f3f0e8" opacity="0.08"/>
+      <circle cx="1" cy="1" r="0.7" fill="#f3f0e8" opacity="0.075"/>
     </pattern>
-    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0" stop-color="#d7bfd0" stop-opacity="0.38"/>
-      <stop offset="1" stop-color="#d7bfd0" stop-opacity="0"/>
+    <radialGradient id="aurora" gradientUnits="userSpaceOnUse" cx="8" cy="12" r="42">
+      <stop offset="0" stop-color="#c9e876" stop-opacity="0.9"/>
+      <stop offset="0.22" stop-color="#c9e876" stop-opacity="0.68"/>
+      <stop offset="0.56" stop-color="#c9b2d6" stop-opacity="0.48"/>
+      <stop offset="1" stop-color="#c9b2d6" stop-opacity="0"/>
     </radialGradient>
+    <filter id="aurora-blur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="1.7"/>
+    </filter>
   </defs>
 
   <rect width="1200" height="630" fill="#11130f"/>
   <rect width="1200" height="630" fill="url(#paper-dots)"/>
 
-  <g transform="translate(64 48)" fill="none" stroke="#f3f0e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
-    <path d="M4 24C10 8 31 4 43 16"/>
-    <path d="M6 31c9-16 28-18 38-7"/>
-    <path d="M11 38c8-12 24-15 32-6"/>
-    <circle cx="8" cy="12" r="4.7" fill="#f3f0e8" stroke="none"/>
+  <text x="64" y="98" fill="#f3f0e8" font-family="Arial, Helvetica, sans-serif" font-size="15" letter-spacing="2.35">INDEPENDENT CURATOR · RESEARCHER · EDUCATOR</text>
+
+  <text x="59" y="305" fill="#f3f0e8" font-family="Iowan Old Style, Palatino Linotype, Book Antiqua, Palatino, Georgia, serif" font-size="148" letter-spacing="-7.5">Olga</text>
+  <text x="152" y="467" fill="#f3f0e8" font-family="Iowan Old Style, Palatino Linotype, Book Antiqua, Palatino, Georgia, serif" font-size="140" letter-spacing="-7.5">Shirokostup</text>
+
+  <g transform="translate(820 78) scale(6.2)">
+    <g
+      fill="none"
+      stroke="url(#aurora)"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="4.2"
+      opacity="0.38"
+      filter="url(#aurora-blur)"
+    >
+      <path d="M4 24C10 8 31 4 43 16"/>
+      <path d="M6 31c9-16 28-18 38-7"/>
+      <path d="M11 38c8-12 24-15 32-6"/>
+      <circle cx="8" cy="12" r="3.5" fill="url(#aurora)" stroke="none"/>
+    </g>
+    <g fill="none" stroke="#f3f0e8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2">
+      <path d="M4 24C10 8 31 4 43 16"/>
+      <path d="M6 31c9-16 28-18 38-7"/>
+      <path d="M11 38c8-12 24-15 32-6"/>
+      <circle cx="8" cy="12" r="3.5" fill="#f3f0e8" stroke="none"/>
+    </g>
   </g>
-
-  <text x="128" y="79" fill="#f3f0e8" font-family="Arial, Helvetica, sans-serif" font-size="18" letter-spacing="0.5">OLGA SHIROKOSTUP</text>
-  <text x="64" y="150" fill="#f3f0e8" font-family="Arial, Helvetica, sans-serif" font-size="14" letter-spacing="2.2">INDEPENDENT CURATOR · RESEARCHER · EDUCATOR</text>
-
-  <text x="60" y="315" fill="#f3f0e8" font-family="Iowan Old Style, Palatino Linotype, Book Antiqua, Palatino, Georgia, serif" font-size="150" letter-spacing="-7.5">Olga</text>
-  <text x="180" y="482" fill="#f3f0e8" font-family="Iowan Old Style, Palatino Linotype, Book Antiqua, Palatino, Georgia, serif" font-size="150" letter-spacing="-7.5">Shirokostup</text>
-
-  <g fill="none" stroke="#f3f0e8" opacity="0.14">
-    <circle cx="984" cy="184" r="135"/>
-    <circle cx="984" cy="184" r="91"/>
-    <circle cx="984" cy="184" r="45"/>
-  </g>
-  <circle cx="1117" cy="207" r="70" fill="url(#glow)"/>
-  <circle cx="1117" cy="207" r="8" fill="#c6db72"/>
 
   <line x1="64" y1="545" x2="1136" y2="545" stroke="#f3f0e8" opacity="0.24"/>
   <text x="64" y="585" fill="#f3f0e8" font-family="Arial, Helvetica, sans-serif" font-size="17">Artistic research · archives · exhibition-making</text>

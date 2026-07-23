@@ -22,8 +22,28 @@ assert(/<main\b[^>]*id="main"[^>]*tabindex="-1"/i.test(html), "#main must remain
 assert(/<dialog\b[^>]*id="site-index"[^>]*aria-labelledby="index-title"/i.test(html), "The Index dialog needs its accessible label.");
 assert(/<meta\b[^>]*name="color-scheme"[^>]*content="light dark"/i.test(html), "The page must advertise both colour schemes.");
 assert(/<meta\b[^>]*name="theme-color"/i.test(html), "The page needs a browser theme colour.");
-assert(/property="og:image"/i.test(html) && /name="twitter:card"/i.test(html), "Social sharing metadata is incomplete.");
-assert(/type="application\/ld\+json"/i.test(html), "Structured Person metadata is missing.");
+assert(
+  /<link\b[^>]*rel="canonical"[^>]*href="https:\/\/shirokostup\.site\/"/i.test(html) &&
+    /<meta\b[^>]*property="og:url"[^>]*content="https:\/\/shirokostup\.site\/"/i.test(html) &&
+    count(html, /https:\/\/shirokostup\.site\/assets\/og-card\.jpg\?v=20260723-1/gi) === 4 &&
+    !html.includes("anton-gorokhovatsky.github.io/shirokostup"),
+  "Canonical and social metadata must consistently use the production domain.",
+);
+assert(
+  /property="og:image"/i.test(html) &&
+    /property="og:image:width" content="1200"/i.test(html) &&
+    /property="og:image:height" content="630"/i.test(html) &&
+    /name="twitter:card" content="summary_large_image"/i.test(html) &&
+    /rel="apple-touch-icon" sizes="180x180"/i.test(html),
+  "Social sharing and home-screen image metadata is incomplete.",
+);
+assert(
+  /type="application\/ld\+json"/i.test(html) &&
+    html.includes('"@type": "WebSite"') &&
+    html.includes('"@type": "Person"') &&
+    html.includes('"@id": "https://shirokostup.site/#website"'),
+  "Structured WebSite and Person metadata is incomplete.",
+);
 
 const ids = [...html.matchAll(/\bid="([^"]+)"/gi)].map((match) => match[1]);
 const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
@@ -49,6 +69,7 @@ const localReferences = [...html.matchAll(/\b(?:href|src)="([^"]+)"/gi)]
   .map((match) => match[1])
   .filter((value) => !/^(?:https?:|mailto:|tel:|#|data:)/i.test(value))
   .map((value) => value.split(/[?#]/)[0])
+  .map((value) => value.replace(/^\/+/, ""))
   .filter(Boolean);
 
 for (const reference of new Set(localReferences)) {
@@ -100,20 +121,14 @@ assert(
   !html.includes("data-comet-cursor") &&
     !script.includes("cometCursor") &&
     !css.includes("has-custom-cursor") &&
-    css.includes("--site-cursor-default: url") &&
-    css.includes("--site-cursor-action: url") &&
-    css.includes("--site-cursor-drag: url") &&
-    css.includes("--site-cursor-dragging: url") &&
-    css.includes("width='28' height='30'") &&
-    css.includes(") 9 4, pointer") &&
-    css.includes("a *") &&
-    css.includes(".archive-card[data-stack-depth=\"0\"] *") &&
-    css.includes(".archive-card.is-dragging *") &&
-    css.includes("cursor: var(--site-cursor-drag)") &&
-    css.includes("cursor: var(--site-cursor-dragging)") &&
-    !css.includes("cursor: pointer") &&
-    css.includes("@media (hover: hover) and (pointer: fine)"),
-  "The custom pointer must use distinct default, action, drag, and active-drag silhouettes so interaction is not signalled by colour alone.",
+    !css.includes("--site-cursor-") &&
+    !css.includes("cursor: url(") &&
+    css.includes("cursor: pointer") &&
+    css.includes("cursor: grab") &&
+    css.includes("cursor: grabbing") &&
+    html.includes("data-cursor-trail") &&
+    script.includes("drawTrail"),
+  "The site must use predictable native cursors while retaining the non-interactive aurora trail.",
 );
 assert(!css.includes("cursor: none !important"), "The native cursor must remain visible and predictable.");
 assert(
@@ -184,7 +199,7 @@ assert(
     css.includes(".hero__mark") &&
     css.includes("color: var(--ink)") &&
     css.includes("stroke-width: 2.2") &&
-    css.includes("stroke-width: 4.2") &&
+    css.includes("stroke-width: 5") &&
     css.includes("@keyframes hero-mark-glow") &&
     css.includes(":root[data-motion=\"reduced\"] .hero__mark-aurora") &&
     css.includes(":root[data-motion=\"reduced\"] .climate-field__path--observed"),
@@ -197,10 +212,15 @@ assert(
   "The hero divider must leave a clean background break around the vertical scroll cue arrow.",
 );
 assert(
-  /<section\b[^>]*class="about"[^>]*data-header-ink="theme"/i.test(html) &&
+  /<article\b[^>]*class="project project--forum"[^>]*data-header-ink="theme"/i.test(html) &&
+    /<section\b[^>]*class="about"[^>]*data-header-ink="theme"/i.test(html) &&
+    css.includes(".work {") &&
+    css.includes(".project--forum {") &&
     css.includes(".about {") &&
-    css.includes("background: var(--paper)"),
-  "The About section must follow the active colour theme.",
+    css.includes(".texts {") &&
+    count(css, /background: transparent/g) >= 7 &&
+    css.includes("background-image: radial-gradient(var(--texture-dot) 0.65px, transparent 0.65px)"),
+  "Neutral work, Forum, About, and Texts surfaces must share the page texture instead of exposing decorative seams.",
 );
 assert(
   script.includes("moveCursorTrail(menu)") && script.includes("moveCursorTrail(document.body)"),
@@ -226,8 +246,12 @@ assert(
     script.includes("archiveItemNameSentence") &&
     script.includes("--archive-register-position") &&
     css.includes(".archive-register__marker") &&
-    css.includes(".archive-card--document > img"),
-  "The Apatity archive must retain its mixed eight-record dossier, accessible item naming, and linked catalogue register.",
+    css.includes(".archive-card--document > img") &&
+    css.includes("height: calc(100% + 1.72rem)") &&
+    css.includes("align-items: flex-start") &&
+    css.includes("@media (min-width: 701px) and (max-width: 800px)") &&
+    css.includes("right: -1rem"),
+  "The Apatity archive must retain its mixed eight-record dossier, accessible item naming, linked catalogue register, and zoom-safe spine.",
 );
 assert(
   html.includes('class="women-route"') &&
@@ -261,8 +285,8 @@ assert(
     count(html, /climate-field__trace-underlay/gi) === 2 &&
     css.includes("stroke: color-mix(in srgb, var(--ink) 76%, var(--aurora-blue))") &&
     css.includes("stroke: color-mix(in srgb, var(--ink) 72%, var(--aurora-violet))") &&
-    css.includes("stroke: var(--paper-bright)") &&
-    css.includes("background: color-mix(in srgb, var(--paper-bright) 94%, transparent)") &&
+    css.includes("stroke: var(--paper)") &&
+    css.includes("background: color-mix(in srgb, var(--paper) 94%, transparent)") &&
     css.includes("stroke-dasharray: none") &&
     css.includes(".climate-field__stations") &&
     css.includes(".climate-field__path--observed") &&
