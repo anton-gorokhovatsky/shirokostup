@@ -186,6 +186,27 @@ assert(
   "The header state must remain tied to the hero instead of changing after a tiny restored scroll.",
 );
 assert(
+  css.includes("font-size: min(var(--type-hero), clamp(4.75rem, 16svh, 10.5rem))") &&
+    css.includes("padding-bottom: clamp(9rem, 18svh, 11rem)") &&
+    css.includes("@media (max-width: 980px) and (max-height: 800px)") &&
+    css.includes("width: min(31vw, 9rem)"),
+  "The hero must respond to both viewport width and height, with a dedicated compact mark layout and reserved event space.",
+);
+assert(
+  /<h2\b[^>]*id="work-title"[^>]*data-reveal[^>]*>\s*<span>Long-term<\/span>\s+<span>projects<\/span>\s*<\/h2>/i.test(
+    html,
+  ) &&
+    css.includes(".js .section-heading h2[data-reveal]:not(.is-visible) > span:first-child") &&
+    css.includes(".js .section-heading h2[data-reveal]:not(.is-visible) > span:last-child") &&
+    css.includes(".js .now__card[data-reveal]:not(.is-visible) .now__date") &&
+    css.includes(".js .now__card[data-reveal]:not(.is-visible) .now__copy") &&
+    css.includes(".now__card.is-visible:focus-visible .now__copy") &&
+    css.includes("transform: translateX(-0.11em)") &&
+    css.includes(".section-heading h2 {\n  line-height: 0.82") &&
+    css.includes(':root.js[data-motion="reduced"] .section-heading h2[data-reveal] > span'),
+  "The work heading and upcoming card must keep optical alignment and staggered motion while preserving focus and reduced-motion states.",
+);
+assert(
   /<svg\b[^>]*class="hero__mark"[^>]*aria-hidden="true"[^>]*focusable="false"/i.test(html) &&
     count(html.match(/<g\b[^>]*class="hero__mark-ink"[\s\S]*?<\/g>/i)?.[0] ?? "", /<path\b/gi) === 3 &&
     count(html.match(/<g\b[^>]*class="hero__mark-ink"[\s\S]*?<\/g>/i)?.[0] ?? "", /<circle\b/gi) === 1 &&
@@ -218,9 +239,14 @@ assert(
     css.includes(".project--forum {") &&
     css.includes(".about {") &&
     css.includes(".texts {") &&
-    count(css, /background: transparent/g) >= 7 &&
+    css.includes("--editorial-frame: var(--paper-bright)") &&
+    css.includes("--editorial-frame-solid: var(--paper-bright)") &&
+    count(css, /--editorial-frame: transparent/g) >= 2 &&
+    count(css, /--editorial-frame-solid: var\(--paper\)/g) >= 2 &&
+    count(css, /background-color: var\(--editorial-frame\)/g) === 2 &&
+    count(css, /background: color-mix\(in srgb, var\(--editorial-frame-solid\)/g) === 2 &&
     css.includes("background-image: radial-gradient(var(--texture-dot) 0.65px, transparent 0.65px)"),
-  "Neutral work, Forum, About, and Texts surfaces must share the page texture instead of exposing decorative seams.",
+  "Forum and Texts must recover their light editorial frames, with route masks matched to the actual surface in both themes.",
 );
 assert(
   script.includes("moveCursorTrail(menu)") && script.includes("moveCursorTrail(document.body)"),
@@ -282,17 +308,18 @@ assert(
 );
 assert(
   css.includes(".climate-field__trace") &&
-    count(html, /climate-field__trace-underlay/gi) === 2 &&
+    !html.includes("climate-field__trace-underlay") &&
+    !css.includes(".climate-field__trace-underlay") &&
     css.includes("stroke: color-mix(in srgb, var(--ink) 76%, var(--aurora-blue))") &&
     css.includes("stroke: color-mix(in srgb, var(--ink) 72%, var(--aurora-violet))") &&
-    css.includes("stroke: var(--paper)") &&
-    css.includes("background: color-mix(in srgb, var(--paper) 94%, transparent)") &&
+    css.includes("--forum-label: #faf9f5") &&
+    css.includes("background: color-mix(in srgb, var(--editorial-frame-solid) 94%, transparent)") &&
     css.includes("stroke-dasharray: none") &&
     css.includes(".climate-field__stations") &&
     css.includes(".climate-field__path--observed") &&
     css.includes("animation: none") &&
     !css.includes(".project--forum:hover .climate-field__trace--baseline"),
-  "The climate route must keep theme-aware double-stroke colours, soften beneath copy, and avoid Safari-fragile mobile animation.",
+  "The climate route must stay crisp on imagery, remain below opaque station labels, soften beneath copy, and avoid Safari-fragile mobile animation.",
 );
 assert(
     css.includes("aspect-ratio: 1.58") &&

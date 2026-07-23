@@ -2,6 +2,8 @@
   color-scheme: light;
   --paper: #f2efe7;
   --paper-bright: #faf9f5;
+  --editorial-frame: var(--paper-bright);
+  --editorial-frame-solid: var(--paper-bright);
   --ink: #111310;
   --ink-soft: #2f332e;
   --line: rgba(17, 19, 16, 0.22);
@@ -51,7 +53,7 @@
   --archive-frame: #0e1317;
   --archive-caption: #f2efe7;
   --forum-ink: #1e2737;
-  --forum-label: rgba(250, 249, 245, 0.76);
+  --forum-label: #faf9f5;
   --forum-label-line: rgba(30, 39, 55, 0.2);
   --contact-line: rgba(17, 19, 16, 0.4);
   --duration-instant: 120ms;
@@ -81,7 +83,9 @@
 :root.is-theme-transitioning body,
 :root.is-theme-transitioning .site-index,
 :root.is-theme-transitioning .site-index__top,
-:root.is-theme-transitioning .site-index__preferences {
+:root.is-theme-transitioning .site-index__preferences,
+:root.is-theme-transitioning .project--forum,
+:root.is-theme-transitioning .texts {
   transition: color var(--duration-medium) var(--ease-move), background-color var(--duration-medium) var(--ease-move),
     border-color var(--duration-medium) var(--ease-move);
 }
@@ -90,6 +94,8 @@
   color-scheme: dark;
   --paper: #11130f;
   --paper-bright: #171a15;
+  --editorial-frame: transparent;
+  --editorial-frame-solid: var(--paper);
   --ink: #f3f0e8;
   --ink-soft: #c8ccc3;
   --line: rgba(243, 240, 232, 0.27);
@@ -145,6 +151,8 @@
     color-scheme: dark;
     --paper: #11130f;
     --paper-bright: #171a15;
+    --editorial-frame: transparent;
+    --editorial-frame-solid: var(--paper);
     --ink: #f3f0e8;
     --ink-soft: #c8ccc3;
     --line: rgba(243, 240, 232, 0.27);
@@ -1113,12 +1121,12 @@ button {
   position: relative;
   display: grid;
   min-height: 100svh;
-  padding: clamp(8rem, 15vh, 12rem) var(--gutter) 2rem;
+  padding: clamp(6rem, 13svh, 10rem) var(--gutter) 2rem;
   overflow: hidden;
 }
 
 :root.has-active-event .hero {
-  padding-bottom: clamp(14.5rem, 24vh, 16rem);
+  padding-bottom: clamp(9rem, 18svh, 11rem);
 }
 
 .hero__content {
@@ -1128,7 +1136,7 @@ button {
 }
 
 .eyebrow {
-  margin: 0 0 clamp(2.2rem, 5vh, 4rem);
+  margin: 0 0 clamp(1.75rem, 4svh, 4rem);
   font-size: 0.75rem;
   letter-spacing: 0.09em;
   text-transform: uppercase;
@@ -1140,7 +1148,7 @@ button {
   row-gap: 0.19em;
   margin: 0;
   font-family: var(--serif);
-  font-size: var(--type-hero);
+  font-size: min(var(--type-hero), clamp(4.75rem, 16svh, 10.5rem));
   font-weight: 400;
   line-height: 0.94;
   letter-spacing: -0.068em;
@@ -1159,7 +1167,7 @@ button {
   grid-template-columns: minmax(0, 1.8fr) minmax(13rem, 0.7fr);
   gap: var(--gutter);
   align-items: end;
-  margin-top: clamp(2.5rem, 5vw, 5rem);
+  margin-top: clamp(2rem, 4.5svh, 5rem);
   padding-top: 1.25rem;
   border-top: 1px solid var(--line);
 }
@@ -1218,7 +1226,7 @@ button {
 .hero__mark {
   position: absolute;
   z-index: 1;
-  top: clamp(7.5rem, 15vh, 11rem);
+  top: clamp(6rem, 13svh, 10rem);
   right: clamp(5rem, 9vw, 10rem);
   width: clamp(15rem, 23vw, 23rem);
   height: auto;
@@ -1539,6 +1547,29 @@ body.menu-open .event-ticket {
   z-index: 1;
 }
 
+.js .now__card[data-reveal] .now__date,
+.js .now__card[data-reveal] .now__copy {
+  transition: opacity var(--duration-slow) var(--ease-enter), transform var(--duration-slow) var(--ease-enter);
+}
+
+.js .now__card[data-reveal]:not(.is-visible) .now__date {
+  opacity: 0;
+  transform: translate3d(-1rem, 0.65rem, 0);
+}
+
+.js .now__card[data-reveal]:not(.is-visible) .now__copy {
+  opacity: 0;
+  transform: translate3d(1.2rem, 1rem, 0);
+}
+
+.js .now__card[data-reveal].is-visible .now__date {
+  transition-delay: 100ms;
+}
+
+.js .now__card[data-reveal].is-visible .now__copy {
+  transition-delay: 220ms;
+}
+
 .dialogue-field {
   position: absolute;
   top: clamp(4rem, 8vw, 7rem);
@@ -1615,6 +1646,18 @@ body.menu-open .event-ticket {
   transform: translateY(-50%) scale(1.18);
 }
 
+.now__card.is-visible:hover .now__date,
+.now__card.is-visible:focus-visible .now__date {
+  transform: translate3d(0, -0.35rem, 0);
+  transition-delay: 0ms;
+}
+
+.now__card.is-visible:hover .now__copy,
+.now__card.is-visible:focus-visible .now__copy {
+  transform: translate3d(0.35rem, 0, 0);
+  transition-delay: 0ms;
+}
+
 .now__date {
   display: flex;
   gap: 1.2rem;
@@ -1627,6 +1670,7 @@ body.menu-open .event-ticket {
   font-weight: 400;
   line-height: 0.65;
   letter-spacing: -0.08em;
+  transform: translateX(-0.11em);
 }
 
 .now__date span,
@@ -1698,6 +1742,30 @@ body.menu-open .event-ticket {
   font-weight: 400;
   line-height: 0.72;
   letter-spacing: -0.068em;
+}
+
+.section-heading h2 > span {
+  display: inline-block;
+}
+
+.section-heading h2 {
+  line-height: 0.82;
+}
+
+.js .section-heading h2[data-reveal] > span {
+  transition: transform var(--duration-slow) var(--ease-enter);
+}
+
+.js .section-heading h2[data-reveal]:not(.is-visible) > span:first-child {
+  transform: translate3d(-0.22em, 0, 0);
+}
+
+.js .section-heading h2[data-reveal]:not(.is-visible) > span:last-child {
+  transform: translate3d(0.18em, 0, 0);
+}
+
+.js .section-heading h2[data-reveal].is-visible > span:last-child {
+  transition-delay: 100ms;
 }
 
 .project {
@@ -2274,7 +2342,7 @@ body.menu-open .event-ticket {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: transparent;
+  background-color: var(--editorial-frame);
 }
 
 .project--forum .project__information {
@@ -2292,7 +2360,7 @@ body.menu-open .event-ticket {
   position: absolute;
   z-index: -1;
   inset: -0.2em -0.4em;
-  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  background: color-mix(in srgb, var(--editorial-frame-solid) 94%, transparent);
   border-radius: 0.75rem;
   content: "";
   filter: blur(0.5rem);
@@ -2309,7 +2377,7 @@ body.menu-open .event-ticket {
   position: absolute;
   z-index: -1;
   inset: -0.22em -0.42em;
-  background: color-mix(in srgb, var(--paper) 95%, transparent);
+  background: color-mix(in srgb, var(--editorial-frame-solid) 95%, transparent);
   border-radius: 0.55rem;
   content: "";
   filter: blur(0.35rem);
@@ -2367,30 +2435,16 @@ body.menu-open .event-ticket {
   stroke: color-mix(in srgb, var(--ink) 72%, var(--aurora-violet));
 }
 
-.climate-field__trace-underlay {
-  fill: none;
-  stroke: var(--paper);
-  stroke-width: 3.35px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 1.4s var(--ease-enter);
-  vector-effect: non-scaling-stroke;
-}
-
 .climate-field__path--observed {
   animation: climate-micro-shift 7.5s var(--ease-move) infinite alternate;
   animation-play-state: paused;
 }
 
-.project__visual--forum.is-visible + .climate-field .climate-field__trace,
-.project__visual--forum.is-visible + .climate-field .climate-field__trace-underlay {
+.project__visual--forum.is-visible + .climate-field .climate-field__trace {
   stroke-dashoffset: 0;
 }
 
-.project__visual--forum.is-visible + .climate-field .climate-field__path--baseline .climate-field__trace,
-.project__visual--forum.is-visible + .climate-field .climate-field__path--baseline .climate-field__trace-underlay {
+.project__visual--forum.is-visible + .climate-field .climate-field__path--baseline .climate-field__trace {
   transition-delay: 160ms;
 }
 
@@ -2398,8 +2452,7 @@ body.menu-open .event-ticket {
   animation-play-state: running;
 }
 
-.project__visual--forum.is-visible + .climate-field .climate-field__path--observed .climate-field__trace,
-.project__visual--forum.is-visible + .climate-field .climate-field__path--observed .climate-field__trace-underlay {
+.project__visual--forum.is-visible + .climate-field .climate-field__path--observed .climate-field__trace {
   transition-delay: 300ms;
 }
 
@@ -2706,7 +2759,7 @@ body.menu-open .event-ticket {
 
 .texts {
   padding: var(--section-top-clearance) var(--gutter) clamp(6rem, 10vw, 10rem);
-  background: transparent;
+  background-color: var(--editorial-frame);
 }
 
 .texts > h2 {
@@ -3238,7 +3291,7 @@ body.menu-open .event-ticket {
 
 @media (max-width: 980px) {
   :root.has-active-event .hero {
-    padding-bottom: 9.25rem;
+    padding-bottom: clamp(8.25rem, 16svh, 9.25rem);
   }
 
   .hero__mark {
@@ -3496,12 +3549,12 @@ body.menu-open .event-ticket {
 
   .hero {
     min-height: 100svh;
-    padding-top: 7.5rem;
+    padding-top: clamp(6.5rem, 14svh, 7.5rem);
     padding-bottom: 1.5rem;
   }
 
   :root.has-active-event .hero {
-    padding-bottom: clamp(8.75rem, 18svh, 10.5rem);
+    padding-bottom: clamp(6.5rem, 15svh, 8rem);
   }
 
   .hero__mark {
@@ -3523,7 +3576,7 @@ body.menu-open .event-ticket {
 
   .hero__details {
     gap: 2rem;
-    margin-top: 2.5rem;
+    margin-top: clamp(1.75rem, 4.5svh, 2.5rem);
   }
 
   .hero__statement {
@@ -3778,8 +3831,7 @@ body.menu-open .event-ticket {
     display: none;
   }
 
-  .climate-field__trace,
-  .climate-field__trace-underlay {
+  .climate-field__trace {
     stroke-dasharray: none;
     stroke-dashoffset: 0;
     transition: none;
@@ -4003,13 +4055,29 @@ body.menu-open .event-ticket {
   }
 }
 
-@media (max-width: 700px) and (max-height: 720px) {
+@media (max-width: 980px) and (max-height: 800px) {
+  .hero {
+    padding-top: 5.25rem;
+  }
+
   .hero__mark {
     top: 4.25rem;
-    right: 1.25rem;
+    right: var(--gutter);
     left: auto;
-    width: min(31vw, 7.5rem);
+    width: min(31vw, 9rem);
     transform: none;
+  }
+}
+
+@media (min-width: 701px) and (max-width: 800px) and (max-height: 800px) {
+  :root.has-active-event .hero {
+    padding-bottom: 6.5rem;
+  }
+}
+
+@media (max-width: 700px) and (max-height: 800px) {
+  :root.has-active-event .hero {
+    padding-bottom: 6rem;
   }
 
   .eyebrow {
@@ -4116,6 +4184,13 @@ body.menu-open .event-ticket {
 }
 
 :root.js[data-motion="reduced"] [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+:root.js[data-motion="reduced"] .section-heading h2[data-reveal] > span,
+:root.js[data-motion="reduced"] .now__card[data-reveal] .now__date,
+:root.js[data-motion="reduced"] .now__card[data-reveal] .now__copy {
   opacity: 1;
   transform: none;
 }
