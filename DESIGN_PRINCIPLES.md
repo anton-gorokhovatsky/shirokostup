@@ -11,6 +11,7 @@ Consistency is a project rule, but it does not mean making every section look th
 - Treat the Northern Lights palette as a quiet environmental reference: ice blue, aurora green, and dusk violet on archival paper or night-sky surfaces. Keep it muted and functional rather than neon or decorative, and preserve contrast first.
 - Use the matte-ice material only for navigation, controls, and compact labels over imagery. Keep it as one restrained translucent family with readable contrast: no milky panels, lens distortion, or glass over long-form text and faces.
 - Protect meaningful typographic units from awkward breaks, balance display lines, and keep prose wrapping natural. Completed date ranges use an en dash; active work uses an explicit Ongoing status rather than a dangling dash.
+- Keep rules and underlines optically clear of letterforms. Native underlines must skip ink; custom lines must sit below descenders rather than cutting through them.
 - Keep links, buttons, dialogs, labels, captions, and dates semantically and verbally consistent.
 - Prefer clarity and the needs of the current content over rigid pattern reuse. Any divergence should be intentional, legible, and accessible.
 - Do not reproduce a weak pattern just to remain consistent; improve the shared pattern instead.

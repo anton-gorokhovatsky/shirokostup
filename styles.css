@@ -61,6 +61,7 @@
   --duration-responsive: 260ms;
   --duration-medium: 420ms;
   --duration-slow: 680ms;
+  --underline-clearance: 0.16em;
   /* Entry decelerates, exit accelerates, and visible-state movement stays balanced. */
   --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
@@ -230,6 +231,11 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration-skip-ink: auto;
+  text-underline-offset: var(--underline-clearance);
 }
 
 h1,
@@ -1517,7 +1523,7 @@ button {
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 0.045em;
-  text-underline-offset: 0.1em;
+  text-underline-offset: var(--underline-clearance);
   transition: text-decoration-color var(--duration-fast) var(--ease-move);
 }
 
@@ -1750,7 +1756,7 @@ body.menu-open .event-ticket {
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 0.02em;
-  text-underline-offset: 0.1em;
+  text-underline-offset: var(--underline-clearance);
   transition: text-decoration-color var(--duration-responsive) var(--ease-move);
 }
 
@@ -1885,7 +1891,7 @@ body.menu-open .event-ticket {
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 0.04em;
-  text-underline-offset: 0.09em;
+  text-underline-offset: var(--underline-clearance);
   transition: text-decoration-color var(--duration-responsive) var(--ease-move);
 }
 
@@ -2734,26 +2740,18 @@ body.menu-open .event-ticket {
 
 .about__biography a,
 .timeline a {
-  background-image: linear-gradient(
-      90deg,
-      color-mix(in srgb, currentColor 42%, transparent),
-      color-mix(in srgb, currentColor 42%, transparent)
-    ),
-    var(--aurora-sweep);
-  background-position: left calc(100% - 0.12em);
-  background-repeat: no-repeat;
-  background-size: 100% 1px, 0 2px;
-  text-decoration: none;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  transition: background-size var(--duration-responsive) var(--ease-move);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 42%, transparent);
+  text-decoration-thickness: 0.04em;
+  text-underline-offset: var(--underline-clearance);
+  transition: text-decoration-color var(--duration-responsive) var(--ease-move);
 }
 
 .about__biography a:hover,
 .about__biography a:focus-visible,
 .timeline a:hover,
 .timeline a:focus-visible {
-  background-size: 0 1px, 100% 2px;
+  text-decoration-color: var(--aurora-green);
 }
 
 .timeline {
@@ -3053,55 +3051,40 @@ body.menu-open .event-ticket {
 
 .contact h2 a {
   position: relative;
-  display: inline-block;
-  padding-bottom: 0.16em;
+  display: inline-grid;
+  padding-bottom: 0.34em;
   text-decoration: none;
-  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
-.contact h2 a::before {
-  position: absolute;
-  right: 0.02em;
-  bottom: 0.16em;
-  font-family: var(--sans);
-  font-size: 0.19em;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: 0;
-  content: "↗";
-  opacity: 0;
-  transform: translate(-0.28em, 0.28em) scale(0.72);
-  transform-origin: center;
-  transition:
-    opacity var(--duration-fast) var(--ease-enter),
-    transform var(--duration-responsive) var(--ease-settle);
+.contact__cta-line {
+  display: block;
+  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
 .contact h2 a::after {
   position: absolute;
-  bottom: 0.01em;
+  bottom: 0.02em;
   left: 0;
-  width: 100%;
+  width: clamp(10rem, 18vw, 18rem);
   height: max(2px, 0.025em);
   background: var(--aurora-sweep);
   content: "";
   opacity: 0.64;
-  transform: scaleX(0.09);
+  transform: scaleX(0.22);
   transform-origin: left;
   transition:
     opacity var(--duration-fast) var(--ease-move),
     transform var(--duration-medium) var(--ease-settle);
 }
 
-.contact h2 a:hover,
-.contact h2 a:focus-visible {
-  transform: translateX(0.025em);
+.contact h2 a:hover .contact__cta-line:first-child,
+.contact h2 a:focus-visible .contact__cta-line:first-child {
+  transform: translateX(0.018em);
 }
 
-.contact h2 a:hover::before,
-.contact h2 a:focus-visible::before {
-  opacity: 0.92;
-  transform: translate(0, 0) scale(1);
+.contact h2 a:hover .contact__cta-line:last-child,
+.contact h2 a:focus-visible .contact__cta-line:last-child {
+  transform: translateX(0.055em);
 }
 
 .contact h2 a:hover::after,
@@ -3239,6 +3222,7 @@ body.menu-open .event-ticket {
 }
 
 .back-to-top__label {
+  padding-bottom: var(--underline-clearance);
   background-image: linear-gradient(
       90deg,
       color-mix(in srgb, currentColor 48%, transparent),
