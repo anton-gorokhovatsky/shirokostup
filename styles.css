@@ -51,7 +51,9 @@
   --archive-frame: #0e1317;
   --archive-caption: #f2efe7;
   --site-cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='30' viewBox='0 0 24 30'%3E%3Cpath d='M3 2.5v20l5.1-4.8 4.1 8.2 3.2-1.6-4-7.9h7.2L3 2.5Z' fill='%23111310' stroke='%23f3f0e8' stroke-width='1.5' stroke-linejoin='round' paint-order='stroke'/%3E%3Ccircle cx='3' cy='2.5' r='1.35' fill='%23c9e876'/%3E%3C/svg%3E") 3 3, default;
-  --site-cursor-action: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='30' viewBox='0 0 24 30'%3E%3Cpath d='M3 2.5v20l5.1-4.8 4.1 8.2 3.2-1.6-4-7.9h7.2L3 2.5Z' fill='%236a5076' stroke='%23f3f0e8' stroke-width='1.5' stroke-linejoin='round' paint-order='stroke'/%3E%3Ccircle cx='3' cy='2.5' r='1.7' fill='%23c9e876'/%3E%3C/svg%3E") 3 3, pointer;
+  --site-cursor-action: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='30' viewBox='0 0 28 30'%3E%3Cpath d='M10.5 27.5c-2.7 0-4.7-1.3-5.8-3.7l-3-6.4a2.1 2.1 0 0 1 3.8-1.8L7.4 19V5.2a2.1 2.1 0 0 1 4.2 0v8h.8V9.4a2 2 0 0 1 4 0v3.8h.8v-2.4a2 2 0 0 1 4 0v3h.7v-1.3a2 2 0 0 1 4 0v6.8c0 4.5-3.7 8.2-8.2 8.2h-7.2Z' fill='%236a5076' stroke='%23f3f0e8' stroke-width='1.5' stroke-linejoin='round' paint-order='stroke'/%3E%3Ccircle cx='9.5' cy='4.2' r='1.7' fill='%23c9e876'/%3E%3C/svg%3E") 9 4, pointer;
+  --site-cursor-drag: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='24' viewBox='0 0 34 24'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h28M3 12l5-5M3 12l5 5M31 12l-5-5M31 12l-5 5' stroke='%23f3f0e8' stroke-width='5'/%3E%3Cpath d='M3 12h28M3 12l5-5M3 12l5 5M31 12l-5-5M31 12l-5 5' stroke='%236a5076' stroke-width='2'/%3E%3C/g%3E%3Ccircle cx='17' cy='12' r='3.2' fill='%23c9e876' stroke='%23f3f0e8' stroke-width='1.5'/%3E%3C/svg%3E") 17 12, ew-resize;
+  --site-cursor-dragging: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='24' viewBox='0 0 34 24'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 12h28M3 12l5-5M3 12l5 5M31 12l-5-5M31 12l-5 5' stroke='%23f3f0e8' stroke-width='5'/%3E%3Cpath d='M3 12h28M3 12l5-5M3 12l5 5M31 12l-5-5M31 12l-5 5' stroke='%236a5076' stroke-width='2'/%3E%3C/g%3E%3Crect x='12' y='7' width='10' height='10' rx='3' fill='%236a5076' stroke='%23f3f0e8' stroke-width='1.5'/%3E%3C/svg%3E") 17 12, grabbing;
   --forum-ink: #1e2737;
   --forum-label: rgba(250, 249, 245, 0.76);
   --forum-label-line: rgba(30, 39, 55, 0.2);
@@ -383,6 +385,7 @@ button {
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  margin-left: auto;
   padding: 0;
 }
 
@@ -466,7 +469,7 @@ button {
   padding: 0.65rem 0.15rem;
   background: none;
   border: 0;
-  cursor: pointer;
+  cursor: var(--site-cursor-action);
 }
 
 .no-js .theme-switcher {
@@ -503,7 +506,7 @@ button {
   background: transparent;
   border: 0;
   border-radius: 0.35rem;
-  cursor: pointer;
+  cursor: var(--site-cursor-action);
   opacity: 0.62;
   transition: color var(--duration-fast) var(--ease-move), opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-move);
 }
@@ -968,7 +971,7 @@ button {
   color: inherit;
   background: transparent;
   border: 0;
-  cursor: pointer;
+  cursor: var(--site-cursor-action);
   font-size: 0.72rem;
   opacity: 0.62;
   transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-move);
@@ -1119,7 +1122,7 @@ button {
 }
 
 :root.has-active-event .hero {
-  padding-bottom: 9.5rem;
+  padding-bottom: 13.5rem;
 }
 
 .hero__content {
@@ -1204,6 +1207,8 @@ button {
   display: grid;
   width: 1rem;
   height: 1rem;
+  background: var(--paper);
+  box-shadow: 0 0 0 0.42rem var(--paper);
   font-size: 1rem;
   place-items: center;
   transition: transform var(--duration-responsive) var(--ease-settle);
@@ -1214,44 +1219,49 @@ button {
   transform: translateX(0.3rem);
 }
 
-.aurora-orbit {
+.hero__mark {
   position: absolute;
-  top: clamp(5.5rem, 9vh, 8rem);
-  right: clamp(4.5rem, 7vw, 8rem);
-  width: clamp(19rem, 34vw, 34rem);
-  aspect-ratio: 1;
+  z-index: 1;
+  top: clamp(7.5rem, 15vh, 11rem);
+  right: clamp(5rem, 9vw, 10rem);
+  width: clamp(15rem, 23vw, 23rem);
+  height: auto;
+  overflow: visible;
+  fill: none;
   pointer-events: none;
 }
 
-.aurora-orbit__mark {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+.hero__mark-ink {
+  color: var(--ink);
   fill: none;
-}
-
-.aurora-orbit__arc {
-  stroke: var(--orbit-line-soft);
+  stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  transition: stroke var(--duration-responsive) var(--ease-move), stroke-width var(--duration-responsive) var(--ease-move);
+  stroke-width: 2.2;
 }
 
-.aurora-orbit__arc.is-active {
-  stroke: var(--orbit-line-active);
-  stroke-width: 1.35;
-}
-
-.aurora-orbit__route {
+.hero__mark-ink circle {
+  fill: currentColor;
   stroke: none;
 }
 
-.aurora-orbit__focus {
-  fill: var(--aurora-green);
-  filter: drop-shadow(0 0 0.7px var(--aurora-green)) drop-shadow(0 0 4px var(--aurora-glow));
+.hero__mark-aurora {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4.2;
+  opacity: 0.3;
+  animation: hero-mark-glow 5.2s var(--ease-move) infinite;
+}
+
+@keyframes hero-mark-glow {
+  0%,
+  100% {
+    opacity: 0.24;
+  }
+
+  50% {
+    opacity: 0.46;
+  }
 }
 
 .practice-statement {
@@ -1447,6 +1457,19 @@ button {
   -webkit-line-clamp: 2;
 }
 
+.event-ticket__title {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 0.045em;
+  text-underline-offset: 0.1em;
+  transition: text-decoration-color var(--duration-fast) var(--ease-move);
+}
+
+.event-ticket__link:hover .event-ticket__title,
+.event-ticket__link:focus-visible .event-ticket__title {
+  text-decoration-color: currentColor;
+}
+
 .event-ticket__dismiss {
   position: absolute;
   top: var(--event-ticket-inset);
@@ -1462,7 +1485,7 @@ button {
   border: 0;
   border-radius: 0.85rem;
   corner-shape: var(--event-ticket-corner-shape);
-  cursor: pointer;
+  cursor: var(--site-cursor-action);
   place-items: center;
   transition: color var(--duration-fast) var(--ease-move), background-color var(--duration-fast) var(--ease-move);
 }
@@ -1632,6 +1655,16 @@ body.menu-open .event-ticket {
   overflow-wrap: normal;
   word-break: normal;
   hyphens: none;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 0.02em;
+  text-underline-offset: 0.1em;
+  transition: text-decoration-color var(--duration-responsive) var(--ease-move);
+}
+
+.now__card:hover .now__copy h2,
+.now__card:focus-visible .now__copy h2 {
+  text-decoration-color: color-mix(in srgb, currentColor 72%, transparent);
 }
 
 .round-arrow {
@@ -1685,8 +1718,7 @@ body.menu-open .event-ticket {
 }
 
 .project__information {
-  position: sticky;
-  top: 7rem;
+  position: relative;
   align-self: start;
   max-width: 40rem;
 }
@@ -1948,11 +1980,11 @@ body.menu-open .event-ticket {
 
 .archive-register__spine {
   position: absolute;
-  z-index: 6;
-  top: 1rem;
-  right: -1.55rem;
+  z-index: 0;
+  top: 2.35rem;
+  right: -3.45rem;
   display: flex;
-  width: 1.8rem;
+  width: 2.4rem;
   height: 8.8rem;
   padding: 0.7rem 0.35rem;
   align-items: center;
@@ -1962,6 +1994,7 @@ body.menu-open .event-ticket {
   border-left: 0;
   border-radius: 0 0.42rem 0.42rem 0;
   writing-mode: vertical-rl;
+  pointer-events: none;
 }
 
 .archive-register__meta {
@@ -2248,6 +2281,8 @@ body.menu-open .event-ticket {
 
 .project--forum .project__information {
   z-index: 2;
+  grid-row: 1;
+  grid-column: 1;
 }
 
 .project--forum .project__description {
@@ -2271,6 +2306,8 @@ body.menu-open .event-ticket {
 }
 
 .project__visual--forum {
+  grid-row: 1;
+  grid-column: 2;
   isolation: auto;
   overflow: hidden;
 }
@@ -2404,7 +2441,7 @@ body.menu-open .event-ticket {
 }
 
 .forum-overlay span,
-.project__visual--forum figcaption {
+.forum-caption {
   width: fit-content;
   padding: 0.42rem 0.55rem;
   background: var(--forum-label);
@@ -2418,21 +2455,50 @@ body.menu-open .event-ticket {
   border-radius: 999px;
 }
 
-.project__visual--forum figcaption {
+.forum-caption {
   border-radius: 0.18rem;
+  background: linear-gradient(
+    90deg,
+    rgba(250, 249, 245, 0.78),
+    rgba(250, 249, 245, 0.98) 18%,
+    rgba(250, 249, 245, 0.96)
+  );
+  border-color: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 8px 24px rgba(30, 39, 55, 0.12), inset 0 0 0 1px rgba(250, 249, 245, 0.82);
+  text-shadow: 0 0 0.6rem rgba(250, 249, 245, 1), 0 0 0.2rem rgba(250, 249, 245, 1);
 }
 
 .forum-overlay span:nth-child(3) {
   justify-self: end;
 }
 
-.project__visual--forum figcaption {
-  position: absolute;
-  z-index: 2;
-  right: 1.5rem;
-  bottom: 1.5rem;
-  left: 1.5rem;
+.forum-caption {
+  position: relative;
+  z-index: 3;
+  grid-row: 1;
+  grid-column: 2;
+  align-self: start;
+  justify-self: start;
+  max-width: calc(100% - 3rem);
+  margin: calc(63.291% - 4.85rem) 1.5rem 0;
   color: var(--forum-ink);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  line-height: normal;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.project__visual--forum .forum-caption__semantic {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .about {
@@ -2601,7 +2667,6 @@ body.menu-open .event-ticket {
   width: 0.72rem;
   height: 0.72rem;
   padding: 0;
-  color: var(--menu-accent);
   background: transparent;
   border: 0;
 }
@@ -2609,8 +2674,7 @@ body.menu-open .event-ticket {
 .timeline .ongoing-status i {
   width: 0.44rem;
   height: 0.44rem;
-  background: currentColor;
-  box-shadow: 0 0 0.7rem color-mix(in srgb, var(--aurora-green) 36%, transparent);
+  background: var(--aurora-green);
 }
 
 .timeline .ongoing-status__label {
@@ -3009,7 +3073,7 @@ body.menu-open .event-ticket {
   align-items: center;
   min-height: 64px;
   width: 100%;
-  cursor: pointer;
+  cursor: var(--site-cursor-action);
   list-style: none;
   font-size: 0.7rem;
   letter-spacing: 0.08em;
@@ -3118,6 +3182,11 @@ body.menu-open .event-ticket {
   transform: translateY(0);
 }
 
+.js .project__information[data-reveal] {
+  transform: none;
+  transition: opacity 560ms var(--ease-enter);
+}
+
 .hero .eyebrow {
   --reveal-delay: 60ms;
 }
@@ -3153,6 +3222,18 @@ body.menu-open .event-ticket {
 }
 
 @media (max-width: 980px) {
+  :root.has-active-event .hero {
+    padding-bottom: 9.25rem;
+  }
+
+  .hero__mark {
+    top: 5.5rem;
+    right: auto;
+    left: 50%;
+    width: min(46vw, 18rem);
+    transform: translateX(-50%);
+  }
+
   .site-index__body {
     grid-template-columns: 1fr;
   }
@@ -3196,6 +3277,22 @@ body.menu-open .event-ticket {
     grid-template-columns: 1fr;
     min-height: 0;
     padding-bottom: clamp(6rem, 14vw, 11rem);
+  }
+
+  .forum-caption {
+    grid-row: 2;
+    grid-column: 1;
+    margin-top: calc(max(62vw, 63.291%) - 4.85rem);
+  }
+
+  .project--forum .project__information {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .project__visual--forum {
+    grid-row: 2;
+    grid-column: 1;
   }
 
   .project__information {
@@ -3392,10 +3489,12 @@ body.menu-open .event-ticket {
     padding-bottom: 7.25rem;
   }
 
-  .aurora-orbit {
-    top: 13vh;
-    right: -16vw;
-    width: min(76vw, 22rem);
+  .hero__mark {
+    top: 5.1rem;
+    right: auto;
+    left: 50%;
+    width: min(48vw, 11rem);
+    transform: translateX(-50%);
   }
 
   .hero__title {
@@ -3582,7 +3681,7 @@ body.menu-open .event-ticket {
   }
 
   .archive-register__spine {
-    top: -1.45rem;
+    top: -1.72rem;
     right: 0.35rem;
     width: auto;
     min-width: 7.3rem;
@@ -3888,6 +3987,11 @@ body.menu-open .event-ticket {
   .site-header.is-scrolled .brand {
     transition-delay: 0s;
   }
+
+  .hero__mark-aurora,
+  .climate-field__path--observed {
+    animation: none !important;
+  }
 }
 
 :root[data-motion="reduced"] {
@@ -3923,6 +4027,15 @@ body.menu-open .event-ticket {
   display: none;
 }
 
+:root[data-motion="reduced"] .hero__mark-aurora {
+  animation: none;
+  opacity: 0.34;
+}
+
+:root[data-motion="reduced"] .climate-field__path--observed {
+  animation: none;
+}
+
 @media (hover: hover) and (pointer: fine) {
   html,
   body,
@@ -3931,19 +4044,26 @@ body.menu-open .event-ticket {
   }
 
   a,
+  a *,
   button,
+  button *,
   summary,
+  summary *,
   [role="button"],
-  [tabindex="0"] {
+  [role="button"] *,
+  [tabindex="0"],
+  [tabindex="0"] * {
     cursor: var(--site-cursor-action);
   }
 
-  .archive-card[data-stack-depth="0"] {
-    cursor: grab;
+  .archive-card[data-stack-depth="0"],
+  .archive-card[data-stack-depth="0"] * {
+    cursor: var(--site-cursor-drag);
   }
 
-  .archive-card.is-dragging {
-    cursor: grabbing;
+  .archive-card.is-dragging,
+  .archive-card.is-dragging * {
+    cursor: var(--site-cursor-dragging);
   }
 }
 
@@ -4021,7 +4141,7 @@ body.menu-open .event-ticket {
 
   .archive-card,
   .forum-overlay span,
-  .project__visual--forum figcaption {
+  .forum-caption {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
