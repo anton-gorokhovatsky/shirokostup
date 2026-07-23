@@ -253,6 +253,40 @@ assert(
   "The decorative cursor trail must move into the Index top layer and return to the page.",
 );
 assert(
+  script.includes("interactivePointerSelector") &&
+    script.includes('cursorTrail.classList.toggle("is-over-interactive"') &&
+    css.includes(".cursor-trail.is-over-interactive") &&
+    css.includes("button:not(:disabled)") &&
+    css.includes('[role="button"]') &&
+    css.includes('[role="link"]'),
+  "Links and controls must keep a stable native pointer while the decorative cursor trail yields to interaction.",
+);
+assert(
+  html.includes('<a href="#practice"><span>01</span>Practice</a>') &&
+    html.includes('<a href="#contact"><span>05</span>Contact</a>') &&
+    script.includes('link.setAttribute("aria-current", "location")') &&
+    css.includes(".index-nav a[aria-current=\"location\"]") &&
+    css.includes("grid-template-rows: auto minmax(0, 1fr)") &&
+    css.includes("overflow-y: auto") &&
+    css.includes("overscroll-behavior: contain"),
+  "The Index must expose all five numbered sections, identify the current section, and remain scrollable on short screens.",
+);
+assert(
+  count(html, /\bsrcset=/gi) === 13 &&
+    count(html, /\bsizes=/gi) === 14 &&
+    count(html, /decoding="async"/gi) === 13 &&
+    html.includes("assets/images/responsive/women-house-480.jpg") &&
+    html.includes("assets/images/responsive/arctic-forum-800.jpg"),
+  "All editorial images must retain responsive source candidates and asynchronous decoding.",
+);
+assert(
+  css.includes("@media (min-width: 701px) and (max-width: 1180px)") &&
+    css.includes("grid-template-columns: minmax(10rem, 0.8fr) minmax(0, 1.2fr)") &&
+    css.includes("@media print") &&
+    css.includes(".js [data-reveal]"),
+  "Intermediate archive widths and printed pages must remain free of clipping and unrevealed content.",
+);
+assert(
   count(html, /data-archive-stack\b/gi) === 2 &&
     count(html, /data-archive-card\b/gi) === 12 &&
     script.includes('document.querySelectorAll("[data-archive-stack]")') &&
@@ -268,7 +302,10 @@ assert(
     count(html, /data-archive-counter\b/gi) === 1 &&
     !html.includes("data-archive-register-number") &&
     !script.includes("archiveRegisterNumber") &&
-    count(html, /archive-(?:painting-coup-poster|gallery-m-1991|gallery-modern-art-leaflet|russian-arctic-poster)\.jpg/gi) === 4 &&
+    count(
+      html,
+      /src="assets\/images\/archive-(?:painting-coup-poster|gallery-m-1991|gallery-modern-art-leaflet|russian-arctic-poster)\.jpg"/gi,
+    ) === 4 &&
     script.includes("archiveItemNameSentence") &&
     script.includes("--archive-register-position") &&
     css.includes(".archive-register__marker") &&

@@ -4,12 +4,21 @@ const progressBar = document.querySelector(".reading-progress span");
 const menuButton = document.querySelector(".index-button");
 const menu = document.querySelector("#site-index");
 const menuClose = menu?.querySelector(".index-close");
+const menuBody = menu?.querySelector(".site-index__body");
+const indexLinks = Array.from(menu?.querySelectorAll(".index-nav a[href^='#']") || []);
+const indexEntries = indexLinks
+  .map((link) => ({
+    link,
+    section: document.querySelector(link.getAttribute("href")),
+  }))
+  .filter((entry) => entry.section);
 const themeChoices = Array.from(document.querySelectorAll("[data-theme-choice]"));
 const motionChoices = Array.from(document.querySelectorAll("[data-motion-choice]"));
 const themeColor = document.querySelector('meta[name="theme-color"]');
 const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 const systemReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+const interactivePointerSelector = "a[href], button:not(:disabled), summary, [role='button'], [role='link']";
 const validThemeModes = new Set(["system", "light", "dark"]);
 const validMotionModes = new Set(["system", "reduced"]);
 const headerInkSurfaces = Array.from(document.querySelectorAll("[data-header-ink]"));
@@ -20,7 +29,6 @@ const eventTicket = document.querySelector("[data-event-ticket]");
 const eventTicketDismiss = document.querySelector("[data-event-ticket-dismiss]");
 const heroSection = document.querySelector("#top");
 const upcomingSection = document.querySelector("#now");
-const contactSection = document.querySelector("#contact");
 let menuCloseTimer = 0;
 let creditsCloseTimer = 0;
 let themeTransitionTimer = 0;
@@ -222,7 +230,7 @@ const showEventTicket = (mode) => {
 
   window.clearTimeout(eventTicketHideTimer);
   eventTicket.classList.toggle("event-ticket--intro", mode === "intro");
-  eventTicket.classList.toggle("event-ticket--reminder", mode === "reminder");
+  eventTicket.classList.remove("event-ticket--reminder");
 
   if (!eventTicket.hidden && eventTicket.classList.contains("is-visible")) return;
 
@@ -237,7 +245,7 @@ const showEventTicket = (mode) => {
 };
 
 const updateEventTicketVisibility = () => {
-  if (!eventTicket || !heroSection || !upcomingSection || !contactSection) return;
+  if (!eventTicket || !heroSection || !upcomingSection) return;
 
   if (eventTicketDismissed || eventTicketHasExpired()) {
     root.classList.remove("has-active-event");
@@ -245,17 +253,14 @@ const updateEventTicketVisibility = () => {
     return;
   }
 
+  const heroBounds = heroSection.getBoundingClientRect();
   const upcomingBounds = upcomingSection.getBoundingClientRect();
-  const contactBounds = contactSection.getBoundingClientRect();
   const headerClearance = (header?.getBoundingClientRect().height || 0) + 8;
-  const introIsVisible = upcomingBounds.top > window.innerHeight * 0.9;
-  const reminderIsVisible =
-    upcomingBounds.bottom <= headerClearance && contactBounds.top > window.innerHeight * 0.82;
+  const introIsVisible =
+    heroBounds.bottom > headerClearance && upcomingBounds.top > window.innerHeight * 0.9;
 
   if (introIsVisible) {
     showEventTicket("intro");
-  } else if (reminderIsVisible) {
-    showEventTicket("reminder");
   } else {
     hideEventTicket();
   }
@@ -290,6 +295,20 @@ const updateScrollUI = () => {
     progressBar.style.transform = `scaleX(${progress})`;
   }
 
+  const indexMarker = headerHeight + Math.min(window.innerHeight * 0.22, 160);
+  const currentIndexEntry = indexEntries.find(({ section }) => {
+    const bounds = section.getBoundingClientRect();
+    return bounds.top <= indexMarker && bounds.bottom > indexMarker;
+  });
+
+  indexEntries.forEach(({ link }) => {
+    if (link === currentIndexEntry?.link) {
+      link.setAttribute("aria-current", "location");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+
   updateEventTicketVisibility();
 };
 
@@ -318,6 +337,7 @@ if (cursorTrail) {
   let trailPixelRatio = 1;
   let trailTarget = null;
   let trailHead = null;
+  let trailIsOverInteractive = false;
 
   const colourWithAlpha = (colour, alpha) => {
     const match = colour.trim().match(/^#([0-9a-f]{6})$/i);
@@ -418,6 +438,25 @@ if (cursorTrail) {
     (event) => {
       if (motionIsReduced() || !finePointer.matches || (event.pointerType && event.pointerType !== "mouse")) return;
 
+      const isOverInteractive =
+        event.target instanceof Element && Boolean(event.target.closest(interactivePointerSelector));
+
+      if (isOverInteractive !== trailIsOverInteractive) {
+        trailIsOverInteractive = isOverInteractive;
+        cursorTrail.classList.toggle("is-over-interactive", isOverInteractive);
+
+        if (isOverInteractive) {
+          if (trailFrame) window.cancelAnimationFrame(trailFrame);
+          trailFrame = 0;
+          trailTarget = null;
+          trailHead = null;
+          trailPoints.length = 0;
+          trailContext.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        }
+      }
+
+      if (isOverInteractive) return;
+
       const now = performance.now();
       trailTarget = { x: event.clientX, y: event.clientY, time: now };
 
@@ -440,8 +479,10 @@ const openMenu = () => {
 
   window.clearTimeout(menuCloseTimer);
   menu.classList.remove("is-closing");
+  if (menuBody) menuBody.scrollTop = 0;
   menu.showModal();
   moveCursorTrail(menu);
+  root.classList.add("menu-open");
   document.body.classList.add("menu-open");
   menuButton?.setAttribute("aria-expanded", "true");
 };
@@ -490,6 +531,7 @@ menu?.addEventListener("close", () => {
   menuCloseTimer = 0;
   menu.removeEventListener("animationend", handleMenuExit);
   menu.classList.remove("is-closing");
+  root.classList.remove("menu-open");
   document.body.classList.remove("menu-open");
   moveCursorTrail(document.body);
   menuButton?.setAttribute("aria-expanded", "false");
