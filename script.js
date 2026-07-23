@@ -668,7 +668,10 @@ archiveStacks.forEach((archiveStack) => {
     archiveIsAnimating = true;
     const cardWidth = departingCard.getBoundingClientRect().width;
     const exitStartX = exitDirection < 0 ? Math.min(dragX, 0) : Math.max(dragX, 0);
-    const exitDistance = Math.max(Math.abs(exitStartX) + 72, Math.min(cardWidth * 0.62, 220));
+    const isCompactArchive = window.matchMedia("(max-width: 700px)").matches;
+    const exitDistance = isCompactArchive
+      ? Math.max(cardWidth + 32, Math.abs(exitStartX) + 96)
+      : Math.max(Math.abs(exitStartX) + 72, Math.min(cardWidth * 0.62, 220));
 
     departingCard.classList.remove("is-dragging");
     departingCard.style.setProperty("--archive-drag-x", `${exitStartX}px`);

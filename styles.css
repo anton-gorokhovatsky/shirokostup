@@ -2391,6 +2391,12 @@ body.menu-open .event-ticket {
   line-height: 1.35;
 }
 
+.project__visual--women-stack .archive-stack__instructions {
+  width: calc(100% - clamp(1.4rem, 2.6vw, 2.5rem));
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .archive-stack__instructions [data-archive-counter] {
   flex: 0 0 auto;
   font-variant-numeric: tabular-nums;
@@ -3050,20 +3056,52 @@ body.menu-open .event-ticket {
   display: inline-block;
   padding-bottom: 0.16em;
   text-decoration: none;
+  transition: transform var(--duration-responsive) var(--ease-settle);
+}
+
+.contact h2 a::before {
+  position: absolute;
+  right: 0.02em;
+  bottom: 0.16em;
+  font-family: var(--sans);
+  font-size: 0.19em;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  content: "↗";
+  opacity: 0;
+  transform: translate(-0.28em, 0.28em) scale(0.72);
+  transform-origin: center;
+  transition:
+    opacity var(--duration-fast) var(--ease-enter),
+    transform var(--duration-responsive) var(--ease-settle);
 }
 
 .contact h2 a::after {
   position: absolute;
   bottom: 0.01em;
   left: 0;
-  width: clamp(4rem, 8vw, 6rem);
+  width: 100%;
   height: max(2px, 0.025em);
   background: var(--aurora-sweep);
   content: "";
-  opacity: 0.58;
-  transform: scaleX(0.58);
+  opacity: 0.64;
+  transform: scaleX(0.09);
   transform-origin: left;
-  transition: opacity var(--duration-fast) var(--ease-move), transform var(--duration-responsive) var(--ease-move);
+  transition:
+    opacity var(--duration-fast) var(--ease-move),
+    transform var(--duration-medium) var(--ease-settle);
+}
+
+.contact h2 a:hover,
+.contact h2 a:focus-visible {
+  transform: translateX(0.025em);
+}
+
+.contact h2 a:hover::before,
+.contact h2 a:focus-visible::before {
+  opacity: 0.92;
+  transform: translate(0, 0) scale(1);
 }
 
 .contact h2 a:hover::after,
@@ -3908,7 +3946,11 @@ body.menu-open .event-ticket {
   }
 
   .archive-card.is-leaving {
+    opacity: 1;
     box-shadow: 0 0.9rem 1.65rem rgba(13, 20, 28, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition:
+      transform var(--duration-responsive) var(--ease-exit),
+      box-shadow var(--duration-fast) var(--ease-exit);
   }
 
   .archive-card[data-stack-depth="1"] {
@@ -3924,8 +3966,8 @@ body.menu-open .event-ticket {
   }
 
   .archive-card__caption {
-    min-height: 2.85rem;
-    padding-top: 0.62rem;
+    min-height: 0;
+    padding: 0.58rem 0 0.16rem;
     font-size: 0.58rem;
   }
 
