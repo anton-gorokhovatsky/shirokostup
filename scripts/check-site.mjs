@@ -247,7 +247,7 @@ assert(
     script.includes("--archive-register-position") &&
     css.includes(".archive-register__marker") &&
     css.includes(".archive-card--document > img") &&
-    css.includes("height: calc(100% + 1.72rem)") &&
+    css.includes("height: calc(100% + 2.05rem)") &&
     css.includes("align-items: flex-start") &&
     css.includes("@media (min-width: 701px) and (max-width: 800px)") &&
     css.includes("right: -1rem"),

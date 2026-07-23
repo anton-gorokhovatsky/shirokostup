@@ -2192,8 +2192,10 @@ body.menu-open .event-ticket {
 }
 
 .archive-card.is-leaving {
+  z-index: 5;
   pointer-events: none;
   box-shadow: 0 1.7rem 4rem rgba(13, 20, 28, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translate3d(var(--archive-drag-x), var(--archive-drag-y), 0) rotate(var(--archive-drag-rotate));
 }
 
 :root:not(.is-pointer-navigation) .archive-card:focus-visible {
@@ -2294,6 +2296,23 @@ body.menu-open .event-ticket {
   border-radius: 0.75rem;
   content: "";
   filter: blur(0.5rem);
+  pointer-events: none;
+}
+
+.project--forum .text-link {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.project--forum .text-link::before {
+  position: absolute;
+  z-index: -1;
+  inset: -0.22em -0.42em;
+  background: color-mix(in srgb, var(--paper) 95%, transparent);
+  border-radius: 0.55rem;
+  content: "";
+  filter: blur(0.35rem);
   pointer-events: none;
 }
 
@@ -3482,7 +3501,7 @@ body.menu-open .event-ticket {
   }
 
   :root.has-active-event .hero {
-    padding-bottom: 7.25rem;
+    padding-bottom: clamp(8.75rem, 18svh, 10.5rem);
   }
 
   .hero__mark {
@@ -3677,11 +3696,11 @@ body.menu-open .event-ticket {
   }
 
   .archive-register__spine {
-    top: -1.72rem;
+    top: -2.05rem;
     right: 0.35rem;
     width: auto;
     min-width: 7.3rem;
-    height: calc(100% + 1.72rem);
+    height: calc(100% + 2.05rem);
     padding: 0.38rem 0.52rem;
     align-items: flex-start;
     flex-direction: row;
