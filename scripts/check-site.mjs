@@ -201,25 +201,36 @@ assert(
   "The Women in the North route must remain visible without intercepting photo dragging.",
 );
 assert(
-  count(html, /women-route__branch/gi) === 2 &&
+    count(html, /women-route__branch/gi) === 2 &&
     count(html, /women-route__cluster--/gi) === 6 &&
     html.includes("women-route__cluster--waypoints") &&
     html.includes("women-route__cluster--junction") &&
-    css.includes("stroke-width: 0.62px"),
+    !html.includes("women-route__ink") &&
+    css.includes("filter: drop-shadow(0 0 0.75px") &&
+    css.includes(".women-route__points rect"),
   "The Women in the North route must retain its branch and source-faithful mix of sparse, dense, and waypoint clusters.",
+);
+assert(
+  count(html, /class="timeline__date"/gi) === 6 &&
+    /timeline__date[\s\S]*?<time datetime="2023">2023<\/time>[\s\S]*?ongoing-status/i.test(html) &&
+    /timeline__date[\s\S]*?<time datetime="2022">2022<\/time>[\s\S]*?ongoing-status/i.test(html) &&
+    css.includes(".timeline .ongoing-status__label") &&
+    css.includes("width: 0.72rem"),
+  "Ongoing project states must remain accessible as compact pulsing markers beside their corresponding years.",
 );
 assert(
   css.includes(".climate-field__trace") &&
     count(html, /climate-field__trace-underlay/gi) === 2 &&
-    css.includes("stroke: #263448") &&
-    css.includes("stroke: #6a5076") &&
-    css.includes("stroke: rgba(250, 249, 245, 0.9)") &&
+    css.includes("stroke: color-mix(in srgb, var(--ink) 76%, var(--aurora-blue))") &&
+    css.includes("stroke: color-mix(in srgb, var(--ink) 72%, var(--aurora-violet))") &&
+    css.includes("stroke: var(--paper-bright)") &&
+    css.includes("background: color-mix(in srgb, var(--paper-bright) 94%, transparent)") &&
     css.includes("stroke-dasharray: none") &&
     css.includes(".climate-field__stations") &&
     css.includes(".climate-field__path--observed") &&
     css.includes("animation: none") &&
     !css.includes(".project--forum:hover .climate-field__trace--baseline"),
-  "The climate route must keep fixed double-stroke colours across image boundaries and avoid Safari-fragile mobile animation.",
+  "The climate route must keep theme-aware double-stroke colours, soften beneath copy, and avoid Safari-fragile mobile animation.",
 );
 assert(
   css.includes("aspect-ratio: 1.58") &&
@@ -228,12 +239,13 @@ assert(
   "The Arctic Art Forum image must keep its meaningful right-edge forms in view.",
 );
 assert(
-  count(html, /class="ongoing-status timeline__state"/gi) === 2 &&
+  count(html, /class="timeline__date"/gi) === 6 &&
     count(html, /class="timeline__role"/gi) === 6 &&
     !html.includes("timeline__period") &&
     css.includes("grid-template-columns: 7rem minmax(0, 1fr) minmax(5.8rem, auto)") &&
+    css.includes(".timeline__date") &&
     css.includes(".timeline__state"),
-  "The selected-roles table must keep year, role, and status in predictable columns.",
+  "The selected-roles table must keep each ongoing state grouped with its year while preserving predictable role columns.",
 );
 assert(!/[←↑→↓↗↘↙↖]/u.test(html), "Directional actions must use the shared vector-arrow system.");
 

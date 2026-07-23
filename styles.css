@@ -1930,9 +1930,14 @@ body.menu-open .event-ticket {
 
 .archive-register {
   --archive-register-position: 0;
-  position: absolute;
-  z-index: 6;
-  inset: 0;
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.8fr) minmax(20rem, 1.2fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start;
+  width: calc(100% - clamp(1.4rem, 2.6vw, 2.5rem));
+  margin: clamp(3.2rem, 4.8vw, 4.4rem) auto 0;
   color: color-mix(in srgb, var(--archive-ink) 74%, transparent);
   font-size: clamp(0.52rem, 0.62vw, 0.65rem);
   line-height: 1;
@@ -1943,6 +1948,7 @@ body.menu-open .event-ticket {
 
 .archive-register__spine {
   position: absolute;
+  z-index: 6;
   top: 1rem;
   right: -1.55rem;
   display: flex;
@@ -1959,13 +1965,10 @@ body.menu-open .event-ticket {
 }
 
 .archive-register__meta {
-  position: absolute;
-  bottom: -4rem;
-  left: 0;
   display: grid;
-  width: 43%;
   min-width: 0;
   gap: 0.35rem;
+  padding-top: 0.1rem;
 }
 
 .archive-register__meta strong {
@@ -1978,11 +1981,9 @@ body.menu-open .event-ticket {
 }
 
 .archive-register__rail {
-  position: absolute;
-  right: 0;
-  bottom: -4rem;
+  position: relative;
   display: grid;
-  width: 52%;
+  width: 100%;
   grid-template-columns: repeat(8, minmax(0, 1fr));
   border-top: 1px solid var(--archive-line);
   font-variant-numeric: tabular-nums;
@@ -2007,7 +2008,8 @@ body.menu-open .event-ticket {
 
 .project__visual--archive .archive-stack__instructions {
   justify-content: flex-end;
-  margin-top: clamp(5.9rem, 7vw, 6.8rem) !important;
+  width: calc(100% - clamp(1.4rem, 2.6vw, 2.5rem));
+  margin: clamp(1.45rem, 2.4vw, 2.1rem) auto 0 !important;
 }
 
 .archive-stack--women .women-route {
@@ -2029,12 +2031,12 @@ body.menu-open .event-ticket {
 }
 
 .women-route__underlay {
-  stroke: rgba(250, 249, 245, 0.9);
+  stroke: var(--paper-bright);
   stroke-width: 3.2px;
 }
 
 .women-route__line {
-  stroke: #111310;
+  stroke: var(--ink);
   stroke-width: 1.15px;
 }
 
@@ -2055,20 +2057,19 @@ body.menu-open .event-ticket {
 }
 
 .women-route__points {
-  color: #111310;
+  color: var(--ink);
+  filter: drop-shadow(0 0 0.75px var(--paper-bright));
 }
 
-.women-route__points circle {
-  fill: #111310;
-  stroke: rgba(250, 249, 245, 0.82);
-  stroke-width: 0.62px;
-  vector-effect: non-scaling-stroke;
-}
-
-.women-route__ink {
+.women-route__points circle,
+.women-route__points ellipse,
+.women-route__points rect,
+.women-route__points path {
   fill: currentColor;
-  stroke: rgba(250, 249, 245, 0.7);
-  stroke-width: 0.45px;
+  stroke: currentColor;
+  stroke-width: 1.2px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   vector-effect: non-scaling-stroke;
 }
 
@@ -2249,6 +2250,22 @@ body.menu-open .event-ticket {
   z-index: 2;
 }
 
+.project--forum .project__description {
+  position: relative;
+  isolation: isolate;
+}
+
+.project--forum .project__description::before {
+  position: absolute;
+  z-index: -1;
+  inset: -0.2em -0.4em;
+  background: color-mix(in srgb, var(--paper-bright) 94%, transparent);
+  border-radius: 0.75rem;
+  content: "";
+  filter: blur(0.5rem);
+  pointer-events: none;
+}
+
 .project--forum h3 {
   font-size: clamp(3rem, 5vw, 5.9rem);
 }
@@ -2284,7 +2301,7 @@ body.menu-open .event-ticket {
 
 .climate-field__trace {
   fill: none;
-  stroke: #263448;
+  stroke: color-mix(in srgb, var(--ink) 76%, var(--aurora-blue));
   stroke-width: 1.15px;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -2295,12 +2312,12 @@ body.menu-open .event-ticket {
 }
 
 .climate-field__trace--observed {
-  stroke: #6a5076;
+  stroke: color-mix(in srgb, var(--ink) 72%, var(--aurora-violet));
 }
 
 .climate-field__trace-underlay {
   fill: none;
-  stroke: rgba(250, 249, 245, 0.9);
+  stroke: var(--paper-bright);
   stroke-width: 3.35px;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -2335,7 +2352,7 @@ body.menu-open .event-ticket {
 }
 
 .climate-field__stations line {
-  stroke: #f2efe7;
+  stroke: var(--ink);
   stroke-width: 2px;
   stroke-linecap: round;
   opacity: 0;
@@ -2516,6 +2533,14 @@ body.menu-open .event-ticket {
   white-space: nowrap;
 }
 
+.timeline__date {
+  display: inline-flex;
+  min-width: 0;
+  gap: 0.5rem;
+  align-items: center;
+  align-self: start;
+}
+
 .timeline__role {
   min-width: 0;
 }
@@ -2571,14 +2596,33 @@ body.menu-open .event-ticket {
 }
 
 .timeline .ongoing-status {
+  flex: 0 0 auto;
+  justify-content: center;
+  width: 0.72rem;
+  height: 0.72rem;
+  padding: 0;
   color: var(--menu-accent);
-  background: var(--glass-control);
-  border-color: var(--line);
-  font-size: 0.55rem;
+  background: transparent;
+  border: 0;
 }
 
 .timeline .ongoing-status i {
+  width: 0.44rem;
+  height: 0.44rem;
   background: currentColor;
+  box-shadow: 0 0 0.7rem color-mix(in srgb, var(--aurora-green) 36%, transparent);
+}
+
+.timeline .ongoing-status__label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .texts {
@@ -3216,12 +3260,6 @@ body.menu-open .event-ticket {
     width: 3.6rem;
   }
 
-  .timeline .ongoing-status,
-  :root[data-theme="dark"] .timeline .ongoing-status {
-    padding: 0.32rem 0.45rem 0.28rem;
-    font-size: 0.5rem;
-  }
-
   .timeline .ongoing-status i {
     width: 0.42rem;
     height: 0.42rem;
@@ -3558,17 +3596,21 @@ body.menu-open .event-ticket {
   }
 
   .archive-register__meta {
-    bottom: -4.75rem;
-    width: 100%;
+    padding-top: 0;
   }
 
   .archive-register__meta > span:first-child {
     display: none;
   }
 
+  .archive-register {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    width: calc(100% - 1rem);
+    margin-top: 2.9rem;
+  }
+
   .archive-register__rail {
-    bottom: -2.95rem;
-    left: 0;
     width: 100%;
   }
 
@@ -3605,7 +3647,8 @@ body.menu-open .event-ticket {
   }
 
   .project__visual--archive .archive-stack__instructions {
-    margin-top: 7.4rem !important;
+    width: calc(100% - 1rem);
+    margin-top: 1.35rem !important;
   }
 
   .archive-stack__instructions span:last-child {
@@ -3653,6 +3696,11 @@ body.menu-open .event-ticket {
   }
 
   .timeline time {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .timeline__date {
     grid-column: 1;
     grid-row: 1;
   }
@@ -3704,33 +3752,6 @@ body.menu-open .event-ticket {
     clip: rect(0 0 0 0);
     white-space: nowrap;
     border: 0;
-  }
-
-  .timeline .ongoing-status,
-  :root[data-theme="dark"] .timeline .ongoing-status {
-    justify-content: flex-start;
-    width: fit-content;
-    height: auto;
-    padding: 0.34rem 0.48rem 0.3rem;
-    color: var(--menu-accent);
-    background: var(--glass-control);
-    border: 1px solid var(--line);
-  }
-
-  .timeline .ongoing-status i {
-    width: 0.42rem;
-    height: 0.42rem;
-  }
-
-  .timeline .ongoing-status__label {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: 0;
-    margin: 0;
-    overflow: visible;
-    clip: auto;
-    white-space: nowrap;
   }
 
   .texts__list a {

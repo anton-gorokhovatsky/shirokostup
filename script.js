@@ -562,7 +562,7 @@ archiveStacks.forEach((archiveStack) => {
   const archiveStatus = archiveFigure?.querySelector("[data-archive-status]");
   const archiveItemName = archiveStack.dataset.archiveItemName || "image";
   const archiveItemNameSentence = archiveItemName.replace(/^./, (character) => character.toUpperCase());
-  const archiveRegister = archiveStack.querySelector("[data-archive-register]");
+  const archiveRegister = archiveFigure?.querySelector("[data-archive-register]");
   const archiveRegisterKind = archiveRegister?.querySelector("[data-archive-register-kind]");
   const archiveRegisterYear = archiveRegister?.querySelector("[data-archive-register-year]");
 
