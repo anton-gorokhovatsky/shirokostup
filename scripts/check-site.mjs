@@ -388,9 +388,9 @@ assert(
   "The climate route must stay crisp on imagery, remain below opaque station labels, soften beneath copy, and avoid Safari-fragile mobile animation.",
 );
 assert(
-    css.includes("aspect-ratio: 1.58") &&
+  css.includes("aspect-ratio: 1.58") &&
     css.includes("object-position: 68% center") &&
-    css.includes("transform-origin: 68% center") &&
+    !css.includes(".project__visual--forum:hover .project__image") &&
     /<figcaption\b[^>]*class="forum-caption__semantic"/i.test(html) &&
     /<p\b[^>]*class="forum-caption"[^>]*aria-hidden="true"/i.test(html) &&
     css.includes(".forum-caption {") &&
@@ -400,7 +400,7 @@ assert(
     css.includes("grid-column: 2") &&
     css.includes("rgba(250, 249, 245, 0.98) 18%") &&
     css.includes("text-shadow: 0 0 0.6rem"),
-  "The Arctic Art Forum image must keep its meaningful right-edge forms in view while a semantic caption and a separate top-layer plaque keep the route physically below its material.",
+  "The Arctic Art Forum image must keep its meaningful right-edge forms in view without implying a false hover action, while a semantic caption and a separate top-layer plaque keep the route physically below its material.",
 );
 assert(
   count(html, /class="timeline__date"/gi) === 6 &&

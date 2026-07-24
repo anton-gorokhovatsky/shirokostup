@@ -658,10 +658,11 @@ archiveStacks.forEach((archiveStack) => {
 
     const departingCard = archiveCards[activeArchiveIndex];
     const nextIndex = (activeArchiveIndex + 1) % archiveCards.length;
+    const shouldRestoreFocus = focus || document.activeElement === departingCard;
 
     if (motionIsReduced()) {
       activeArchiveIndex = nextIndex;
-      renderArchiveStack({ focus, announce: true });
+      renderArchiveStack({ focus: shouldRestoreFocus, announce: true });
       return;
     }
 
@@ -695,7 +696,7 @@ archiveStacks.forEach((archiveStack) => {
       departingCard.getBoundingClientRect();
       departingCard.classList.remove("is-recycling");
       archiveIsAnimating = false;
-      if (focus) archiveCards[activeArchiveIndex].focus({ preventScroll: true });
+      if (shouldRestoreFocus) archiveCards[activeArchiveIndex].focus({ preventScroll: true });
     };
 
     const handleArchiveExit = (event) => {
