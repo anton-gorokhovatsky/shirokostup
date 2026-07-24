@@ -2182,7 +2182,7 @@ body.menu-open .event-ticket {
 
 .archive-stack--women .women-route {
   position: absolute;
-  z-index: 0;
+  z-index: 5;
   top: -18%;
   right: -9%;
   width: 80%;
@@ -2513,12 +2513,6 @@ body.menu-open .event-ticket {
   aspect-ratio: 1.58;
   height: auto;
   object-position: 68% center;
-  transform-origin: 68% center;
-  transition: transform var(--duration-slow) var(--ease-enter);
-}
-
-.project__visual--forum:hover .project__image {
-  transform: scale(1.025);
 }
 
 .climate-field {
