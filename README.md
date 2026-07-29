@@ -5,30 +5,50 @@ A static editorial portfolio for independent curator, researcher, and educator O
 ## Run locally
 
 ```bash
+corepack enable
+pnpm install
+pnpm run build
 python3 -m http.server 4173
 ```
 
 Then open `http://127.0.0.1:4173`.
 
-There is no build step or runtime dependency. The repository can be published directly with GitHub Pages.
+The site remains static and can be published directly with GitHub Pages. The build step only combines the authored CSS
+modules into `styles.css` and updates content-derived cache keys in `index.html`.
 
 ## Checks
 
 ```bash
-npm run check
+pnpm run check
+pnpm exec playwright install chromium webkit
+pnpm run test:browser
 ```
 
-The automated gate verifies document landmarks, unique anchors, local assets, image alternatives and dimensions, sharing
-metadata, consistent contact actions, theme and motion controls, reduced-motion support, responsive CSS, and JavaScript
-syntax. It runs for every pull request and every push to `main`.
+The fast gate verifies generated files, document landmarks, unique anchors, local assets, image alternatives and
+dimensions, sharing metadata, consistent contact actions, theme and motion controls, JavaScript syntax, and performance
+budgets. Playwright then checks rendered Chromium and Safari/WebKit layouts, both archive stacks, keyboard focus, themes,
+reduced motion, and WCAG A/AA rules with axe. Both gates run for every pull request and push to `main`.
 
 Automation supports rather than replaces the focused real-browser release gate in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
+
+## Responsive images
+
+Install the pinned image dependency and regenerate the existing AVIF, WebP, and JPEG variants when source imagery
+changes:
+
+```bash
+python3 -m pip install -r requirements-images.txt
+pnpm run images
+```
 
 ## Structure
 
 - `index.html` — content and document structure
-- `styles.css` — responsive visual system
+- `styles/*.css` — authored visual-system modules
+- `styles.css` — generated browser bundle; do not edit directly
 - `script.js` — index dialog, scroll progress, and restrained reveal motion
+- `scripts/build-assets.mjs` — deterministic CSS bundle and cache-key generator
+- `tests/site.spec.mjs` — rendered desktop/mobile interaction and accessibility checks
 - `assets/images` — locally stored project imagery
 
 ## Accessibility

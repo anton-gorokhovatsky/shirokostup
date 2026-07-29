@@ -9,16 +9,31 @@ permissions:
   contents: read
 
 jobs:
-  structure-and-accessibility:
+  structure-accessibility-and-browser:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Run site quality checks
-        run: npm run check
+        run: pnpm run check
+
+      - name: Install browser engines
+        run: pnpm exec playwright install --with-deps chromium webkit
+
+      - name: Run browser and accessibility checks
+        run: pnpm run test:browser

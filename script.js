@@ -214,7 +214,7 @@ const hideEventTicket = ({ immediate = false } = {}) => {
 
   const finishHide = () => {
     eventTicket.hidden = true;
-    eventTicket.classList.remove("event-ticket--intro", "event-ticket--reminder");
+    eventTicket.classList.remove("event-ticket--intro");
   };
 
   if (immediate || motionIsReduced()) {
@@ -225,12 +225,11 @@ const hideEventTicket = ({ immediate = false } = {}) => {
   eventTicketHideTimer = window.setTimeout(finishHide, 280);
 };
 
-const showEventTicket = (mode) => {
+const showEventTicket = () => {
   if (!eventTicket || eventTicketDismissed || eventTicketHasExpired()) return;
 
   window.clearTimeout(eventTicketHideTimer);
-  eventTicket.classList.toggle("event-ticket--intro", mode === "intro");
-  eventTicket.classList.remove("event-ticket--reminder");
+  eventTicket.classList.add("event-ticket--intro");
 
   if (!eventTicket.hidden && eventTicket.classList.contains("is-visible")) return;
 
@@ -260,7 +259,7 @@ const updateEventTicketVisibility = () => {
     heroBounds.bottom > headerClearance && upcomingBounds.top > window.innerHeight * 0.9;
 
   if (introIsVisible) {
-    showEventTicket("intro");
+    showEventTicket();
   } else {
     hideEventTicket();
   }
