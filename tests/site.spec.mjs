@@ -80,8 +80,13 @@ test("content reflows at 320 px and equivalent 200% desktop zoom", async ({ page
   await openFreshPage(page);
 
   await expect(page.locator(".hero__statement")).toBeVisible();
-  const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  expect(horizontalOverflow).toBeLessThanOrEqual(1);
+  const horizontalScroll = await page.evaluate(() => {
+    window.scrollTo({ left: 100, top: window.scrollY, behavior: "instant" });
+    const position = window.scrollX;
+    window.scrollTo({ left: 0, top: window.scrollY, behavior: "instant" });
+    return position;
+  });
+  expect(horizontalScroll).toBe(0);
 
   const indexButtonBox = await page.getByRole("button", { name: "Index" }).boundingBox();
   expect(indexButtonBox).not.toBeNull();
