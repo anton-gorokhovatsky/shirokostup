@@ -1,0 +1,2 @@
+# Pillow 11.3 is the last Python 3.9-compatible release and ships AVIF support in its standard wheels.
+Pillow==11.3.0

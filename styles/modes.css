@@ -1,0 +1,217 @@
+@media print {
+  :root {
+    color-scheme: light;
+  }
+
+  body {
+    color: #111310;
+    background: #fff;
+  }
+
+  .site-header,
+  .site-index,
+  .reading-progress,
+  .cursor-trail,
+  .event-ticket,
+  .scroll-cue {
+    display: none !important;
+  }
+
+  .js [data-reveal],
+  .js .now__card[data-reveal] .now__date,
+  .js .now__card[data-reveal] .now__copy,
+  .js .section-heading h2[data-reveal] > span {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .hero,
+  .practice-statement,
+  .now,
+  .section-heading,
+  .project,
+  .about,
+  .texts,
+  .contact {
+    min-height: 0;
+    break-inside: auto;
+  }
+
+  .archive-card,
+  .texts__list li,
+  .timeline li {
+    break-inside: avoid;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .site-header.is-scrolled .brand {
+    transition-delay: 0s;
+  }
+
+  .hero__mark-aurora,
+  .climate-field__path--observed {
+    animation: none !important;
+  }
+}
+
+:root[data-motion="reduced"] {
+  scroll-behavior: auto;
+}
+
+:root[data-motion="reduced"] *,
+:root[data-motion="reduced"] *::before,
+:root[data-motion="reduced"] *::after {
+  scroll-behavior: auto !important;
+  animation-duration: 0.01ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0s !important;
+}
+
+:root[data-motion="reduced"]::view-transition-old(root),
+:root[data-motion="reduced"]::view-transition-new(root) {
+  animation: none !important;
+}
+
+:root.js[data-motion="reduced"] [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+:root.js[data-motion="reduced"] .section-heading h2[data-reveal] > span,
+:root.js[data-motion="reduced"] .now__card[data-reveal] .now__date,
+:root.js[data-motion="reduced"] .now__card[data-reveal] .now__copy {
+  opacity: 1;
+  transform: none;
+}
+
+:root[data-motion="reduced"] .site-header.is-scrolled .brand {
+  transition-delay: 0s;
+}
+
+:root[data-motion="reduced"] .cursor-trail {
+  display: none;
+}
+
+:root[data-motion="reduced"] .hero__mark-aurora {
+  animation: none;
+  opacity: 0.52;
+}
+
+:root[data-motion="reduced"] .climate-field__path--observed {
+  animation: none;
+}
+
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-trail {
+    display: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .cursor-trail {
+    display: none;
+  }
+
+  .site-header,
+  .site-header.is-scrolled,
+  .site-header[data-header-ink] {
+    color: var(--ink);
+    background: var(--paper);
+    border-bottom: 2px solid currentColor;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .theme-switcher,
+  .theme-choice[aria-pressed="true"] {
+    background: var(--paper);
+    border-color: currentColor;
+    box-shadow: none;
+  }
+
+  .brand,
+  .index-button,
+  .theme-switcher {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .site-index {
+    background: var(--paper);
+    border: 2px solid currentColor;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .event-ticket {
+    background: var(--paper);
+    border: 2px solid currentColor;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .site-index__top::after {
+    height: 2px;
+    background: currentColor;
+    opacity: 1;
+  }
+
+  .theme-choice[aria-pressed="true"] {
+    outline: 2px solid currentColor;
+    outline-offset: -3px;
+  }
+
+  .index-button::before {
+    display: none;
+  }
+
+  .archive-card,
+  .forum-overlay span,
+  .forum-caption {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .text-link,
+  .texts__list a,
+  .timeline li,
+  .section-label {
+    border-width: 2px;
+  }
+
+  a:hover {
+    text-decoration-thickness: 0.12em;
+  }
+}

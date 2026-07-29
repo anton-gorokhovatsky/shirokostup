@@ -2,7 +2,17 @@
   "name": "olga-shirokostup-portfolio",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@11.9.0",
   "scripts": {
-    "check": "node scripts/check-site.mjs && node --check script.js"
+    "build": "node scripts/build-assets.mjs",
+    "build:check": "node scripts/build-assets.mjs --check",
+    "check": "node scripts/build-assets.mjs --check && node scripts/check-site.mjs && node scripts/check-performance-budget.mjs && node --check script.js",
+    "images": "python3 scripts/generate-responsive-images.py",
+    "test": "playwright test",
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.62.0"
   }
 }
