@@ -149,6 +149,20 @@ test("non-interactive forum image has no false hover action", async ({ page }, t
   await expect(image).toHaveCSS("transform", "none");
 });
 
+test("decorative route illustrations render as solid strokes", async ({ page }) => {
+  await openFreshPage(page, "work");
+
+  const routeDashArrays = await page.locator(".women-route > path").evaluateAll((paths) =>
+    paths.map((path) => getComputedStyle(path).strokeDasharray),
+  );
+  const traceDashArrays = await page.locator(".climate-field__trace").evaluateAll((paths) =>
+    paths.map((path) => getComputedStyle(path).strokeDasharray),
+  );
+
+  expect(routeDashArrays).toEqual(["none", "none", "none", "none"]);
+  expect(traceDashArrays).toEqual(["none", "none"]);
+});
+
 test("rendered page has no serious WCAG A or AA violations", async ({ page }) => {
   await openFreshPage(page);
 

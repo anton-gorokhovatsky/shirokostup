@@ -588,7 +588,7 @@
 
   .climate-field__trace {
     stroke-dasharray: none;
-    stroke-dashoffset: 0;
+    opacity: 1;
     transition: none;
   }
 

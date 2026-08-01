@@ -79,6 +79,12 @@
   .climate-field__path--observed {
     animation: none !important;
   }
+
+  .js .women-route__underlay,
+  .js .women-route__line,
+  .climate-field__trace {
+    opacity: 1 !important;
+  }
 }
 
 :root[data-motion="reduced"] {
@@ -128,6 +134,12 @@
 
 :root[data-motion="reduced"] .climate-field__path--observed {
   animation: none;
+}
+
+:root.js[data-motion="reduced"] .women-route__underlay,
+:root.js[data-motion="reduced"] .women-route__line,
+:root[data-motion="reduced"] .climate-field__trace {
+  opacity: 1;
 }
 
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
