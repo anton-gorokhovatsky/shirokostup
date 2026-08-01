@@ -2225,14 +2225,18 @@ body.menu-open .event-ticket {
 
 .js .women-route__underlay,
 .js .women-route__line {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 1.35s var(--ease-enter) 180ms;
+  stroke-dasharray: none;
+  opacity: 0;
+  transition: opacity 680ms var(--ease-enter) 180ms;
 }
 
 .js .project__visual--women-stack.is-visible .women-route__underlay,
 .js .project__visual--women-stack.is-visible .women-route__line {
-  stroke-dashoffset: 0;
+  opacity: 1;
+}
+
+.js .project__visual--women-stack.is-visible .women-route__branch {
+  opacity: 0.72;
 }
 
 .women-route__points {
@@ -2542,9 +2546,9 @@ body.menu-open .event-ticket {
   stroke-width: 1.15px;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 1.4s var(--ease-enter);
+  stroke-dasharray: none;
+  opacity: 0;
+  transition: opacity 720ms var(--ease-enter);
   vector-effect: non-scaling-stroke;
 }
 
@@ -2558,7 +2562,7 @@ body.menu-open .event-ticket {
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__trace {
-  stroke-dashoffset: 0;
+  opacity: 1;
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__path--baseline .climate-field__trace {
@@ -3990,7 +3994,7 @@ body.menu-open .event-ticket {
 
   .climate-field__trace {
     stroke-dasharray: none;
-    stroke-dashoffset: 0;
+    opacity: 1;
     transition: none;
   }
 
@@ -4355,6 +4359,12 @@ body.menu-open .event-ticket {
   .climate-field__path--observed {
     animation: none !important;
   }
+
+  .js .women-route__underlay,
+  .js .women-route__line,
+  .climate-field__trace {
+    opacity: 1 !important;
+  }
 }
 
 :root[data-motion="reduced"] {
@@ -4404,6 +4414,12 @@ body.menu-open .event-ticket {
 
 :root[data-motion="reduced"] .climate-field__path--observed {
   animation: none;
+}
+
+:root.js[data-motion="reduced"] .women-route__underlay,
+:root.js[data-motion="reduced"] .women-route__line,
+:root[data-motion="reduced"] .climate-field__trace {
+  opacity: 1;
 }
 
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
