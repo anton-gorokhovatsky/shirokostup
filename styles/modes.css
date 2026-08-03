@@ -85,6 +85,10 @@
   .climate-field__trace {
     opacity: 1 !important;
   }
+
+  .js .arca-network__links path {
+    opacity: 0.72 !important;
+  }
 }
 
 :root[data-motion="reduced"] {
@@ -140,6 +144,10 @@
 :root.js[data-motion="reduced"] .women-route__line,
 :root[data-motion="reduced"] .climate-field__trace {
   opacity: 1;
+}
+
+:root.js[data-motion="reduced"] .arca-network__links path {
+  opacity: 0.72;
 }
 
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {

@@ -2824,8 +2824,7 @@ body.menu-open .event-ticket {
   stroke-width: 1.15px;
   opacity: 0.72;
   stroke-linecap: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
+  stroke-dasharray: none;
   vector-effect: non-scaling-stroke;
 }
 
@@ -2837,11 +2836,11 @@ body.menu-open .event-ticket {
 }
 
 .js .timeline:not(.is-visible) .arca-network__links path {
-  stroke-dashoffset: 1;
+  opacity: 0;
 }
 
 .js .timeline .arca-network__links path {
-  transition: stroke-dashoffset 1s var(--ease-enter) 280ms;
+  transition: opacity 680ms var(--ease-enter) 280ms;
 }
 
 .js .timeline:not(.is-visible) .arca-network__places circle {
@@ -4378,6 +4377,10 @@ body.menu-open .event-ticket {
   .climate-field__trace {
     opacity: 1 !important;
   }
+
+  .js .arca-network__links path {
+    opacity: 0.72 !important;
+  }
 }
 
 :root[data-motion="reduced"] {
@@ -4433,6 +4436,10 @@ body.menu-open .event-ticket {
 :root.js[data-motion="reduced"] .women-route__line,
 :root[data-motion="reduced"] .climate-field__trace {
   opacity: 1;
+}
+
+:root.js[data-motion="reduced"] .arca-network__links path {
+  opacity: 0.72;
 }
 
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
