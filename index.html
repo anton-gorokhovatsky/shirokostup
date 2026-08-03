@@ -107,7 +107,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=b7cbbee8e4" />
+    <link rel="stylesheet" href="styles.css?v=b83656cef8" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -595,30 +595,40 @@
                 aria-hidden="true"
                 focusable="false"
               >
-                <path
-                  class="women-route__underlay"
-                  pathLength="1"
-                  vector-effect="non-scaling-stroke"
-                  d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
-                />
-                <path
-                  class="women-route__line"
-                  pathLength="1"
-                  vector-effect="non-scaling-stroke"
-                  d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
-                />
-                <path
-                  class="women-route__underlay women-route__branch"
-                  pathLength="1"
-                  vector-effect="non-scaling-stroke"
-                  d="M-96 676C26 617 90 701 170 660c80-41 103-110 179-84 62 21 54 98 137 118 67 16 98-33 156-74"
-                />
-                <path
-                  class="women-route__line women-route__branch"
-                  pathLength="1"
-                  vector-effect="non-scaling-stroke"
-                  d="M-96 676C26 617 90 701 170 660c80-41 103-110 179-84 62 21 54 98 137 118 67 16 98-33 156-74"
-                />
+                <defs>
+                  <mask id="women-route-reveal" x="-140" y="-100" width="840" height="1220" maskUnits="userSpaceOnUse">
+                    <path
+                      class="route-reveal-path women-route__reveal women-route__reveal--main"
+                      d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
+                    />
+                    <path
+                      class="route-reveal-path women-route__reveal women-route__reveal--branch"
+                      d="M-96 676C26 617 90 701 170 660c80-41 103-110 179-84 62 21 54 98 137 118 67 16 98-33 156-74"
+                    />
+                  </mask>
+                </defs>
+                <g class="women-route__art" mask="url(#women-route-reveal)">
+                  <path
+                    class="women-route__underlay"
+                    vector-effect="non-scaling-stroke"
+                    d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
+                  />
+                  <path
+                    class="women-route__line"
+                    vector-effect="non-scaling-stroke"
+                    d="M438-64C427 11 389 38 378 91c-10 46 15 82-19 122-32 38-68 53-55 104 15 60-41 78-78 121-48 56 9 104-1 164-13 79-87 98-68 178 18 76 112 86 136 156 19 57 48 95 82 142"
+                  />
+                  <path
+                    class="women-route__underlay women-route__branch"
+                    vector-effect="non-scaling-stroke"
+                    d="M-96 676C26 617 90 701 170 660c80-41 103-110 179-84 62 21 54 98 137 118 67 16 98-33 156-74"
+                  />
+                  <path
+                    class="women-route__line women-route__branch"
+                    vector-effect="non-scaling-stroke"
+                    d="M-96 676C26 617 90 701 170 660c80-41 103-110 179-84 62 21 54 98 137 118 67 16 98-33 156-74"
+                  />
+                </g>
                 <g class="women-route__points">
                   <g class="women-route__cluster women-route__cluster--north">
                     <circle cx="378" cy="91" r="1.35" />
@@ -1106,18 +1116,30 @@
             aria-hidden="true"
             focusable="false"
           >
+            <defs>
+              <mask id="climate-baseline-reveal" x="-180" y="150" width="2020" height="700" maskUnits="userSpaceOnUse">
+                <path
+                  class="route-reveal-path climate-field__reveal climate-field__reveal--baseline"
+                  d="M-120 758C80 730 174 748 306 715C438 682 500 712 620 656C742 599 786 516 882 470C988 420 1047 442 1124 408C1207 372 1264 295 1362 282C1452 270 1510 318 1606 294C1662 280 1714 249 1760 228"
+                />
+              </mask>
+              <mask id="climate-observed-reveal" x="-180" y="150" width="2020" height="700" maskUnits="userSpaceOnUse">
+                <path
+                  class="route-reveal-path climate-field__reveal climate-field__reveal--observed"
+                  d="M-120 771C84 742 180 761 311 728C443 695 507 725 627 668C750 610 794 529 891 482C996 432 1054 455 1132 421C1216 385 1272 309 1370 296C1460 284 1518 333 1614 309C1670 295 1722 265 1760 244"
+                />
+              </mask>
+            </defs>
             <g class="climate-field__traces">
-              <g class="climate-field__path climate-field__path--baseline">
+              <g class="climate-field__path climate-field__path--baseline" mask="url(#climate-baseline-reveal)">
                 <path
                   class="climate-field__trace climate-field__trace--baseline"
-                  pathLength="1"
                   d="M-120 758C80 730 174 748 306 715C438 682 500 712 620 656C742 599 786 516 882 470C988 420 1047 442 1124 408C1207 372 1264 295 1362 282C1452 270 1510 318 1606 294C1662 280 1714 249 1760 228"
                 />
               </g>
-              <g class="climate-field__path climate-field__path--observed">
+              <g class="climate-field__path climate-field__path--observed" mask="url(#climate-observed-reveal)">
                 <path
                   class="climate-field__trace climate-field__trace--observed"
-                  pathLength="1"
                   d="M-120 771C84 742 180 761 311 728C443 695 507 725 627 668C750 610 794 529 891 482C996 432 1054 455 1132 421C1216 385 1272 309 1370 296C1460 284 1518 333 1614 309C1670 295 1722 265 1760 244"
                 />
               </g>
@@ -1171,9 +1193,21 @@
               <span class="timeline__date"><time>2024—27</time></span>
               <span class="timeline__role">Curator, ARCA European research project</span>
               <svg class="arca-network timeline__state" viewBox="0 0 72 42" aria-hidden="true" focusable="false">
-                <g class="arca-network__links">
-                  <path pathLength="1" d="M7 29C19 8 34 8 43 20S58 37 67 12" />
-                  <path pathLength="1" d="M7 29C25 37 46 38 67 12" />
+                <defs>
+                  <mask id="arca-network-reveal" x="0" y="0" width="72" height="42" maskUnits="userSpaceOnUse">
+                    <path
+                      class="route-reveal-path arca-network__reveal arca-network__reveal--arc"
+                      d="M7 29C19 8 34 8 43 20S58 37 67 12"
+                    />
+                    <path
+                      class="route-reveal-path arca-network__reveal arca-network__reveal--direct"
+                      d="M7 29C25 37 46 38 67 12"
+                    />
+                  </mask>
+                </defs>
+                <g class="arca-network__links" mask="url(#arca-network-reveal)">
+                  <path d="M7 29C19 8 34 8 43 20S58 37 67 12" />
+                  <path d="M7 29C25 37 46 38 67 12" />
                 </g>
                 <g class="arca-network__places">
                   <circle cx="7" cy="29" r="3" />

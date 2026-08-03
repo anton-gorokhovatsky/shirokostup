@@ -123,6 +123,22 @@
   vector-effect: non-scaling-stroke;
 }
 
+.arca-network__reveal {
+  --route-reveal-width: 4;
+}
+
+.arca-network__reveal--arc {
+  --route-draw-length: 85;
+  --route-draw-duration: 980ms;
+  --route-draw-delay: 240ms;
+}
+
+.arca-network__reveal--direct {
+  --route-draw-length: 69;
+  --route-draw-duration: 820ms;
+  --route-draw-delay: 390ms;
+}
+
 .arca-network__places circle {
   fill: currentColor;
   stroke: currentColor;
@@ -130,12 +146,8 @@
   vector-effect: non-scaling-stroke;
 }
 
-.js .timeline:not(.is-visible) .arca-network__links path {
-  opacity: 0;
-}
-
-.js .timeline .arca-network__links path {
-  transition: opacity 680ms var(--ease-enter) 280ms;
+.js .timeline.is-visible .arca-network__reveal {
+  animation: route-reveal-draw var(--route-draw-duration) var(--ease-move) var(--route-draw-delay) both;
 }
 
 .js .timeline:not(.is-visible) .arca-network__places circle {
@@ -146,8 +158,8 @@
 .js .timeline .arca-network__places circle {
   transform-box: fill-box;
   transform-origin: center;
-  transition: opacity var(--duration-medium) var(--ease-enter) 620ms,
-    transform var(--duration-medium) var(--ease-settle) 620ms;
+  transition: opacity var(--duration-medium) var(--ease-enter) 960ms,
+    transform var(--duration-medium) var(--ease-settle) 960ms;
 }
 
 .timeline .ongoing-status {
