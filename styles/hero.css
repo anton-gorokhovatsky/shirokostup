@@ -18,7 +18,7 @@
 
 .eyebrow {
   margin: 0 0 clamp(1.75rem, 4svh, 4rem);
-  font-size: 0.75rem;
+  font-size: var(--type-meta);
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
@@ -54,10 +54,10 @@
 }
 
 .hero__statement {
-  max-width: 48rem;
+  max-inline-size: var(--measure-statement);
   margin: 0;
   font-family: var(--serif);
-  font-size: clamp(1.45rem, 2.7vw, 2.85rem);
+  font-size: var(--type-display-lead);
   line-height: 1.08;
   letter-spacing: -0.026em;
 }
@@ -81,7 +81,7 @@
   display: flex;
   gap: 1rem;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: var(--type-meta);
   text-decoration: none;
   text-transform: uppercase;
   transform: rotate(90deg) translateX(50%);
@@ -169,9 +169,9 @@
 }
 
 .practice-statement__note {
-  max-width: 35rem;
+  max-inline-size: var(--measure-prose);
   margin: 0 0 0 auto;
-  font-size: clamp(1rem, 1.35vw, 1.3rem);
+  font-size: var(--type-body-lead);
   line-height: 1.5;
 }
 

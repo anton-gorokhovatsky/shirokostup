@@ -463,7 +463,7 @@
   }
 
   .project__description {
-    font-size: 1rem;
+    font-size: var(--type-body);
   }
 
   .project__visual--women-stack,

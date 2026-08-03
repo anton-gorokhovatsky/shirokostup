@@ -25,8 +25,9 @@
 }
 
 .about__intro > p {
+  max-inline-size: var(--measure-prose-narrow);
   margin: 0;
-  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  font-size: var(--type-body-lead);
   line-height: 1.55;
 }
 
@@ -38,9 +39,9 @@
 }
 
 .about__biography {
-  max-width: 57rem;
+  max-inline-size: var(--measure-editorial);
   font-family: var(--serif);
-  font-size: clamp(1.65rem, 2.8vw, 3rem);
+  font-size: var(--type-editorial-copy);
   line-height: 1.15;
   letter-spacing: -0.025em;
 }
@@ -285,7 +286,7 @@
   display: inline-flex;
   gap: 0.65rem;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: var(--type-meta);
   letter-spacing: 0.06em;
   overflow-wrap: normal;
   text-transform: uppercase;
@@ -313,7 +314,7 @@
 
 .texts__list strong {
   font-family: var(--serif);
-  font-size: clamp(1.45rem, 2.65vw, 3rem);
+  font-size: var(--type-reading-heading);
   font-weight: 400;
   line-height: 1.08;
   letter-spacing: -0.026em;
