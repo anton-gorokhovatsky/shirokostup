@@ -73,6 +73,18 @@
   --gutter: clamp(1.25rem, 3.5vw, 4.5rem);
   --section-top-clearance: clamp(6rem, 10vh, 8rem);
   --type-hero: clamp(3.1rem, calc(1.05rem + 9.6vw), 10.5rem);
+  --type-feature-heading: clamp(2.8rem, calc(0.5rem + 5.45vw), 7rem);
+  --type-project-heading: clamp(3.1rem, calc(1.4rem + 3.85vw), 6.4rem);
+  --type-reading-heading: clamp(1.45rem, calc(0.75rem + 1.82vw), 3rem);
+  --type-display-lead: clamp(1.45rem, calc(0.35rem + 2.31vw), 2.85rem);
+  --type-editorial-copy: clamp(1.65rem, calc(0.65rem + 2.08vw), 3rem);
+  --type-body-lead: clamp(1rem, calc(0.9rem + 0.3vw), 1.3rem);
+  --type-body: 1rem;
+  --type-meta: 0.75rem;
+  --measure-statement: 35ch;
+  --measure-prose: 50ch;
+  --measure-prose-narrow: 40ch;
+  --measure-editorial: 32ch;
   --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
   --sans: Arial, Helvetica, sans-serif;
 }
@@ -239,7 +251,7 @@ body {
   background-image: radial-gradient(var(--texture-dot) 0.65px, transparent 0.65px);
   background-size: 5px 5px;
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: var(--type-body);
   line-height: 1.4;
   overflow-wrap: break-word;
   font-kerning: normal;
@@ -1212,7 +1224,7 @@ button {
 
 .eyebrow {
   margin: 0 0 clamp(1.75rem, 4svh, 4rem);
-  font-size: 0.75rem;
+  font-size: var(--type-meta);
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
@@ -1248,10 +1260,10 @@ button {
 }
 
 .hero__statement {
-  max-width: 48rem;
+  max-inline-size: var(--measure-statement);
   margin: 0;
   font-family: var(--serif);
-  font-size: clamp(1.45rem, 2.7vw, 2.85rem);
+  font-size: var(--type-display-lead);
   line-height: 1.08;
   letter-spacing: -0.026em;
 }
@@ -1275,7 +1287,7 @@ button {
   display: flex;
   gap: 1rem;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: var(--type-meta);
   text-decoration: none;
   text-transform: uppercase;
   transform: rotate(90deg) translateX(50%);
@@ -1363,9 +1375,9 @@ button {
 }
 
 .practice-statement__note {
-  max-width: 35rem;
+  max-inline-size: var(--measure-prose);
   margin: 0 0 0 auto;
-  font-size: clamp(1rem, 1.35vw, 1.3rem);
+  font-size: var(--type-body-lead);
   line-height: 1.5;
 }
 
@@ -1744,7 +1756,7 @@ body.menu-open .event-ticket {
 
 .now__date span,
 .now__copy > p {
-  font-size: 0.75rem;
+  font-size: var(--type-meta);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -1757,7 +1769,7 @@ body.menu-open .event-ticket {
   max-width: 62rem;
   margin: 0;
   font-family: var(--serif);
-  font-size: clamp(2.8rem, 6vw, 7rem);
+  font-size: var(--type-feature-heading);
   font-weight: 400;
   line-height: 0.95;
   letter-spacing: -0.048em;
@@ -1860,7 +1872,7 @@ body.menu-open .event-ticket {
 .project__type,
 .project__years,
 .project figcaption {
-  font-size: 0.75rem;
+  font-size: var(--type-meta);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -1892,7 +1904,7 @@ body.menu-open .event-ticket {
 .project h3 {
   margin: 1.2rem 0 1.5rem;
   font-family: var(--serif);
-  font-size: clamp(3.1rem, 5.4vw, 6.4rem);
+  font-size: var(--type-project-heading);
   font-weight: 400;
   line-height: 0.92;
   letter-spacing: -0.052em;
@@ -1968,9 +1980,9 @@ body.menu-open .event-ticket {
 }
 
 .project__description {
-  max-width: 35rem;
+  max-inline-size: var(--measure-prose);
   margin: 1.5rem 0 2rem;
-  font-size: clamp(1rem, 1.25vw, 1.25rem);
+  font-size: var(--type-body-lead);
   line-height: 1.52;
 }
 
@@ -2718,8 +2730,9 @@ body.menu-open .event-ticket {
 }
 
 .about__intro > p {
+  max-inline-size: var(--measure-prose-narrow);
   margin: 0;
-  font-size: clamp(1rem, 1.3vw, 1.25rem);
+  font-size: var(--type-body-lead);
   line-height: 1.55;
 }
 
@@ -2731,9 +2744,9 @@ body.menu-open .event-ticket {
 }
 
 .about__biography {
-  max-width: 57rem;
+  max-inline-size: var(--measure-editorial);
   font-family: var(--serif);
-  font-size: clamp(1.65rem, 2.8vw, 3rem);
+  font-size: var(--type-editorial-copy);
   line-height: 1.15;
   letter-spacing: -0.025em;
 }
@@ -2978,7 +2991,7 @@ body.menu-open .event-ticket {
   display: inline-flex;
   gap: 0.65rem;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: var(--type-meta);
   letter-spacing: 0.06em;
   overflow-wrap: normal;
   text-transform: uppercase;
@@ -3006,7 +3019,7 @@ body.menu-open .event-ticket {
 
 .texts__list strong {
   font-family: var(--serif);
-  font-size: clamp(1.45rem, 2.65vw, 3rem);
+  font-size: var(--type-reading-heading);
   font-weight: 400;
   line-height: 1.08;
   letter-spacing: -0.026em;
@@ -3869,7 +3882,7 @@ body.menu-open .event-ticket {
   }
 
   .project__description {
-    font-size: 1rem;
+    font-size: var(--type-body);
   }
 
   .project__visual--women-stack,

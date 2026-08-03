@@ -70,6 +70,18 @@
   --gutter: clamp(1.25rem, 3.5vw, 4.5rem);
   --section-top-clearance: clamp(6rem, 10vh, 8rem);
   --type-hero: clamp(3.1rem, calc(1.05rem + 9.6vw), 10.5rem);
+  --type-feature-heading: clamp(2.8rem, calc(0.5rem + 5.45vw), 7rem);
+  --type-project-heading: clamp(3.1rem, calc(1.4rem + 3.85vw), 6.4rem);
+  --type-reading-heading: clamp(1.45rem, calc(0.75rem + 1.82vw), 3rem);
+  --type-display-lead: clamp(1.45rem, calc(0.35rem + 2.31vw), 2.85rem);
+  --type-editorial-copy: clamp(1.65rem, calc(0.65rem + 2.08vw), 3rem);
+  --type-body-lead: clamp(1rem, calc(0.9rem + 0.3vw), 1.3rem);
+  --type-body: 1rem;
+  --type-meta: 0.75rem;
+  --measure-statement: 35ch;
+  --measure-prose: 50ch;
+  --measure-prose-narrow: 40ch;
+  --measure-editorial: 32ch;
   --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
   --sans: Arial, Helvetica, sans-serif;
 }
@@ -236,7 +248,7 @@ body {
   background-image: radial-gradient(var(--texture-dot) 0.65px, transparent 0.65px);
   background-size: 5px 5px;
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: var(--type-body);
   line-height: 1.4;
   overflow-wrap: break-word;
   font-kerning: normal;
