@@ -629,20 +629,24 @@
   opacity: 0.72;
 }
 
-.js .women-route__underlay,
-.js .women-route__line {
-  stroke-dasharray: none;
-  opacity: 0;
-  transition: opacity 680ms var(--ease-enter) 180ms;
+.women-route__reveal {
+  --route-reveal-width: 10;
 }
 
-.js .project__visual--women-stack.is-visible .women-route__underlay,
-.js .project__visual--women-stack.is-visible .women-route__line {
-  opacity: 1;
+.women-route__reveal--main {
+  --route-draw-length: 1317;
+  --route-draw-duration: 2100ms;
+  --route-draw-delay: 120ms;
 }
 
-.js .project__visual--women-stack.is-visible .women-route__branch {
-  opacity: 0.72;
+.women-route__reveal--branch {
+  --route-draw-length: 847;
+  --route-draw-duration: 1600ms;
+  --route-draw-delay: 420ms;
+}
+
+.js .project__visual--women-stack.is-visible .women-route__reveal {
+  animation: route-reveal-draw var(--route-draw-duration) var(--ease-move) var(--route-draw-delay) both;
 }
 
 .women-route__points {
@@ -677,17 +681,17 @@
 
 .js .women-route__cluster--north,
 .js .women-route__cluster--waypoints {
-  transition-delay: 520ms;
+  transition-delay: 640ms;
 }
 
 .js .women-route__cluster--mid,
 .js .women-route__cluster--junction {
-  transition-delay: 860ms;
+  transition-delay: 1.04s;
 }
 
 .js .women-route__cluster--south,
 .js .women-route__cluster--branch-end {
-  transition-delay: 1.18s;
+  transition-delay: 1.55s;
 }
 
 .archive-card {
@@ -953,8 +957,7 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: none;
-  opacity: 0;
-  transition: opacity 720ms var(--ease-enter);
+  opacity: 1;
   vector-effect: non-scaling-stroke;
 }
 
@@ -967,20 +970,26 @@
   animation-play-state: paused;
 }
 
-.project__visual--forum.is-visible + .climate-field .climate-field__trace {
-  opacity: 1;
+.climate-field__reveal {
+  --route-reveal-width: 16;
+  --route-draw-length: 2010;
+  --route-draw-duration: 1900ms;
 }
 
-.project__visual--forum.is-visible + .climate-field .climate-field__path--baseline .climate-field__trace {
-  transition-delay: 160ms;
+.climate-field__reveal--baseline {
+  --route-draw-delay: 100ms;
+}
+
+.climate-field__reveal--observed {
+  --route-draw-delay: 260ms;
+}
+
+.js .project__visual--forum.is-visible + .climate-field .climate-field__reveal {
+  animation: route-reveal-draw var(--route-draw-duration) var(--ease-move) var(--route-draw-delay) both;
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__path--observed {
   animation-play-state: running;
-}
-
-.project__visual--forum.is-visible + .climate-field .climate-field__path--observed .climate-field__trace {
-  transition-delay: 300ms;
 }
 
 .climate-field__stations line {
@@ -1001,15 +1010,15 @@
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__stations line:nth-child(1) {
-  transition-delay: 620ms;
+  transition-delay: 640ms;
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__stations line:nth-child(2) {
-  transition-delay: 780ms;
+  transition-delay: 1.05s;
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__stations line:nth-child(3) {
-  transition-delay: 940ms;
+  transition-delay: 1.45s;
 }
 
 @keyframes climate-micro-shift {

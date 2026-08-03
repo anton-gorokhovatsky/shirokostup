@@ -287,6 +287,29 @@ img {
   max-width: 100%;
 }
 
+/* Draw route masks instead of dashing the visible artwork: Chrome and Safari
+   can then animate the reveal without ever fragmenting the final stroke. */
+.route-reveal-path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: var(--route-reveal-width, 12);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: none;
+  stroke-dashoffset: 0;
+}
+
+.js .route-reveal-path {
+  stroke-dasharray: var(--route-draw-length);
+  stroke-dashoffset: var(--route-draw-length);
+}
+
+@keyframes route-reveal-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .icon-sprite {
   position: absolute;
   width: 0;

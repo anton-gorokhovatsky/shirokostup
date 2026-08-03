@@ -149,10 +149,10 @@ test("non-interactive forum image has no false hover action", async ({ page }, t
   await expect(image).toHaveCSS("transform", "none");
 });
 
-test("decorative route illustrations render as solid strokes", async ({ page }) => {
+test("decorative routes draw through stable masks and finish as solid strokes", async ({ page }) => {
   await openFreshPage(page, "work");
 
-  const routeDashArrays = await page.locator(".women-route > path").evaluateAll((paths) =>
+  const routeDashArrays = await page.locator(".women-route__art > path").evaluateAll((paths) =>
     paths.map((path) => getComputedStyle(path).strokeDasharray),
   );
   const traceDashArrays = await page.locator(".climate-field__trace").evaluateAll((paths) =>
@@ -166,10 +166,40 @@ test("decorative route illustrations render as solid strokes", async ({ page }) 
   expect(traceDashArrays).toEqual(["none", "none"]);
   expect(arcaDashArrays).toEqual(["none", "none"]);
 
+  const normalizedPathLengths = await page.locator(".route-reveal-path, .women-route__art > path, .climate-field__trace, .arca-network__links path").evaluateAll(
+    (paths) => paths.map((path) => path.getAttribute("pathLength")),
+  );
+  expect(normalizedPathLengths.every((pathLength) => pathLength === null)).toBe(true);
+
+  const routeSequences = [
+    {
+      trigger: page.locator(".project__visual--women-stack"),
+      reveal: page.locator(".women-route__reveal"),
+    },
+    {
+      trigger: page.locator(".project__visual--forum"),
+      reveal: page.locator(".climate-field__reveal"),
+    },
+    {
+      trigger: page.locator(".timeline"),
+      reveal: page.locator(".arca-network__reveal"),
+    },
+  ];
+
+  for (const { trigger, reveal } of routeSequences) {
+    await trigger.scrollIntoViewIfNeeded();
+    await expect(reveal.first()).toHaveCSS("animation-name", "route-reveal-draw");
+    await expect(reveal.first()).toHaveCSS("stroke-dashoffset", "0px", { timeout: 4_000 });
+    await expect(reveal.last()).toHaveCSS("stroke-dashoffset", "0px", { timeout: 4_000 });
+  }
+
   await page.getByRole("button", { name: "Index" }).click();
   const dialog = page.getByRole("dialog", { name: "Index" });
   await dialog.getByRole("button", { name: "Reduced" }).click();
-  await expect(page.locator(".arca-network__links path").first()).toHaveCSS("opacity", "0.72");
+  const reducedReveal = page.locator(".route-reveal-path");
+  await expect(reducedReveal.first()).toHaveCSS("animation-name", "none");
+  await expect(reducedReveal.first()).toHaveCSS("stroke-dasharray", "none");
+  await expect(reducedReveal.first()).toHaveCSS("stroke-dashoffset", "0px");
 });
 
 test("rendered page has no serious WCAG A or AA violations", async ({ page }) => {

@@ -290,6 +290,29 @@ img {
   max-width: 100%;
 }
 
+/* Draw route masks instead of dashing the visible artwork: Chrome and Safari
+   can then animate the reveal without ever fragmenting the final stroke. */
+.route-reveal-path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: var(--route-reveal-width, 12);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: none;
+  stroke-dashoffset: 0;
+}
+
+.js .route-reveal-path {
+  stroke-dasharray: var(--route-draw-length);
+  stroke-dashoffset: var(--route-draw-length);
+}
+
+@keyframes route-reveal-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .icon-sprite {
   position: absolute;
   width: 0;
@@ -2235,20 +2258,24 @@ body.menu-open .event-ticket {
   opacity: 0.72;
 }
 
-.js .women-route__underlay,
-.js .women-route__line {
-  stroke-dasharray: none;
-  opacity: 0;
-  transition: opacity 680ms var(--ease-enter) 180ms;
+.women-route__reveal {
+  --route-reveal-width: 10;
 }
 
-.js .project__visual--women-stack.is-visible .women-route__underlay,
-.js .project__visual--women-stack.is-visible .women-route__line {
-  opacity: 1;
+.women-route__reveal--main {
+  --route-draw-length: 1317;
+  --route-draw-duration: 2100ms;
+  --route-draw-delay: 120ms;
 }
 
-.js .project__visual--women-stack.is-visible .women-route__branch {
-  opacity: 0.72;
+.women-route__reveal--branch {
+  --route-draw-length: 847;
+  --route-draw-duration: 1600ms;
+  --route-draw-delay: 420ms;
+}
+
+.js .project__visual--women-stack.is-visible .women-route__reveal {
+  animation: route-reveal-draw var(--route-draw-duration) var(--ease-move) var(--route-draw-delay) both;
 }
 
 .women-route__points {
@@ -2283,17 +2310,17 @@ body.menu-open .event-ticket {
 
 .js .women-route__cluster--north,
 .js .women-route__cluster--waypoints {
-  transition-delay: 520ms;
+  transition-delay: 640ms;
 }
 
 .js .women-route__cluster--mid,
 .js .women-route__cluster--junction {
-  transition-delay: 860ms;
+  transition-delay: 1.04s;
 }
 
 .js .women-route__cluster--south,
 .js .women-route__cluster--branch-end {
-  transition-delay: 1.18s;
+  transition-delay: 1.55s;
 }
 
 .archive-card {
@@ -2559,8 +2586,7 @@ body.menu-open .event-ticket {
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: none;
-  opacity: 0;
-  transition: opacity 720ms var(--ease-enter);
+  opacity: 1;
   vector-effect: non-scaling-stroke;
 }
 
@@ -2573,20 +2599,26 @@ body.menu-open .event-ticket {
   animation-play-state: paused;
 }
 
-.project__visual--forum.is-visible + .climate-field .climate-field__trace {
-  opacity: 1;
+.climate-field__reveal {
+  --route-reveal-width: 16;
+  --route-draw-length: 2010;
+  --route-draw-duration: 1900ms;
 }
 
-.project__visual--forum.is-visible + .climate-field .climate-field__path--baseline .climate-field__trace {
-  transition-delay: 160ms;
+.climate-field__reveal--baseline {
+  --route-draw-delay: 100ms;
+}
+
+.climate-field__reveal--observed {
+  --route-draw-delay: 260ms;
+}
+
+.js .project__visual--forum.is-visible + .climate-field .climate-field__reveal {
+  animation: route-reveal-draw var(--route-draw-duration) var(--ease-move) var(--route-draw-delay) both;
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__path--observed {
   animation-play-state: running;
-}
-
-.project__visual--forum.is-visible + .climate-field .climate-field__path--observed .climate-field__trace {
-  transition-delay: 300ms;
 }
 
 .climate-field__stations line {
@@ -2607,15 +2639,15 @@ body.menu-open .event-ticket {
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__stations line:nth-child(1) {
-  transition-delay: 620ms;
+  transition-delay: 640ms;
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__stations line:nth-child(2) {
-  transition-delay: 780ms;
+  transition-delay: 1.05s;
 }
 
 .project__visual--forum.is-visible + .climate-field .climate-field__stations line:nth-child(3) {
-  transition-delay: 940ms;
+  transition-delay: 1.45s;
 }
 
 @keyframes climate-micro-shift {
@@ -2828,6 +2860,22 @@ body.menu-open .event-ticket {
   vector-effect: non-scaling-stroke;
 }
 
+.arca-network__reveal {
+  --route-reveal-width: 4;
+}
+
+.arca-network__reveal--arc {
+  --route-draw-length: 85;
+  --route-draw-duration: 980ms;
+  --route-draw-delay: 240ms;
+}
+
+.arca-network__reveal--direct {
+  --route-draw-length: 69;
+  --route-draw-duration: 820ms;
+  --route-draw-delay: 390ms;
+}
+
 .arca-network__places circle {
   fill: currentColor;
   stroke: currentColor;
@@ -2835,12 +2883,8 @@ body.menu-open .event-ticket {
   vector-effect: non-scaling-stroke;
 }
 
-.js .timeline:not(.is-visible) .arca-network__links path {
-  opacity: 0;
-}
-
-.js .timeline .arca-network__links path {
-  transition: opacity 680ms var(--ease-enter) 280ms;
+.js .timeline.is-visible .arca-network__reveal {
+  animation: route-reveal-draw var(--route-draw-duration) var(--ease-move) var(--route-draw-delay) both;
 }
 
 .js .timeline:not(.is-visible) .arca-network__places circle {
@@ -2851,8 +2895,8 @@ body.menu-open .event-ticket {
 .js .timeline .arca-network__places circle {
   transform-box: fill-box;
   transform-origin: center;
-  transition: opacity var(--duration-medium) var(--ease-enter) 620ms,
-    transform var(--duration-medium) var(--ease-settle) 620ms;
+  transition: opacity var(--duration-medium) var(--ease-enter) 960ms,
+    transform var(--duration-medium) var(--ease-settle) 960ms;
 }
 
 .timeline .ongoing-status {
@@ -4318,6 +4362,12 @@ body.menu-open .event-ticket {
     transition: none !important;
   }
 
+  .route-reveal-path {
+    animation: none !important;
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+
   .hero,
   .practice-statement,
   .now,
@@ -4372,14 +4422,10 @@ body.menu-open .event-ticket {
     animation: none !important;
   }
 
-  .js .women-route__underlay,
-  .js .women-route__line,
-  .climate-field__trace {
-    opacity: 1 !important;
-  }
-
-  .js .arca-network__links path {
-    opacity: 0.72 !important;
+  .route-reveal-path {
+    animation: none !important;
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
   }
 }
 
@@ -4432,14 +4478,10 @@ body.menu-open .event-ticket {
   animation: none;
 }
 
-:root.js[data-motion="reduced"] .women-route__underlay,
-:root.js[data-motion="reduced"] .women-route__line,
-:root[data-motion="reduced"] .climate-field__trace {
-  opacity: 1;
-}
-
-:root.js[data-motion="reduced"] .arca-network__links path {
-  opacity: 0.72;
+:root[data-motion="reduced"] .route-reveal-path {
+  animation: none !important;
+  stroke-dasharray: none;
+  stroke-dashoffset: 0;
 }
 
 @media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
