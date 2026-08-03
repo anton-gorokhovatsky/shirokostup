@@ -158,9 +158,18 @@ test("decorative route illustrations render as solid strokes", async ({ page }) 
   const traceDashArrays = await page.locator(".climate-field__trace").evaluateAll((paths) =>
     paths.map((path) => getComputedStyle(path).strokeDasharray),
   );
+  const arcaDashArrays = await page.locator(".arca-network__links path").evaluateAll((paths) =>
+    paths.map((path) => getComputedStyle(path).strokeDasharray),
+  );
 
   expect(routeDashArrays).toEqual(["none", "none", "none", "none"]);
   expect(traceDashArrays).toEqual(["none", "none"]);
+  expect(arcaDashArrays).toEqual(["none", "none"]);
+
+  await page.getByRole("button", { name: "Index" }).click();
+  const dialog = page.getByRole("dialog", { name: "Index" });
+  await dialog.getByRole("button", { name: "Reduced" }).click();
+  await expect(page.locator(".arca-network__links path").first()).toHaveCSS("opacity", "0.72");
 });
 
 test("rendered page has no serious WCAG A or AA violations", async ({ page }) => {
