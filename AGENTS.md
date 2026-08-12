@@ -11,3 +11,5 @@ Keep checks proportional to the change: one focused change, one focused visual c
 ## Consistency means predictability
 
 Follow [`DESIGN_PRINCIPLES.md`](DESIGN_PRINCIPLES.md). Reuse established behaviour, state, language, tokens, and motion for equivalent elements across themes and breakpoints. Consistency does not mean visual sameness: prefer clarity and context when a deliberate divergence improves the experience, and never preserve a weak pattern merely because it already exists.
+
+For agent-assisted interface work, use the representative scenarios in [`DESIGN_EVALS.md`](DESIGN_EVALS.md). Run the one relevant scenario for a focused change; run the complete suite only when shared design rules, interaction patterns, tokens, motion, or agent guidance change. Passing an eval narrows review but never replaces the accessibility gate, a relevant real-browser render, or human visual judgement.
