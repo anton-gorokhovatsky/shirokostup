@@ -6,6 +6,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const html = await readFile(resolve(root, "index.html"), "utf8");
 const css = await readFile(resolve(root, "styles.css"), "utf8");
 const script = await readFile(resolve(root, "script.js"), "utf8");
+const events = JSON.parse(await readFile(resolve(root, "content/events.json"), "utf8"));
 const failures = [];
 
 const assert = (condition, message) => {
@@ -48,7 +49,7 @@ assert(
   "Structured WebSite and Person metadata is incomplete.",
 );
 
-const ids = [...html.matchAll(/\bid="([^"]+)"/gi)].map((match) => match[1]);
+const ids = [...html.matchAll(/\sid="([^"]+)"/gi)].map((match) => match[1]);
 const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
 assert(duplicateIds.length === 0, `Duplicate ids: ${[...new Set(duplicateIds)].join(", ")}`);
 
@@ -139,22 +140,36 @@ assert(script.includes("showModal") && script.includes("focus"), "The Index must
 
 // Event, hero and Index structure.
 assert(
-  /<aside\b[^>]*data-event-ticket[^>]*data-event-until="2026-08-14T00:00:00\+02:00"/i.test(html) &&
-    /<time\b[^>]*datetime="2026-08-13T18:00:00\+02:00"/i.test(html),
-  "The upcoming-event ticket needs machine-readable date and expiry data.",
+  Array.isArray(events) &&
+    events.length > 0 &&
+    events.every(
+      (event) =>
+        typeof event.id === "string" &&
+        event.id.length > 0 &&
+        Number.isFinite(Date.parse(event.startsAt)) &&
+        Number.isFinite(Date.parse(event.archivesAt)) &&
+        Date.parse(event.archivesAt) > Date.parse(event.startsAt) &&
+        event.url.startsWith("https://"),
+    ) &&
+    new Set(events.map(({ id }) => id)).size === events.length,
+  "The event collection needs unique ids, HTTPS destinations and machine-readable start/archive dates.",
 );
 assert(
-  /<a\b[^>]*class="event-ticket__link"[\s\S]*?<strong\b[^>]*class="event-ticket__title"[^>]*id="event-ticket-title"/i.test(
-    html,
-  ) &&
-    count(html, /href="https:[/][/]kinmuseum[.]se[/]en[/]events[/]samtal-med-olga-shirokostup-och-tanja-muravskaja"/gi) === 2,
-  "The fixed invitation and full event card must retain one linked event title and destination.",
+  /<script\b[^>]*type="application\/json"[^>]*id="event-data"/i.test(html) &&
+    /<aside\b[^>]*data-event-ticket[^>]*data-event-id=/i.test(html) &&
+    /<section\b[^>]*data-featured-event[^>]*data-event-state=/i.test(html) &&
+    /<a\b[^>]*data-event-ticket-link[\s\S]*?<strong\b[^>]*data-event-ticket-title/i.test(html) &&
+    /<a\b[^>]*data-featured-event-link[\s\S]*?<h2\b[^>]*data-event-title/i.test(html),
+  "The generated invitation and featured event must retain their semantic hooks and accessible content.",
 );
 assert(
-  script.includes("olga-event-ticket-dismissed") &&
+  script.includes("olga-event-ticket-dismissed:") &&
+    script.includes("resolveEvents") &&
+    script.includes("scheduleEventStateUpdate") &&
+    script.includes('"Past event"') &&
     script.includes("updateEventTicketVisibility") &&
     !script.includes("event-ticket--reminder"),
-  "The event ticket must remain dismissible without the retired reminder state.",
+  "Events must select a current or past feature, transition on time and retain per-event ticket dismissal.",
 );
 
 const heroMark = html.match(/<svg\b[^>]*class="hero__mark"[\s\S]*?<\/svg>/i)?.[0] ?? "";

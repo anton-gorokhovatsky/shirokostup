@@ -25,14 +25,16 @@ const headerInkSurfaces = Array.from(document.querySelectorAll("[data-header-ink
 const credits = document.querySelector(".credits");
 const creditsSummary = credits?.querySelector("summary");
 const cursorTrail = document.querySelector("[data-cursor-trail]");
+const eventData = document.querySelector("#event-data");
 const eventTicket = document.querySelector("[data-event-ticket]");
 const eventTicketDismiss = document.querySelector("[data-event-ticket-dismiss]");
 const heroSection = document.querySelector("#top");
-const upcomingSection = document.querySelector("#now");
+const featuredEventSection = document.querySelector("[data-featured-event]");
 let menuCloseTimer = 0;
 let creditsCloseTimer = 0;
 let themeTransitionTimer = 0;
 let eventTicketHideTimer = 0;
+let eventStateTimer = 0;
 
 document.addEventListener(
   "pointerdown",
@@ -191,20 +193,152 @@ systemReducedMotion.addEventListener?.("change", () => {
   }
 });
 
+const legacyEventDismissalKey = "olga-event-ticket-dismissed";
+let events = [];
+let featuredEvent = null;
+let upcomingEvent = null;
 let eventTicketDismissed = false;
 
 try {
-  eventTicketDismissed = sessionStorage.getItem("olga-event-ticket-dismissed") === "true";
+  const parsedEvents = JSON.parse(eventData?.textContent || "[]");
+  if (Array.isArray(parsedEvents)) {
+    events = parsedEvents.filter((event) => {
+      const startTime = Date.parse(event?.startsAt || "");
+      const archiveTime = Date.parse(event?.archivesAt || "");
+      return (
+        typeof event?.id === "string" &&
+        typeof event?.title === "string" &&
+        typeof event?.url === "string" &&
+        Number.isFinite(startTime) &&
+        Number.isFinite(archiveTime) &&
+        archiveTime > startTime
+      );
+    });
+  }
 } catch (error) {
-  eventTicketDismissed = false;
+  events = [];
 }
 
-const eventTicketHasExpired = () => {
-  const endTime = Date.parse(eventTicket?.dataset.eventUntil || "");
-  return Number.isFinite(endTime) && Date.now() >= endTime;
+const eventDismissalKey = (eventId) => `olga-event-ticket-dismissed:${eventId}`;
+
+const eventDisplay = (event) => {
+  const date = new Date(event.startsAt);
+  const format = (options) => new Intl.DateTimeFormat("en-GB", { ...options, timeZone: event.timeZone }).format(date);
+  return {
+    day: format({ day: "numeric" }),
+    month: format({ month: "short" }),
+    date: format({ day: "numeric", month: "long", year: "numeric" }),
+    machineDate: format({ year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-"),
+    time: format({ hour: "2-digit", minute: "2-digit", hourCycle: "h23" }),
+  };
 };
 
-root.classList.toggle("has-active-event", Boolean(eventTicket && !eventTicketDismissed && !eventTicketHasExpired()));
+const setText = (selector, text, scope = document) => {
+  scope.querySelectorAll(selector).forEach((element) => {
+    element.textContent = text;
+  });
+};
+
+const resolveEvents = () => {
+  const now = Date.now();
+  const sortedEvents = [...events].sort((first, second) => Date.parse(first.startsAt) - Date.parse(second.startsAt));
+  upcomingEvent = sortedEvents.find((event) => now < Date.parse(event.archivesAt)) || null;
+  const pastEvents = sortedEvents.filter((event) => now >= Date.parse(event.archivesAt));
+  featuredEvent = upcomingEvent || pastEvents.at(-1) || sortedEvents.at(-1) || null;
+};
+
+const updateFeaturedEvent = () => {
+  if (!featuredEventSection || !featuredEvent) return;
+
+  const display = eventDisplay(featuredEvent);
+  const isUpcoming = featuredEvent === upcomingEvent;
+  const details = `${featuredEvent.title}, ${display.date} at ${display.time}, ${featuredEvent.venue}, ${featuredEvent.city}`;
+  featuredEventSection.dataset.eventId = featuredEvent.id;
+  featuredEventSection.dataset.eventState = isUpcoming ? "upcoming" : "past";
+  setText("[data-featured-event-status]", isUpcoming ? "Upcoming" : "Past event", featuredEventSection);
+  setText("[data-featured-event-date]", display.date, featuredEventSection);
+  setText("[data-event-day]", display.day, featuredEventSection);
+  setText("[data-event-month]", display.month, featuredEventSection);
+  setText("[data-event-time]", display.time, featuredEventSection);
+  setText("[data-event-kind]", featuredEvent.kind, featuredEventSection);
+  setText("[data-event-venue]", featuredEvent.venue, featuredEventSection);
+  setText("[data-event-city]", featuredEvent.city, featuredEventSection);
+  setText("[data-event-title]", featuredEvent.title, featuredEventSection);
+
+  const featuredDate = featuredEventSection.querySelector("[data-featured-event-date]");
+  if (featuredDate) featuredDate.dateTime = display.machineDate;
+
+  const featuredLink = featuredEventSection.querySelector("[data-featured-event-link]");
+  if (featuredLink) {
+    featuredLink.href = featuredEvent.url;
+    featuredLink.setAttribute("aria-label", `Event details: ${details}`);
+  }
+};
+
+const updateEventTicket = () => {
+  if (!eventTicket || !upcomingEvent) {
+    eventTicketDismissed = false;
+    return;
+  }
+
+  const display = eventDisplay(upcomingEvent);
+  const details = `${upcomingEvent.title}, ${display.date} at ${display.time}, ${upcomingEvent.venue}, ${upcomingEvent.city}`;
+  eventTicket.dataset.eventId = upcomingEvent.id;
+  setText("[data-event-ticket-status]", "Upcoming", eventTicket);
+  setText("[data-event-day]", display.day, eventTicket);
+  setText("[data-event-month]", display.month, eventTicket);
+  setText("[data-event-city]", upcomingEvent.city, eventTicket);
+  setText("[data-event-ticket-time]", display.time, eventTicket);
+  setText("[data-event-ticket-title]", upcomingEvent.ticketTitle, eventTicket);
+
+  const ticketDate = eventTicket.querySelector("[data-event-ticket-date]");
+  if (ticketDate) ticketDate.dateTime = upcomingEvent.startsAt;
+
+  const ticketTime = eventTicket.querySelector("[data-event-ticket-time]");
+  if (ticketTime) ticketTime.dateTime = display.time;
+
+  const ticketLink = eventTicket.querySelector("[data-event-ticket-link]");
+  if (ticketLink) {
+    ticketLink.href = upcomingEvent.url;
+    ticketLink.setAttribute("aria-label", details);
+  }
+
+  try {
+    eventTicketDismissed = sessionStorage.getItem(eventDismissalKey(upcomingEvent.id)) === "true";
+  } catch (error) {
+    eventTicketDismissed = false;
+  }
+};
+
+const scheduleEventStateUpdate = () => {
+  window.clearTimeout(eventStateTimer);
+  if (!upcomingEvent) return;
+
+  const remainingTime = Date.parse(upcomingEvent.archivesAt) - Date.now();
+  if (remainingTime <= 0) return;
+  eventStateTimer = window.setTimeout(refreshEventState, Math.min(remainingTime + 50, 2_147_483_647));
+};
+
+const refreshEventState = () => {
+  const previousUpcomingId = upcomingEvent?.id;
+  resolveEvents();
+  updateFeaturedEvent();
+  updateEventTicket();
+
+  if (previousUpcomingId && previousUpcomingId !== upcomingEvent?.id) {
+    hideEventTicket({ immediate: true });
+  }
+
+  root.classList.toggle("has-active-event", Boolean(upcomingEvent && !eventTicketDismissed));
+  scheduleEventStateUpdate();
+  updateEventTicketVisibility();
+};
+
+resolveEvents();
+updateFeaturedEvent();
+updateEventTicket();
+root.classList.toggle("has-active-event", Boolean(upcomingEvent && !eventTicketDismissed));
+scheduleEventStateUpdate();
 
 const hideEventTicket = ({ immediate = false } = {}) => {
   if (!eventTicket || eventTicket.hidden) return;
@@ -226,7 +360,7 @@ const hideEventTicket = ({ immediate = false } = {}) => {
 };
 
 const showEventTicket = () => {
-  if (!eventTicket || eventTicketDismissed || eventTicketHasExpired()) return;
+  if (!eventTicket || !upcomingEvent || eventTicketDismissed) return;
 
   window.clearTimeout(eventTicketHideTimer);
   eventTicket.classList.add("event-ticket--intro");
@@ -244,19 +378,19 @@ const showEventTicket = () => {
 };
 
 const updateEventTicketVisibility = () => {
-  if (!eventTicket || !heroSection || !upcomingSection) return;
+  if (!eventTicket || !heroSection || !featuredEventSection) return;
 
-  if (eventTicketDismissed || eventTicketHasExpired()) {
+  if (!upcomingEvent || eventTicketDismissed) {
     root.classList.remove("has-active-event");
     hideEventTicket({ immediate: true });
     return;
   }
 
   const heroBounds = heroSection.getBoundingClientRect();
-  const upcomingBounds = upcomingSection.getBoundingClientRect();
+  const featuredEventBounds = featuredEventSection.getBoundingClientRect();
   const headerClearance = (header?.getBoundingClientRect().height || 0) + 8;
   const introIsVisible =
-    heroBounds.bottom > headerClearance && upcomingBounds.top > window.innerHeight * 0.9;
+    heroBounds.bottom > headerClearance && featuredEventBounds.top > window.innerHeight * 0.9;
 
   if (introIsVisible) {
     showEventTicket();
@@ -270,7 +404,8 @@ eventTicketDismiss?.addEventListener("click", () => {
   root.classList.remove("has-active-event");
 
   try {
-    sessionStorage.setItem("olga-event-ticket-dismissed", "true");
+    if (upcomingEvent) sessionStorage.setItem(eventDismissalKey(upcomingEvent.id), "true");
+    sessionStorage.removeItem(legacyEventDismissalKey);
   } catch (error) {
     // Dismissal still applies for the current page when storage is unavailable.
   }

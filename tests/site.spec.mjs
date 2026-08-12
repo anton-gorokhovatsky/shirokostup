@@ -1,12 +1,19 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const eventDismissalKey = "olga-event-ticket-dismissed";
+const eventId = "kin-conversation-2026-08-13";
+const eventDismissalKey = `olga-event-ticket-dismissed:${eventId}`;
+const upcomingTime = new Date("2026-08-13T12:00:00+02:00");
+const shortlyBeforeArchiveTime = new Date("2026-08-13T23:59:55+02:00");
 
 const openFreshPage = async (page, hash = "top") => {
   await page.goto(`/?qa=browser-regression#${hash}`);
   await page.evaluate((key) => sessionStorage.removeItem(key), eventDismissalKey);
   await page.reload();
+};
+
+const installUpcomingClock = async (page, time = upcomingTime) => {
+  await page.clock.install({ time });
 };
 
 const rectanglesOverlap = (first, second) =>
@@ -16,6 +23,7 @@ const rectanglesOverlap = (first, second) =>
   first.bottom > second.top;
 
 test("hero reserves space for the active event ticket", async ({ page }) => {
+  await installUpcomingClock(page);
   await openFreshPage(page);
 
   const statement = page.locator(".hero__statement");
@@ -32,7 +40,40 @@ test("hero reserves space for the active event ticket", async ({ page }) => {
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
 });
 
+test("event lifecycle moves from invitation to a lasting past record", async ({ page }) => {
+  await installUpcomingClock(page, shortlyBeforeArchiveTime);
+  await openFreshPage(page);
+
+  const ticket = page.locator("[data-event-ticket]");
+  const featuredEvent = page.locator("[data-featured-event]");
+  await expect(ticket).toBeVisible();
+  await expect(featuredEvent).toHaveAttribute("data-event-state", "upcoming");
+  await expect(featuredEvent.locator("[data-featured-event-status]")).toHaveText("Upcoming");
+
+  await page.clock.runFor(5_100);
+  await expect(ticket).toBeHidden();
+  await expect(page.locator("html")).not.toHaveClass(/has-active-event/);
+  await expect(featuredEvent).toHaveAttribute("data-event-state", "past");
+  await expect(featuredEvent.locator("[data-featured-event-status]")).toHaveText("Past event");
+  await expect(featuredEvent.locator("[data-featured-event-date]")).toHaveText("13 August 2026");
+  await expect(featuredEvent.getByText("Event details", { exact: true })).toBeVisible();
+});
+
+test("event ticket dismissal is scoped to the current event", async ({ page }) => {
+  await installUpcomingClock(page);
+  await openFreshPage(page);
+
+  const ticket = page.locator("[data-event-ticket]");
+  await expect(ticket).toBeVisible();
+  await page.getByRole("button", { name: "Hide event invitation" }).click();
+  await expect(ticket).toBeHidden();
+  await expect
+    .poll(() => page.evaluate((key) => sessionStorage.getItem(key), eventDismissalKey))
+    .toBe("true");
+});
+
 test("index keeps predictable focus, theme, and motion controls", async ({ page }, testInfo) => {
+  await installUpcomingClock(page);
   await openFreshPage(page);
 
   const skipLink = page.getByRole("link", { name: "Skip to content" });
@@ -74,6 +115,7 @@ test("index keeps predictable focus, theme, and motion controls", async ({ page 
 });
 
 test("content reflows at 320 px and equivalent 200% desktop zoom", async ({ page }, testInfo) => {
+  await installUpcomingClock(page);
   const isMobileProject = testInfo.project.name.startsWith("mobile-");
   const viewport = isMobileProject ? { width: 320, height: 844 } : { width: 640, height: 360 };
   await page.setViewportSize(viewport);
@@ -203,6 +245,7 @@ test("decorative routes draw through stable masks and finish as solid strokes", 
 });
 
 test("rendered page has no serious WCAG A or AA violations", async ({ page }) => {
+  await installUpcomingClock(page);
   await openFreshPage(page);
 
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();

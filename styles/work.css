@@ -17,9 +17,24 @@
 
 .now__date,
 .now__copy,
+.now__action,
 .round-arrow {
   position: relative;
   z-index: 1;
+}
+
+.now__action {
+  display: grid;
+  gap: 0.85rem;
+  justify-items: center;
+  align-items: end;
+}
+
+.now__action-label {
+  font-size: var(--type-meta);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .js .now__card[data-reveal] .now__date,
@@ -199,6 +214,13 @@
   color: var(--lichen);
   background: var(--accent-ink);
   transform: rotate(45deg);
+}
+
+.now__card:hover .now__action-label,
+.now__card:focus-visible .now__action-label {
+  text-decoration: underline;
+  text-decoration-thickness: 0.06em;
+  text-underline-offset: var(--underline-clearance);
 }
 
 .work {

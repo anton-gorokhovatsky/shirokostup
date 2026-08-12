@@ -5,8 +5,8 @@
   "packageManager": "pnpm@11.9.0",
   "scripts": {
     "build": "node scripts/build-assets.mjs",
-    "build:check": "node scripts/build-assets.mjs --check",
-    "check": "node scripts/build-assets.mjs --check && node scripts/check-site.mjs && node scripts/check-performance-budget.mjs && node --check script.js",
+    "build:check": "EVENT_RENDER_TIME=2026-08-13T12:00:00+02:00 node scripts/build-assets.mjs --check",
+    "check": "EVENT_RENDER_TIME=2026-08-13T12:00:00+02:00 node scripts/build-assets.mjs --check && node scripts/check-site.mjs && node scripts/check-performance-budget.mjs && node --check script.js",
     "images": "python3 scripts/generate-responsive-images.py",
     "test": "playwright test",
     "test:browser": "playwright test"

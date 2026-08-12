@@ -434,10 +434,17 @@
     font-size: clamp(2.8rem, 12vw, 4.5rem);
   }
 
-  .round-arrow {
+  .now__action {
     position: absolute;
     right: 0;
     bottom: 0;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .now__action-label {
+    font-size: 0.66rem;
   }
 
   .section-heading {
