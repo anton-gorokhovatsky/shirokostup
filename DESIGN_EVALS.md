@@ -114,6 +114,8 @@ pnpm exec playwright test --grep "decorative routes draw"
 **The result must preserve**
 
 - a native, stable pointer and the complete semantic link as the hit area;
+- the established arrow grammar and a one-to-one relationship between action and symbol, without an icon added merely to decorate every action;
+- icons that remain recognisable at rendered size, never rely on tiny visual differences for meaning, and retain visible text or accurate accessible names where the metaphor is not sufficient;
 - an equally clear `:focus-visible` response, without relying on hover, colour, or motion alone;
 - readable contrast and an understandable destination before activation;
 - rules and underlines optically clear of descenders, with native underlines skipping ink;
@@ -131,6 +133,7 @@ pnpm exec playwright test --grep "index keeps|WCAG"
 
 - Compare rest, pointer hover, keyboard focus, and reduced-motion states in Light and Dark modes.
 - Move across the full link box to confirm stable feedback and cursor behaviour.
+- Temporarily ignore the labels and confirm that repeated symbols retain one familiar meaning; then ignore the symbols and confirm that labels and accessible names still explain each action.
 - Judge whether the response is unmistakable yet consistent with the site's restrained motion and material language.
 
 ## Scenario 5 — continuous editorial typography

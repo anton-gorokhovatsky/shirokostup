@@ -44,3 +44,18 @@ Treat wording, typesetting, and accessible naming as one system. Follow [`EDITOR
 - Judge the copy in the rendered interface, including its accessible name and reading order. A typographically polished string that becomes ambiguous, clipped, or misleading does not pass.
 
 References: [Kontur Guides — Screen typography](https://guides.kontur.ru/principles/text/typography/) and [Kontur Guides — Interface text](https://guides.kontur.ru/principles/text/styleguide/).
+
+## Icons earn their place
+
+Use an icon only when it makes an action faster to find or easier to understand. An icon is not a mandatory decoration and must not create a second visual language beside the site's text, mark, routes, and controls.
+
+- Preserve a one-to-one relationship between familiar meaning and symbol. The same action uses the same icon everywhere; one icon never acquires unrelated meanings.
+- Reuse the established arrow grammar: north-east for an external or destination link, right for forward exploration, and up for returning to the top. Do not encode new meanings through small changes in angle, stroke, fill, or detail.
+- Use related geometry for genuinely related or opposite actions, such as open/close, while avoiding false symmetry between actions that are not counterparts.
+- Prefer a clear text label without an icon to an obscure metaphor. Controls whose meaning is not immediately familiar keep visible text or an accessible name; meaningful action text must not be baked into the icon artwork.
+- Keep icons simple and recognisable at their rendered CSS size, not merely when zoomed in. Do not rely on tiny internal details, subpixel stroke differences, colour, or motion to distinguish meaning.
+- Treat icons as supporting cues, not as the sole semantic source. Decorative symbols are hidden from assistive technology; icon-only controls require an accurate accessible name and a comfortable target.
+- Do not reuse system cursors, resize handles, ellipses, or other platform-reserved symbols for novel behaviour. Native conventions remain native.
+- In repeated menus or lists, icons must materially improve scanning. If every row would receive an undifferentiated symbol, omit the icon family and preserve the clean text axis.
+
+Reference: [Nikita Prokopov — It’s hard to justify Tahoe icons](https://tonsky.me/blog/tahoe-icons/) ([Russian translation on Habr](https://habr.com/ru/companies/ruvds/articles/985818/)).
