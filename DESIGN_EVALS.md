@@ -141,12 +141,15 @@ pnpm exec playwright test --grep "index keeps|WCAG"
 
 **The result must preserve**
 
+- copy whose length and tone serve a clear editorial or interface purpose, with meaning front-loaded in headings and predictable action labels;
+- official names and supplied titles, a calm third-person editorial voice, and explicit actors wherever an action would otherwise be ambiguous;
 - one semantic identity at one typographic scale, even when a heading changes line arrangement;
 - fluid, bounded typography that still reaches 200% and does not depend on a few device snapshots;
-- protected meaningful units, natural prose wrapping, correct date-range punctuation, and no accidental orphan created by the change;
+- correct locale-specific characters, dates, and range punctuation; protected meaningful units without layout-only non-breaking spaces or hard breaks;
+- natural prose wrapping and no accidental orphan, repetition, or false hierarchy created by the change;
 - sufficient clearance between letterforms and custom rules or underlines;
 - readable measures and hierarchy at desktop, 390 px, and 320 px in every theme;
-- semantic heading order and no text converted into inaccessible imagery.
+- semantic heading order, useful out-of-context accessible names, machine-readable dates, and no text converted into inaccessible imagery.
 
 **Mechanical evidence**
 
@@ -158,7 +161,8 @@ pnpm exec playwright test --grep "content reflows|WCAG"
 **Rendered evidence**
 
 - Read the affected copy in its final desktop, 390 px, 320 px, and 200% layouts.
-- Inspect line endings, descenders, rules, heading balance, and the transition between adjacent sections.
+- Inspect line endings, protected units, punctuation, dates, descenders, rules, heading balance, and the transition between adjacent sections.
+- Read headings and action names without their surrounding paragraphs and confirm that the intended meaning and destination remain clear.
 - Judge continuity across widths rather than matching a single reference screenshot.
 
 ## Run record

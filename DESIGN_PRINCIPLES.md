@@ -32,3 +32,15 @@ Treat typography and layout as bounded relationships rather than a small set of 
 - Continuous behaviour should feel calm and legible: avoid abrupt jumps, accidental single-word lines, and controls whose visual weight changes merely because the viewport crossed an arbitrary threshold.
 
 References: [Max Kohler — Continuous Typography](https://www.maxkohler.com/posts/continuous-typography/), [Matthias Ott — Compressed Fluid Typography](https://matthiasott.com/notes/compressed-fluid-typography), and [Aida Pacheva — Новый подход в дизайне адаптивности веб-сайтов](https://medium.com/@aidapacheva/%D0%BD%D0%BE%D0%B2%D1%8B%D0%B9-%D0%BF%D0%BE%D0%B4%D1%85%D0%BE%D0%B4-%D0%B2-%D0%B4%D0%B8%D0%B7%D0%B0%D0%B9%D0%BD%D0%B5-%D0%B0%D0%B4%D0%B0%D0%BF%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D1%81%D0%B8-%D0%B2%D0%B5%D0%B1-%D1%81%D0%B0%D0%B9%D1%82%D0%BE%D0%B2-c8532d409c80).
+
+## Editorial text has a job
+
+Treat wording, typesetting, and accessible naming as one system. Follow [`EDITORIAL_STYLE.md`](EDITORIAL_STYLE.md) for the complete project rules.
+
+- Let the purpose determine the amount of text. Prefer sufficiently clear, useful, and characterful copy to either ornamental vagueness or brevity for its own sake.
+- Front-load meaning in headings and make actions predictable without requiring the surrounding paragraph. Give adjacent labels distinct work instead of repeating the same idea.
+- Preserve a calm third-person editorial voice, explicit actors, official names, and supplied titles. Do not import the tone of a generic product interface into Olga's practice.
+- Use correct language-specific characters, dates, ranges, and protected units. Preserve semantic text and natural reflow instead of forcing a particular screenshot with hard breaks or layout-only non-breaking spaces.
+- Judge the copy in the rendered interface, including its accessible name and reading order. A typographically polished string that becomes ambiguous, clipped, or misleading does not pass.
+
+References: [Kontur Guides — Screen typography](https://guides.kontur.ru/principles/text/typography/) and [Kontur Guides — Interface text](https://guides.kontur.ru/principles/text/styleguide/).
