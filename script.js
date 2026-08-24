@@ -14,6 +14,8 @@ const indexEntries = indexLinks
   .filter((entry) => entry.section);
 const themeChoices = Array.from(document.querySelectorAll("[data-theme-choice]"));
 const motionChoices = Array.from(document.querySelectorAll("[data-motion-choice]"));
+const analyticsConsentPanel = document.querySelector("[data-analytics-consent]");
+const analyticsChoices = Array.from(document.querySelectorAll("[data-analytics-choice]"));
 const themeColor = document.querySelector('meta[name="theme-color"]');
 const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 const systemReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -21,6 +23,10 @@ const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 const interactivePointerSelector = "a[href], button:not(:disabled), summary, [role='button'], [role='link']";
 const validThemeModes = new Set(["system", "light", "dark"]);
 const validMotionModes = new Set(["system", "reduced"]);
+const analyticsConsentKey = "olga-analytics-consent";
+const metricaId = 111895186;
+const metricaScriptUrl = `https://mc.yandex.ru/metrika/tag.js?id=${metricaId}`;
+const metricaDisableKey = `disableYaCounter${metricaId}`;
 const headerInkSurfaces = Array.from(document.querySelectorAll("[data-header-ink]"));
 const credits = document.querySelector(".credits");
 const creditsSummary = credits?.querySelector("summary");
@@ -35,6 +41,7 @@ let creditsCloseTimer = 0;
 let themeTransitionTimer = 0;
 let eventTicketHideTimer = 0;
 let eventStateTimer = 0;
+let metricaInitialized = false;
 
 document.addEventListener(
   "pointerdown",
@@ -83,6 +90,81 @@ const readSavedMotionMode = () => {
     return validMotionModes.has(savedMotionMode) ? savedMotionMode : "system";
   } catch (error) {
     return "system";
+  }
+};
+
+const readSavedAnalyticsConsent = () => {
+  try {
+    const savedConsent = localStorage.getItem(analyticsConsentKey);
+    return savedConsent === "granted" || savedConsent === "denied" ? savedConsent : "unset";
+  } catch (error) {
+    return "unset";
+  }
+};
+
+const initializeMetrica = () => {
+  if (metricaInitialized) return;
+
+  window[metricaDisableKey] = false;
+  if (typeof window.ym !== "function") {
+    window.ym = (...args) => (window.ym.a = window.ym.a || []).push(args);
+    window.ym.l = Date.now();
+  }
+
+  if (!Array.from(document.scripts).some((script) => script.src === metricaScriptUrl)) {
+    const metricaScript = document.createElement("script");
+    metricaScript.async = true;
+    metricaScript.src = metricaScriptUrl;
+    document.head.append(metricaScript);
+  }
+
+  window.ym(metricaId, "init", {
+    ssr: true,
+    webvisor: true,
+    clickmap: true,
+    referrer: document.referrer,
+    url: window.location.href,
+    accurateTrackBounce: true,
+    trackLinks: true,
+  });
+  metricaInitialized = true;
+};
+
+const stopMetrica = () => {
+  window[metricaDisableKey] = true;
+
+  if (metricaInitialized && typeof window.ym === "function") {
+    window.ym(metricaId, "destruct");
+  }
+
+  metricaInitialized = false;
+};
+
+const applyAnalyticsConsent = (consent, { save = false } = {}) => {
+  const nextConsent = consent === "granted" || consent === "denied" ? consent : "unset";
+
+  root.dataset.analyticsConsent = nextConsent;
+  root.classList.toggle("analytics-consent-pending", nextConsent === "unset");
+  analyticsConsentPanel?.toggleAttribute("hidden", nextConsent !== "unset");
+
+  analyticsChoices.forEach((choice) => {
+    if (choice.hasAttribute("aria-pressed")) {
+      choice.setAttribute("aria-pressed", String(choice.dataset.analyticsChoice === nextConsent));
+    }
+  });
+
+  if (save) {
+    try {
+      localStorage.setItem(analyticsConsentKey, nextConsent);
+    } catch (error) {
+      // The preference still applies for this visit.
+    }
+  }
+
+  if (nextConsent === "granted") {
+    initializeMetrica();
+  } else {
+    stopMetrica();
   }
 };
 
@@ -151,6 +233,7 @@ const applyTheme = (themeMode, { save = false } = {}) => {
 
 applyTheme(document.documentElement.dataset.themeMode || readSavedThemeMode());
 applyMotion(document.documentElement.dataset.motionMode || readSavedMotionMode());
+applyAnalyticsConsent(readSavedAnalyticsConsent());
 
 themeChoices.forEach((choice) => {
   choice.addEventListener("click", () => {
@@ -177,6 +260,12 @@ motionChoices.forEach((choice) => {
   choice.addEventListener("click", () => {
     applyMotion(choice.dataset.motionChoice, { save: true });
     updateScrollUI();
+  });
+});
+
+analyticsChoices.forEach((choice) => {
+  choice.addEventListener("click", () => {
+    applyAnalyticsConsent(choice.dataset.analyticsChoice, { save: true });
   });
 });
 

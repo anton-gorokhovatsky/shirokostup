@@ -754,6 +754,25 @@
     grid-template-columns: 1fr;
     gap: 0.25rem;
   }
+
+  .analytics-consent {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.8rem;
+    width: auto;
+    padding: 1rem;
+    border-radius: 1.25rem;
+  }
+
+  .analytics-consent__actions {
+    width: 100%;
+  }
+
+  .analytics-consent__actions button {
+    flex: 1;
+  }
 }
 
 @media (min-width: 701px) and (max-width: 800px) {
@@ -801,7 +820,8 @@
   }
 
   .site-index__theme,
-  .site-index__motion {
+  .site-index__motion,
+  .site-index__analytics {
     gap: 0.2rem;
   }
 }
@@ -873,7 +893,8 @@
   }
 
   .site-index__theme,
-  .site-index__motion {
+  .site-index__motion,
+  .site-index__analytics {
     gap: 0.2rem;
   }
 }

@@ -115,6 +115,31 @@ for (const mode of ["system", "light", "dark"]) {
 for (const mode of ["system", "reduced"]) {
   assert(html.includes(`data-motion-choice="${mode}"`), `Missing ${mode} motion control.`);
 }
+for (const choice of ["granted", "denied"]) {
+  assert(
+    count(html, new RegExp(`data-analytics-choice="${choice}"`, "gi")) === 2,
+    `Analytics needs matching ${choice} controls in the consent notice and Index.`,
+  );
+}
+assert(
+  /<aside\b[^>]*data-analytics-consent[^>]*aria-labelledby="analytics-consent-title"[^>]*hidden/i.test(html) &&
+    /role="group" aria-label="Analytics preference"/i.test(html) &&
+    html.includes("https://yandex.com/legal/confidential/"),
+  "Analytics consent needs an accessible first-visit notice, permanent controls and privacy information.",
+);
+assert(
+  script.includes("const metricaId = 111895186") &&
+    script.includes("https://mc.yandex.ru/metrika/tag.js?id=") &&
+    script.includes("olga-analytics-consent") &&
+    script.includes("disableYaCounter") &&
+    script.includes('window.ym(metricaId, "destruct")') &&
+    script.includes("webvisor: true") &&
+    script.includes("clickmap: true") &&
+    script.includes("accurateTrackBounce: true") &&
+    script.includes("trackLinks: true") &&
+    !html.includes("mc.yandex.ru/watch"),
+  "Yandex Metrica 111895186 must load only through the revocable consent path without a bypass pixel.",
+);
 assert(css.includes("@media (prefers-reduced-motion: reduce)"), "CSS must respect the operating-system motion preference.");
 assert(css.includes(':root[data-motion="reduced"]'), "CSS must support the manual reduced-motion mode.");
 assert(css.includes(":focus-visible"), "Visible keyboard focus styles are required.");

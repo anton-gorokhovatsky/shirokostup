@@ -3,12 +3,23 @@ import { expect, test } from "@playwright/test";
 
 const eventId = "kin-conversation-2026-08-13";
 const eventDismissalKey = `olga-event-ticket-dismissed:${eventId}`;
+const analyticsConsentKey = "olga-analytics-consent";
 const upcomingTime = new Date("2026-08-13T12:00:00+02:00");
 const shortlyBeforeArchiveTime = new Date("2026-08-13T23:59:55+02:00");
 
-const openFreshPage = async (page, hash = "top") => {
+const openFreshPage = async (page, hash = "top", { analyticsConsent = "denied" } = {}) => {
   await page.goto(`/?qa=browser-regression#${hash}`);
-  await page.evaluate((key) => sessionStorage.removeItem(key), eventDismissalKey);
+  await page.evaluate(
+    ({ eventKey, consentKey, consent }) => {
+      sessionStorage.removeItem(eventKey);
+      if (consent === null) {
+        localStorage.removeItem(consentKey);
+      } else {
+        localStorage.setItem(consentKey, consent);
+      }
+    },
+    { eventKey: eventDismissalKey, consentKey: analyticsConsentKey, consent: analyticsConsent },
+  );
   await page.reload();
 };
 
@@ -112,6 +123,74 @@ test("index keeps predictable focus, theme, and motion controls", async ({ page 
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
   await expect(indexButton).toBeFocused();
+});
+
+test("analytics waits for consent and can be withdrawn", async ({ page }, testInfo) => {
+  const metricaRequests = [];
+  const isMobileProject = testInfo.project.name.startsWith("mobile-");
+  await page.setViewportSize(isMobileProject ? { width: 320, height: 844 } : { width: 640, height: 360 });
+  await page.route("https://mc.yandex.ru/**", async (route) => {
+    metricaRequests.push(route.request().url());
+    if (route.request().url().includes("/metrika/tag.js")) {
+      await route.fulfill({ status: 200, contentType: "application/javascript", body: "/* metrica test stub */" });
+      return;
+    }
+    await route.abort();
+  });
+
+  await openFreshPage(page, "top", { analyticsConsent: null });
+
+  const consentPanel = page.locator(".analytics-consent[data-analytics-consent]");
+  const allowAnalytics = consentPanel.getByRole("button", { name: "Allow analytics" });
+  const declineAnalytics = consentPanel.getByRole("button", { name: "Decline" });
+  await expect(consentPanel).toBeVisible();
+  await expect(page.locator('script[src*="mc.yandex.ru/metrika/tag.js"]')).toHaveCount(0);
+  expect(metricaRequests).toEqual([]);
+  expect(await page.evaluate(() => window.disableYaCounter111895186)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+
+  await allowAnalytics.focus();
+  await expect(allowAnalytics).toBeFocused();
+  if (testInfo.project.name === "mobile-webkit") {
+    await declineAnalytics.focus();
+  } else {
+    await page.keyboard.press("Tab");
+  }
+  await expect(declineAnalytics).toBeFocused();
+  await declineAnalytics.click();
+  await expect(consentPanel).toBeHidden();
+  expect(await page.evaluate((key) => localStorage.getItem(key), analyticsConsentKey)).toBe("denied");
+  expect(metricaRequests).toEqual([]);
+
+  await page.getByRole("button", { name: "Index" }).click();
+  const analyticsGroup = page.getByRole("dialog", { name: "Index" }).getByRole("group", {
+    name: "Analytics preference",
+  });
+  await expect(analyticsGroup.getByRole("button", { name: "Decline" })).toHaveAttribute("aria-pressed", "true");
+
+  await analyticsGroup.getByRole("button", { name: "Allow" }).click();
+  await expect(page.locator('script[src*="mc.yandex.ru/metrika/tag.js"]')).toHaveCount(1);
+  await expect.poll(() => metricaRequests.filter((url) => url.includes("/metrika/tag.js")).length).toBe(1);
+  expect(await page.evaluate(() => window.disableYaCounter111895186)).toBe(false);
+  const initCall = await page.evaluate(() =>
+    window.ym?.a?.find(([id, method]) => id === 111895186 && method === "init"),
+  );
+  expect(initCall?.[2]).toMatchObject({
+    ssr: true,
+    webvisor: true,
+    clickmap: true,
+    accurateTrackBounce: true,
+    trackLinks: true,
+  });
+
+  await analyticsGroup.getByRole("button", { name: "Decline" }).click();
+  await expect(analyticsGroup.getByRole("button", { name: "Decline" })).toHaveAttribute("aria-pressed", "true");
+  expect(await page.evaluate(() => window.disableYaCounter111895186)).toBe(true);
+  expect(await page.evaluate((key) => localStorage.getItem(key), analyticsConsentKey)).toBe("denied");
+
+  await page.reload();
+  await expect(consentPanel).toBeHidden();
+  await expect(page.locator('script[src*="mc.yandex.ru/metrika/tag.js"]')).toHaveCount(0);
 });
 
 test("content reflows at 320 px and equivalent 200% desktop zoom", async ({ page }, testInfo) => {
@@ -246,7 +325,7 @@ test("decorative routes draw through stable masks and finish as solid strokes", 
 
 test("rendered page has no serious WCAG A or AA violations", async ({ page }) => {
   await installUpcomingClock(page);
-  await openFreshPage(page);
+  await openFreshPage(page, "top", { analyticsConsent: null });
 
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
   const seriousViolations = results.violations.filter(({ impact }) => impact === "serious" || impact === "critical");

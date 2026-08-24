@@ -13,6 +13,7 @@
   .reading-progress,
   .cursor-trail,
   .event-ticket,
+  .analytics-consent,
   .scroll-cue {
     display: none !important;
   }
@@ -192,7 +193,8 @@
     backdrop-filter: none;
   }
 
-  .event-ticket {
+  .event-ticket,
+  .analytics-consent {
     background: var(--paper);
     border: 2px solid currentColor;
     box-shadow: none;

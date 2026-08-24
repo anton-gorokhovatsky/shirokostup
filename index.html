@@ -107,7 +107,7 @@
         ]
       }
     </script>
-    <link rel="stylesheet" href="styles.css?v=9fbccd4d41" />
+    <link rel="stylesheet" href="styles.css?v=595f267cfe" />
     <script>
       (() => {
         const root = document.documentElement;
@@ -279,6 +279,36 @@
                   Reduced
                 </button>
               </div>
+            </div>
+            <div class="site-index__analytics">
+              <span class="site-index__meta-label">Analytics</span>
+              <div class="analytics-switcher" role="group" aria-label="Analytics preference">
+                <button
+                  class="analytics-choice"
+                  type="button"
+                  data-analytics-choice="granted"
+                  aria-pressed="false"
+                >
+                  Allow
+                </button>
+                <button
+                  class="analytics-choice"
+                  type="button"
+                  data-analytics-choice="denied"
+                  aria-pressed="false"
+                >
+                  Decline
+                </button>
+              </div>
+              <p class="site-index__analytics-note">
+                Yandex Metrica, including Session Replay, loads only after you allow it.
+                <a
+                  href="https://yandex.com/legal/confidential/"
+                  target="_blank"
+                  rel="noopener"
+                  aria-label="Read Yandex’s privacy policy"
+                >Privacy policy</a>.
+              </p>
             </div>
           </div>
         </div>
@@ -1382,6 +1412,35 @@
       </section>
     </main>
 
-    <script src="script.js?v=27f00cfb2b"></script>
+    <aside
+      class="analytics-consent"
+      data-analytics-consent
+      aria-labelledby="analytics-consent-title"
+      hidden
+    >
+      <div class="analytics-consent__copy">
+        <p class="analytics-consent__title" id="analytics-consent-title">Optional analytics</p>
+        <p>
+          With your permission, Yandex Metrica measures visits and replays sessions to help improve this site.
+          It loads only after you allow it; you can change this later in Index.
+          <a
+            href="https://yandex.com/legal/confidential/"
+            target="_blank"
+            rel="noopener"
+            aria-label="Read Yandex’s privacy policy"
+          >Privacy policy</a>.
+        </p>
+      </div>
+      <div class="analytics-consent__actions">
+        <button class="analytics-consent__allow" type="button" data-analytics-choice="granted">
+          Allow analytics
+        </button>
+        <button class="analytics-consent__decline" type="button" data-analytics-choice="denied">
+          Decline
+        </button>
+      </div>
+    </aside>
+
+    <script src="script.js?v=3dcf59cef3"></script>
   </body>
 </html>
