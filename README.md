@@ -2,6 +2,9 @@
 
 A static editorial portfolio for independent curator, researcher, and educator Olga Shirokostup.
 
+For ownership transfer, recurring content updates, fragile interaction contracts, and the complete release procedure, see
+[`HANDOFF.md`](HANDOFF.md).
+
 ## Run locally
 
 ```bash
