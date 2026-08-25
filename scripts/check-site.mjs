@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const html = await readFile(resolve(root, "index.html"), "utf8");
+const notFoundHtml = await readFile(resolve(root, "404.html"), "utf8");
 const css = await readFile(resolve(root, "styles.css"), "utf8");
 const script = await readFile(resolve(root, "script.js"), "utf8");
 const events = JSON.parse(await readFile(resolve(root, "content/events.json"), "utf8"));
@@ -15,6 +16,40 @@ const assert = (condition, message) => {
 
 const count = (source, pattern) => [...source.matchAll(pattern)].length;
 const attribute = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`, "i"))?.[1];
+
+// The custom error page is a first-class route rather than a generic hosting fallback.
+assert(/<html\b[^>]*\blang="en"/i.test(notFoundHtml), "The 404 page needs an English language declaration.");
+assert(count(notFoundHtml, /<h1\b/gi) === 1, "The 404 page must contain exactly one h1.");
+assert(
+  /<meta\b[^>]*name="robots"[^>]*content="noindex, follow"/i.test(notFoundHtml),
+  "The 404 page must stay out of search results while allowing link discovery.",
+);
+assert(
+  /<a\b[^>]*class="skip-link"[^>]*href="#main"/i.test(notFoundHtml) &&
+    /<main\b[^>]*id="main"[^>]*tabindex="-1"/i.test(notFoundHtml),
+  "The 404 page needs a working skip target.",
+);
+assert(
+  /<a\b[^>]*class="not-found__action"[^>]*href="\/"/i.test(notFoundHtml) &&
+    notFoundHtml.includes("Return to the portfolio"),
+  "The 404 page needs an explicit return to the portfolio.",
+);
+for (const mode of ["system", "light", "dark"]) {
+  assert(notFoundHtml.includes(`data-theme-choice="${mode}"`), `The 404 page is missing its ${mode} theme control.`);
+}
+for (const mode of ["system", "reduced"]) {
+  assert(notFoundHtml.includes(`data-motion-choice="${mode}"`), `The 404 page is missing its ${mode} motion control.`);
+}
+assert(
+  notFoundHtml.includes('class="not-found-route"') &&
+    count(notFoundHtml, /not-found-route__reveal--/gi) === 2 &&
+    count(notFoundHtml, /not-found-route__cluster--/gi) === 3,
+  "The 404 route must retain its continuous main line, branch and three waypoint clusters.",
+);
+assert(
+  notFoundHtml.includes("data-cursor-trail") && css.includes(".not-found__visual") && css.includes("pointer-events: none"),
+  "The 404 decoration must remain pointer-safe.",
+);
 
 // Document and navigation contracts. Geometry and interaction are verified in Playwright.
 assert(/<html\b[^>]*\blang="en"/i.test(html), "The document needs an English language declaration.");

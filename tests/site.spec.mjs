@@ -23,6 +23,11 @@ const openFreshPage = async (page, hash = "top", { analyticsConsent = "denied" }
   await page.reload();
 };
 
+const openNotFoundPage = async (page) => {
+  await page.addInitScript((consentKey) => localStorage.setItem(consentKey, "denied"), analyticsConsentKey);
+  await page.goto("/404.html?qa=not-found-regression");
+};
+
 const installUpcomingClock = async (page, time = upcomingTime) => {
   await page.clock.install({ time });
 };
@@ -213,6 +218,52 @@ test("content reflows at 320 px and equivalent 200% desktop zoom", async ({ page
   expect(indexButtonBox).not.toBeNull();
   expect(indexButtonBox.x).toBeGreaterThanOrEqual(0);
   expect(indexButtonBox.x + indexButtonBox.width).toBeLessThanOrEqual(viewport.width);
+});
+
+test("custom 404 reflows, preserves preferences, and offers a clear return", async ({ page }, testInfo) => {
+  const isMobileProject = testInfo.project.name.startsWith("mobile-");
+  const viewport = isMobileProject ? { width: 320, height: 844 } : { width: 640, height: 360 };
+  await page.setViewportSize(viewport);
+  await openNotFoundPage(page);
+
+  await expect(page).toHaveTitle("Page not found — Olga Shirokostup");
+  await expect(page.getByRole("heading", { level: 1, name: "This page is not in the archive." })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Return to the portfolio" })).toHaveAttribute("href", "/");
+  expect(await page.locator('meta[name="robots"]').getAttribute("content")).toBe("noindex, follow");
+
+  const routeReveal = page.locator(".not-found-route__reveal");
+  await page.locator(".not-found__visual").scrollIntoViewIfNeeded();
+  await expect(routeReveal.first()).toHaveCSS("animation-name", "route-reveal-draw");
+  await expect(routeReveal.first()).toHaveCSS("stroke-dashoffset", "0px", { timeout: 4_000 });
+  await expect(routeReveal.last()).toHaveCSS("stroke-dashoffset", "0px", { timeout: 4_000 });
+
+  const skipLink = page.getByRole("link", { name: "Skip to content" });
+  if (testInfo.project.name === "mobile-webkit") {
+    await skipLink.focus();
+  } else {
+    await page.keyboard.press("Tab");
+  }
+  await expect(skipLink).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#main")).toBeFocused();
+
+  const colourTheme = page.getByRole("group", { name: "Colour theme" });
+  await colourTheme.getByRole("button", { name: "Dark" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(colourTheme.getByRole("button", { name: "Dark" })).toHaveAttribute("aria-pressed", "true");
+
+  await page.getByRole("button", { name: "Reduced" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-motion", "reduced");
+  await expect(routeReveal.first()).toHaveCSS("stroke-dasharray", "none");
+  await expect(routeReveal.first()).toHaveCSS("stroke-dashoffset", "0px");
+
+  const routeLayer = await page.locator(".not-found__visual").evaluate((visual) => getComputedStyle(visual).pointerEvents);
+  expect(routeLayer).toBe("none");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+
+  const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  const seriousViolations = results.violations.filter(({ impact }) => impact === "serious" || impact === "critical");
+  expect(seriousViolations).toEqual([]);
 });
 
 test("archive stacks share depth, symmetric cycling, and focus behaviour", async ({ page }) => {

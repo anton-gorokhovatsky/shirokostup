@@ -8,6 +8,7 @@ const stylesDirectory = join(repositoryRoot, "styles");
 const bundledStylesPath = join(repositoryRoot, "styles.css");
 const scriptPath = join(repositoryRoot, "script.js");
 const htmlPath = join(repositoryRoot, "index.html");
+const notFoundHtmlPath = join(repositoryRoot, "404.html");
 const eventsPath = join(repositoryRoot, "content", "events.json");
 const checkOnly = process.argv.includes("--check");
 const extractStyles = process.argv.includes("--extract");
@@ -169,11 +170,11 @@ const renderEvents = (events) => {
   return { ticket, featured };
 };
 
-const replaceSingle = (content, pattern, replacement, label) => {
+const replaceSingle = (content, pattern, replacement, label, sourceName = "index.html") => {
   const matches = content.match(new RegExp(pattern.source, pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`));
 
   if (matches?.length !== 1) {
-    throw new Error(`Expected one ${label} cache key in index.html, found ${matches?.length ?? 0}.`);
+    throw new Error(`Expected one ${label} cache key in ${sourceName}, found ${matches?.length ?? 0}.`);
   }
 
   return content.replace(pattern, replacement);
@@ -224,6 +225,7 @@ const bundledStyles = `${[
 
 const script = await readFile(scriptPath, "utf8");
 const html = await readFile(htmlPath, "utf8");
+const notFoundHtml = await readFile(notFoundHtmlPath, "utf8");
 const events = JSON.parse(await readFile(eventsPath, "utf8"));
 validateEvents(events);
 const renderedEvents = renderEvents(events);
@@ -251,6 +253,20 @@ const nextHtml = replaceSingle(
   `script.js?v=${digest(script)}`,
   "script",
 );
+const nextNotFoundHtmlWithStyles = replaceSingle(
+  notFoundHtml,
+  /styles\.css\?v=[^"]+/,
+  `styles.css?v=${digest(bundledStyles)}`,
+  "stylesheet",
+  "404.html",
+);
+const nextNotFoundHtml = replaceSingle(
+  nextNotFoundHtmlWithStyles,
+  /script\.js\?v=[^"]+/,
+  `script.js?v=${digest(script)}`,
+  "script",
+  "404.html",
+);
 
 if (checkOnly) {
   const currentBundle = await readFile(bundledStylesPath, "utf8");
@@ -258,6 +274,7 @@ if (checkOnly) {
 
   if (currentBundle !== bundledStyles) failures.push("styles.css is not built from the files in styles/.");
   if (html !== nextHtml) failures.push("index.html contains stale generated events or asset cache keys.");
+  if (notFoundHtml !== nextNotFoundHtml) failures.push("404.html contains stale asset cache keys.");
 
   if (failures.length) {
     console.error("Generated assets are out of date:");
@@ -270,5 +287,6 @@ if (checkOnly) {
 } else {
   await writeFile(bundledStylesPath, bundledStyles);
   if (html !== nextHtml) await writeFile(htmlPath, nextHtml);
+  if (notFoundHtml !== nextNotFoundHtml) await writeFile(notFoundHtmlPath, nextNotFoundHtml);
   console.log(`Built styles.css and cache keys: CSS ${digest(bundledStyles)}, JS ${digest(script)}.`);
 }

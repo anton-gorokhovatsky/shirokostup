@@ -34,6 +34,7 @@
   }
 
   .hero,
+  .not-found,
   .practice-statement,
   .now,
   .section-heading,
@@ -43,6 +44,11 @@
   .contact {
     min-height: 0;
     break-inside: auto;
+  }
+
+  .not-found__visual,
+  .not-found__preferences {
+    display: none !important;
   }
 
   .archive-card,
@@ -191,6 +197,26 @@
     box-shadow: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+
+  .not-found::before {
+    display: none;
+  }
+
+  .not-found-home::before {
+    background: var(--paper);
+    border: 2px solid currentColor;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .not-found-route__underlay {
+    stroke-width: 7px;
+  }
+
+  .not-found-route__line {
+    stroke-width: 2px;
   }
 
   .event-ticket,
