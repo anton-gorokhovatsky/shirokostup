@@ -30,6 +30,17 @@
   background: color-mix(in srgb, var(--paper-bright) 94%, var(--lichen));
 }
 
+/* Keep the invitation accent out of the dark archival surface. */
+:root[data-theme="dark"] .now[data-event-state="past"] {
+  background: var(--paper-bright);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .now[data-event-state="past"] {
+    background: var(--paper-bright);
+  }
+}
+
 .now[data-event-state="past"] .section-label {
   color: inherit;
   border-color: var(--line);
