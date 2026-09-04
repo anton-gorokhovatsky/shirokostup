@@ -256,6 +256,7 @@ test("control strokes remain visible in forced colours", async ({ page }) => {
 test("analytics waits for consent and can be withdrawn", async ({ page }, testInfo) => {
   const metricaRequests = [];
   const isMobileProject = testInfo.project.name.startsWith("mobile-");
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize(isMobileProject ? { width: 320, height: 844 } : { width: 640, height: 360 });
   await page.route("https://mc.yandex.ru/**", async (route) => {
     metricaRequests.push(route.request().url());
@@ -267,6 +268,7 @@ test("analytics waits for consent and can be withdrawn", async ({ page }, testIn
   });
 
   await openFreshPage(page, "top", { analyticsConsent: null });
+  await page.evaluate(() => document.fonts.ready);
 
   const consentPanel = page.locator(".analytics-consent[data-analytics-consent]");
   const allowAnalytics = consentPanel.getByRole("button", { name: "Allow analytics" });
@@ -277,6 +279,8 @@ test("analytics waits for consent and can be withdrawn", async ({ page }, testIn
   expect(await page.evaluate(() => window.disableYaCounter111895186)).toBe(true);
   expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
 
+  // Finish bringing the whole panel into view before focus changes and the pointer click.
+  await consentPanel.scrollIntoViewIfNeeded();
   await allowAnalytics.focus();
   await expect(allowAnalytics).toBeFocused();
   if (testInfo.project.name === "mobile-webkit") {
