@@ -500,7 +500,7 @@
   }
 
   .practice-statement {
-    min-height: 86svh;
+    min-height: 0;
   }
 
   .practice-statement h2 {
@@ -669,7 +669,8 @@
   }
 
   .archive-stack__instructions {
-    align-items: flex-start;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
     margin-top: 2.55rem !important;
     font-size: 0.61rem !important;
   }
@@ -690,7 +691,14 @@
   }
 
   .archive-stack__instruction {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: end;
     max-width: 13rem;
+  }
+
+  .archive-stack__instructions .archive-next {
+    grid-column: 2;
   }
 
   .project__visual--women-stack .archive-stack__instruction {
@@ -869,12 +877,8 @@
   }
 
   .analytics-consent {
-    right: 0.75rem;
-    bottom: 0.75rem;
-    left: 0.75rem;
     grid-template-columns: minmax(0, 1fr);
     gap: 0.8rem;
-    width: auto;
     padding: 1rem;
     border-radius: 1.25rem;
   }

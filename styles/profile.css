@@ -15,6 +15,7 @@
 }
 
 .about__intro h2 {
+  min-width: 0;
   max-width: 70rem;
   margin: 0;
   font-family: var(--serif);
@@ -25,6 +26,7 @@
 }
 
 .about__intro > p {
+  min-width: 0;
   max-inline-size: var(--measure-prose-narrow);
   margin: 0;
   font-size: var(--type-body-lead);

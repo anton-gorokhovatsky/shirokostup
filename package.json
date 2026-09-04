@@ -5,14 +5,16 @@
   "packageManager": "pnpm@11.9.0",
   "scripts": {
     "build": "node scripts/build-assets.mjs",
-    "build:check": "EVENT_RENDER_TIME=2026-08-13T12:00:00+02:00 node scripts/build-assets.mjs --check",
-    "check": "EVENT_RENDER_TIME=2026-08-13T12:00:00+02:00 node scripts/build-assets.mjs --check && node scripts/check-site.mjs && node scripts/check-performance-budget.mjs && node --check script.js",
+    "build:check": "node scripts/build-assets.mjs --check",
+    "check": "node scripts/build-assets.mjs --check && node --test tests/content.test.mjs && node scripts/check-site.mjs && node scripts/check-performance-budget.mjs && node --check script.js",
+    "package:site": "node scripts/package-site.mjs",
     "images": "python3 scripts/generate-responsive-images.py",
     "test": "playwright test",
     "test:browser": "playwright test"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
-    "@playwright/test": "1.62.0"
+    "@playwright/test": "1.62.0",
+    "esbuild": "0.28.2"
   }
 }
