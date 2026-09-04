@@ -551,6 +551,55 @@ test("past event becomes compact while a future event keeps its invitation", asy
   await expect(feature.getByRole("link")).toHaveAccessibleName(/Event details: Conversation with Olga/);
 });
 
+test("past event uses the neutral dark surface while invitations retain their accent", async ({ page }) => {
+  await installUpcomingClock(page);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openFreshPage(page, "now");
+  const feature = page.locator("[data-featured-event]");
+  const expectBackground = async (background) => {
+    const expected = await feature.evaluate((element, value) => {
+      const probe = document.createElement("div");
+      probe.style.background = value;
+      element.append(probe);
+      const colour = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+      return colour;
+    }, background);
+    await expect(feature).toHaveCSS("background-color", expected);
+  };
+  const chooseTheme = async (name, colorScheme) => {
+    await page.emulateMedia({ colorScheme });
+    await page.getByRole("button", { name: "Index", exact: true }).click();
+    await page.getByRole("group", { name: "Colour theme" }).getByRole("button", { name, exact: true }).click();
+    await page.keyboard.press("Escape");
+    await expect(page.locator("html")).toHaveAttribute("data-theme", name === "System" ? colorScheme : name.toLowerCase());
+  };
+
+  for (const name of ["Light", "Dark"]) {
+    await chooseTheme(name, "dark");
+    await expect(feature).toHaveAttribute("data-event-state", "upcoming");
+    await expectBackground("var(--lichen)");
+  }
+
+  await page.clock.fastForward(12 * 60 * 60 * 1000 + 1000);
+  await expect(feature).toHaveAttribute("data-event-state", "past");
+  for (const [name, colorScheme, dark] of [["Light", "dark", false], ["Dark", "light", true], ["System", "dark", true], ["System", "light", false]]) {
+    await chooseTheme(name, colorScheme);
+    await expectBackground(dark ? "var(--paper-bright)" : "color-mix(in srgb, var(--paper-bright) 94%, var(--lichen))");
+  }
+
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expectBackground("var(--paper-bright)");
+  await feature.scrollIntoViewIfNeeded();
+  const results = await new AxeBuilder({ page }).include("#now").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  expect(results.violations).toEqual([]);
+
+  // Match the CSS-only system fallback before a theme attribute is available.
+  await page.locator("html").evaluate(element => element.removeAttribute("data-theme"));
+  await expectBackground("var(--paper-bright)");
+});
+
 test("next event is selected without changing the build clock", async ({ page }) => {
   await installUpcomingClock(page, shortlyBeforeArchiveTime);
   await page.route('**/?qa=browser-regression*', async route => {
@@ -643,6 +692,8 @@ test("analytics goals respect consent and do not replay earlier actions", async 
 test("rendered page has no serious WCAG A or AA violations", async ({ page }) => {
   await installUpcomingClock(page);
   await openFreshPage(page, "top", { analyticsConsent: null });
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator("[data-event-ticket]")).toHaveCSS("opacity", "1");
 
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
   const seriousViolations = results.violations.filter(({ impact }) => impact === "serious" || impact === "critical");
