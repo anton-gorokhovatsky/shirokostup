@@ -211,13 +211,14 @@ test("control morphs keep immediate, legible reduced-motion states", async ({ pa
 
   const closeButton = page.getByRole("button", { name: "Close index", exact: true });
   const stroke = closeButton.locator(".index-button__glyph i").first();
-  const state = await stroke.evaluate((element) => {
+  const readState = () => stroke.evaluate((element) => {
     const style = getComputedStyle(element);
     const matrix = new DOMMatrixReadOnly(style.transform);
     return { duration: parseFloat(style.transitionDuration), angle: Math.round(Math.atan2(matrix.b, matrix.a) * 180 / Math.PI) };
   });
-  expect(state.angle).toBe(45);
-  expect(state.duration).toBeLessThan(0.001);
+  // WebKit may report the pre-paint transform even for the 0.01ms reduced transition.
+  await expect.poll(async () => (await readState()).angle).toBe(45);
+  expect((await readState()).duration).toBeLessThan(0.001);
   await closeButton.click();
   await expect(page.locator("#site-index")).not.toBeVisible();
 
