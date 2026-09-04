@@ -729,30 +729,34 @@ button {
   height: 15px;
 }
 
-.index-button__glyph i,
-.index-close i,
-.index-close i::after {
+.index-button__glyph i {
   position: absolute;
+  top: calc(50% - 0.5px);
   display: block;
   width: 100%;
   height: 1px;
-  background: currentColor;
-  content: "";
+  border-top: 1px solid currentColor;
+  transform-origin: center;
+  transition: transform var(--duration-responsive) var(--ease-move), width var(--duration-responsive) var(--ease-move);
 }
 
 .index-button__glyph i:first-child {
-  top: 3px;
+  transform: translateY(-4px) rotate(0deg);
 }
 
 .index-button__glyph i:last-child {
   right: 0;
-  bottom: 3px;
   width: 68%;
-  transition: width var(--duration-responsive) var(--ease-settle);
+  transform: translateY(4px) rotate(0deg);
 }
 
 .index-button:hover .index-button__glyph i:last-child {
   width: 100%;
+}
+
+/* The modal owns the control while open; do not ghost the opener behind it. */
+.menu-open .site-header {
+  opacity: 0;
 }
 
 .site-index {
@@ -833,19 +837,18 @@ button {
   outline-offset: -3px;
 }
 
-.index-close i {
-  position: relative;
+.index-close .index-button__glyph {
   width: 28px;
-  transform: rotate(45deg);
-  transition: transform var(--duration-responsive) var(--ease-settle);
 }
 
-.index-close i::after {
-  transform: rotate(90deg);
+/* The two strokes change meaning with the dialog, never with hover. */
+.menu-open .site-index:not(.is-closing) .index-close .index-button__glyph i:first-child {
+  transform: translateY(0) rotate(45deg);
 }
 
-.index-close:hover i {
-  transform: rotate(90deg) scale(0.96);
+.menu-open .site-index:not(.is-closing) .index-close .index-button__glyph i:last-child {
+  width: 100%;
+  transform: translateY(0) rotate(-45deg);
 }
 
 .site-index__body {
@@ -3809,19 +3812,33 @@ body.menu-open .event-ticket {
   opacity: 0.7;
 }
 
-.credits__count::after {
+.credits__glyph {
+  position: relative;
+  flex: 0 0 1rem;
   width: 1rem;
-  content: "+";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1;
-  text-align: center;
-  transition: transform var(--duration-responsive) var(--ease-settle);
+  height: 1rem;
 }
 
-.credits[open] .credits__count::after {
-  content: "−";
-  transform: rotate(180deg);
+.credits__glyph::before,
+.credits__glyph::after {
+  position: absolute;
+  top: calc(50% - 0.5px);
+  left: 50%;
+  width: 0.625rem;
+  height: 1px;
+  border-top: 1px solid currentColor;
+  content: "";
+  transform: translateX(-50%);
+}
+
+.credits__glyph::after {
+  transform: translateX(-50%) rotate(90deg) scaleX(1);
+  transition: transform var(--duration-fast) var(--ease-move);
+}
+
+/* Keep the horizontal stroke still; retract only the vertical stroke. */
+.credits[open]:not(.is-closing) .credits__glyph::after {
+  transform: translateX(-50%) rotate(90deg) scaleX(0);
 }
 
 .credits ul {

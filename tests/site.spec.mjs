@@ -130,6 +130,128 @@ test("index keeps predictable focus, theme, and motion controls", async ({ page 
   await expect(indexButton).toBeFocused();
 });
 
+test("index strokes morph with the dialog state, not hover", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await openFreshPage(page);
+
+  const opener = page.getByRole("button", { name: "Index", exact: true });
+  const dialog = page.getByRole("dialog", { name: "Index" });
+  const closeButton = page.getByRole("button", { name: "Close index", exact: true });
+  const firstStroke = closeButton.locator(".index-button__glyph i").first();
+  const angle = () => firstStroke.evaluate((element) => {
+    const matrix = new DOMMatrixReadOnly(getComputedStyle(element).transform);
+    return Math.round(Math.atan2(matrix.b, matrix.a) * 180 / Math.PI);
+  });
+
+  const openingMorph = await opener.evaluate((element) => {
+    element.click();
+    return document.querySelector(".index-close .index-button__glyph i")
+      .getAnimations().some((animation) => animation.transitionProperty === "transform");
+  });
+  expect(openingMorph).toBe(true);
+  await expect.poll(angle).toBe(45);
+  await closeButton.hover();
+  await expect.poll(angle).toBe(45);
+  await expect(closeButton.locator(".index-button__glyph")).toHaveAttribute("aria-hidden", "true");
+
+  const closingMorph = await closeButton.evaluate((element) => {
+    element.click();
+    return element.querySelector(".index-button__glyph i")
+      .getAnimations().some((animation) => animation.transitionProperty === "transform");
+  });
+  expect(closingMorph).toBe(true);
+  await expect(dialog).not.toBeVisible();
+  await expect(opener).toHaveAttribute("aria-expanded", "false");
+  await expect(opener).toBeFocused();
+
+  await opener.click();
+  await expect.poll(angle).toBe(45);
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+});
+
+test("credits strokes follow disclosure state and rapid reversal", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await openFreshPage(page, "contact");
+  const disclosure = page.locator(".credits");
+  const summary = disclosure.locator("summary");
+  const glyph = summary.locator(".credits__glyph");
+  const verticalScale = () => glyph.evaluate((element) => {
+    const matrix = new DOMMatrixReadOnly(getComputedStyle(element, "::after").transform);
+    return Math.round(Math.hypot(matrix.a, matrix.b) * 100) / 100;
+  });
+
+  await summary.scrollIntoViewIfNeeded();
+  await expect(glyph).toHaveAttribute("aria-hidden", "true");
+  await expect.poll(verticalScale).toBe(1);
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  await expect(disclosure).toHaveAttribute("open", "");
+  await expect.poll(verticalScale).toBe(0);
+
+  await summary.evaluate((element) => {
+    element.click();
+    element.click();
+  });
+  await expect(disclosure).not.toHaveClass(/is-closing/);
+  await page.waitForTimeout(300); // Longer than the cancelled close timer.
+  await expect(disclosure).toHaveAttribute("open", "");
+  await expect.poll(verticalScale).toBe(0);
+
+  await summary.click();
+  await expect(disclosure).not.toHaveAttribute("open", "");
+  await expect.poll(verticalScale).toBe(1);
+  await expect(summary).toBeFocused();
+});
+
+test("control morphs keep immediate, legible reduced-motion states", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openFreshPage(page);
+  await page.getByRole("button", { name: "Index", exact: true }).click();
+
+  const closeButton = page.getByRole("button", { name: "Close index", exact: true });
+  const stroke = closeButton.locator(".index-button__glyph i").first();
+  const state = await stroke.evaluate((element) => {
+    const style = getComputedStyle(element);
+    const matrix = new DOMMatrixReadOnly(style.transform);
+    return { duration: parseFloat(style.transitionDuration), angle: Math.round(Math.atan2(matrix.b, matrix.a) * 180 / Math.PI) };
+  });
+  expect(state.angle).toBe(45);
+  expect(state.duration).toBeLessThan(0.001);
+  await closeButton.click();
+  await expect(page.locator("#site-index")).not.toBeVisible();
+
+  const disclosure = page.locator(".credits");
+  const summary = disclosure.locator("summary");
+  await summary.click();
+  await expect(disclosure).toHaveAttribute("open", "");
+  expect(await summary.locator(".credits__glyph").evaluate((element) =>
+    parseFloat(getComputedStyle(element, "::after").transitionDuration))).toBeLessThan(0.001);
+  await summary.click();
+  await expect(disclosure).not.toHaveAttribute("open", "");
+  await expect(disclosure).not.toHaveClass(/is-closing/);
+});
+
+test("control strokes remain visible in forced colours", async ({ page }) => {
+  await page.emulateMedia({ forcedColors: "active", reducedMotion: "reduce" });
+  await openFreshPage(page);
+  await page.getByRole("button", { name: "Index", exact: true }).click();
+  const line = page.locator(".index-close .index-button__glyph i").first();
+  await expect(line).toHaveCSS("border-top-width", "1px");
+  await expect(line).toHaveCSS("border-top-style", "solid");
+  await expect(line).toHaveCSS("border-top-color", await line.evaluate((element) => getComputedStyle(element).color));
+  await page.keyboard.press("Escape");
+
+  const glyph = page.locator(".credits__glyph");
+  const border = await glyph.evaluate((element) => {
+    const style = getComputedStyle(element, "::before");
+    return { width: style.borderTopWidth, style: style.borderTopStyle, colour: style.borderTopColor, ink: style.color };
+  });
+  expect(border.width).toBe("1px");
+  expect(border.style).toBe("solid");
+  expect(border.colour).toBe(border.ink);
+});
+
 test("analytics waits for consent and can be withdrawn", async ({ page }, testInfo) => {
   const metricaRequests = [];
   const isMobileProject = testInfo.project.name.startsWith("mobile-");

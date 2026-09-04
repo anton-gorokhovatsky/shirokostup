@@ -616,19 +616,33 @@
   opacity: 0.7;
 }
 
-.credits__count::after {
+.credits__glyph {
+  position: relative;
+  flex: 0 0 1rem;
   width: 1rem;
-  content: "+";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1;
-  text-align: center;
-  transition: transform var(--duration-responsive) var(--ease-settle);
+  height: 1rem;
 }
 
-.credits[open] .credits__count::after {
-  content: "−";
-  transform: rotate(180deg);
+.credits__glyph::before,
+.credits__glyph::after {
+  position: absolute;
+  top: calc(50% - 0.5px);
+  left: 50%;
+  width: 0.625rem;
+  height: 1px;
+  border-top: 1px solid currentColor;
+  content: "";
+  transform: translateX(-50%);
+}
+
+.credits__glyph::after {
+  transform: translateX(-50%) rotate(90deg) scaleX(1);
+  transition: transform var(--duration-fast) var(--ease-move);
+}
+
+/* Keep the horizontal stroke still; retract only the vertical stroke. */
+.credits[open]:not(.is-closing) .credits__glyph::after {
+  transform: translateX(-50%) rotate(90deg) scaleX(0);
 }
 
 .credits ul {

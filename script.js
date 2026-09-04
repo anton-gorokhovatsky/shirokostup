@@ -697,13 +697,20 @@ if (cursorTrail) {
   resizeTrail();
 }
 
+const resetMenuClose = () => {
+  window.clearTimeout(menuCloseTimer);
+  menuCloseTimer = 0;
+  menu?.removeEventListener("animationend", handleMenuExit);
+  menu?.classList.remove("is-closing");
+};
+
 const openMenu = () => {
   if (!menu || typeof menu.showModal !== "function") return;
 
-  window.clearTimeout(menuCloseTimer);
-  menu.classList.remove("is-closing");
+  resetMenuClose();
   if (menuBody) menuBody.scrollTop = 0;
   menu.showModal();
+  menuClose?.getBoundingClientRect(); // Prime the resting icon.
   moveCursorTrail(menu);
   root.classList.add("menu-open");
   document.body.classList.add("menu-open");
@@ -711,11 +718,7 @@ const openMenu = () => {
 };
 
 const finishMenuClose = () => {
-  window.clearTimeout(menuCloseTimer);
-  menuCloseTimer = 0;
-  menu?.removeEventListener("animationend", handleMenuExit);
-  menu?.classList.remove("is-closing");
-
+  resetMenuClose();
   if (menu?.open) menu.close();
 };
 
@@ -750,10 +753,7 @@ menu?.addEventListener("cancel", (event) => {
 });
 
 menu?.addEventListener("close", () => {
-  window.clearTimeout(menuCloseTimer);
-  menuCloseTimer = 0;
-  menu.removeEventListener("animationend", handleMenuExit);
-  menu.classList.remove("is-closing");
+  resetMenuClose();
   root.classList.remove("menu-open");
   document.body.classList.remove("menu-open");
   moveCursorTrail(document.body);
@@ -774,11 +774,16 @@ const finishCreditsClose = () => {
 };
 
 creditsSummary?.addEventListener("click", (event) => {
-  if (!credits?.open || credits.classList.contains("is-closing") || motionIsReduced()) return;
+  window.clearTimeout(creditsCloseTimer);
+  if (!credits?.open || motionIsReduced()) {
+    credits?.classList.remove("is-closing");
+    return;
+  }
 
   event.preventDefault();
-  credits.classList.add("is-closing");
-  creditsCloseTimer = window.setTimeout(finishCreditsClose, 240);
+  if (credits.classList.toggle("is-closing")) {
+    creditsCloseTimer = window.setTimeout(finishCreditsClose, 240);
+  }
 });
 
 const revealItems = document.querySelectorAll("[data-reveal]");
