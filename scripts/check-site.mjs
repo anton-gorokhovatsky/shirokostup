@@ -5,9 +5,12 @@ import { fileURLToPath } from "node:url";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const html = await readFile(resolve(root, "index.html"), "utf8");
 const notFoundHtml = await readFile(resolve(root, "404.html"), "utf8");
-const css = await readFile(resolve(root, "styles.css"), "utf8");
-const script = await readFile(resolve(root, "script.js"), "utf8");
+const css = (await Promise.all(["foundation", "hero", "work", "profile", "responsive", "modes"].map(name => readFile(resolve(root, `styles/${name}.css`), "utf8")))).join("\n");
+const script = await readFile(resolve(root, "src/script.js"), "utf8");
 const events = JSON.parse(await readFile(resolve(root, "content/events.json"), "utf8"));
+const content = JSON.parse(await readFile(resolve(root, "content/site.json"), "utf8"));
+const galleryCount = content.projects.reduce((sum, project) => sum + (project.images?.length || 0), 0);
+const archiveCount = content.projects.find(project => project.id === "archive").images.length;
 const failures = [];
 
 const assert = (condition, message) => {
@@ -258,16 +261,17 @@ assert(
 
 // Responsive images and both archive implementations.
 assert(
-  count(html, /<picture\b/gi) === 13 &&
-    count(html, /<source\b[^>]*type="image\/avif"/gi) === 13 &&
-    count(html, /<source\b[^>]*type="image\/webp"/gi) === 13 &&
-    count(html, /\bsrcset=/gi) === 39 &&
-    count(html, /decoding="async"/gi) === 13,
+  count(html, /<picture\b/gi) === galleryCount + 1 &&
+    count(html, /<source\b[^>]*type="image\/avif"/gi) === galleryCount + 1 &&
+    count(html, /<source\b[^>]*type="image\/webp"/gi) === galleryCount + 1 &&
+    count(html, /\bsrcset=/gi) === (galleryCount + 1) * 3 &&
+    count(html, /decoding="async"/gi) === galleryCount + 1,
   "All editorial images must provide AVIF and WebP sources with responsive fallbacks.",
 );
 assert(
   count(html, /data-archive-stack\b/gi) === 2 &&
-    count(html, /data-archive-card\b/gi) === 12 &&
+    count(html, /data-archive-card\b/gi) === galleryCount &&
+    count(html, /data-archive-next\b/gi) === 2 &&
     count(html, /archive-stack__instruction--desktop/g) === 2 &&
     count(html, /archive-stack__instruction--touch/g) === 2 &&
     script.includes('document.querySelectorAll("[data-archive-stack]")') &&
@@ -275,11 +279,11 @@ assert(
   "Both project image stacks must retain shared drag, keyboard, counter and instruction behaviour.",
 );
 assert(
-  html.includes('aria-label="Eight archival records from the Archive of Artistic Life in Zapolyarye"') &&
+  html.includes(`aria-label="${archiveCount} archival records from the Archive of Artistic Life in Zapolyarye"`) &&
     html.includes('data-archive-item-name="archive record"') &&
     html.includes("data-archive-register") &&
-    count(html, /data-archive-kind=/gi) === 8 &&
-    count(html, /data-archive-year=/gi) === 8,
+    count(html, /data-archive-kind=/gi) === archiveCount &&
+    count(html, /data-archive-year=/gi) === archiveCount,
   "The Apatity archive must retain its eight-record catalogue metadata.",
 );
 assert(
@@ -293,8 +297,8 @@ assert(
 
 // Project content semantics.
 assert(
-  count(html, /class="timeline__date"/gi) === 6 &&
-    count(html, /class="timeline__role"/gi) === 6 &&
+  count(html, /class="timeline__date"/gi) === content.timeline.length &&
+    count(html, /class="timeline__role"/gi) === content.timeline.length &&
     /timeline__date[\s\S]*?<time datetime="2023">2023<\/time>[\s\S]*?ongoing-status/i.test(html) &&
     /timeline__date[\s\S]*?<time datetime="2022">2022<\/time>[\s\S]*?ongoing-status/i.test(html),
   "Selected roles and ongoing project years must retain their semantic grouping.",

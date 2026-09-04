@@ -343,6 +343,34 @@ test("content reflows at 320 px and equivalent 200% desktop zoom", async ({ page
   expect(indexButtonBox.x + indexButtonBox.width).toBeLessThanOrEqual(viewport.width);
 });
 
+test("enlarged text keeps consent, past event, and gallery actions inside a narrow screen", async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-09-04T12:00:00Z") });
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openFreshPage(page, "top", { analyticsConsent: null });
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    document.documentElement.style.fontSize = "200%";
+  });
+
+  const controls = page.locator(".analytics-consent__actions button, .now__action, .archive-next");
+  for (const control of await controls.all()) {
+    await control.scrollIntoViewIfNeeded();
+    const box = await control.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(321);
+    expect(await control.evaluate((el) => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+  }
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+
+  const next = page.getByRole("button", { name: "Next image in Women in the North" });
+  await next.focus();
+  await expect(next).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".project__visual--women-stack [data-archive-counter]")).toHaveText("02 / 04");
+});
+
 test("custom 404 reflows, preserves preferences, and offers a clear return", async ({ page }, testInfo) => {
   const isMobileProject = testInfo.project.name.startsWith("mobile-");
   const viewport = isMobileProject ? { width: 320, height: 844 } : { width: 640, height: 360 };
@@ -495,6 +523,121 @@ test("decorative routes draw through stable masks and finish as solid strokes", 
   await expect(reducedReveal.first()).toHaveCSS("animation-name", "none");
   await expect(reducedReveal.first()).toHaveCSS("stroke-dasharray", "none");
   await expect(reducedReveal.first()).toHaveCSS("stroke-dashoffset", "0px");
+});
+
+test("consent notice has an opaque surface and never overlaps the introduction", async ({ page }) => {
+  await installUpcomingClock(page);
+  await openFreshPage(page, "top", { analyticsConsent: null });
+  const notice = page.locator("aside.analytics-consent");
+  const [hero, panel] = await Promise.all([page.locator(".hero").boundingBox(), notice.boundingBox()]);
+  expect(panel.y).toBeGreaterThanOrEqual(hero.y + hero.height - 1);
+  expect(await notice.evaluate(el => getComputedStyle(el).backgroundColor)).not.toMatch(/rgba|transparent/);
+  await expect(page.locator('[data-event-ticket]')).toBeVisible();
+  await expect(page.locator('[data-event-ticket]')).toHaveCSS('opacity', '1');
+  await notice.scrollIntoViewIfNeeded();
+  await expect(notice.getByRole("button", { name: "Allow analytics" })).toBeInViewport();
+  await expect(notice.getByRole("button", { name: "Decline" })).toBeInViewport();
+});
+
+test("past event becomes compact while a future event keeps its invitation", async ({ page }) => {
+  await installUpcomingClock(page, shortlyBeforeArchiveTime);
+  await openFreshPage(page);
+  const feature = page.locator("[data-featured-event]");
+  const before = (await feature.boundingBox()).height;
+  await page.clock.runFor(5100);
+  await expect(feature).toHaveAttribute("data-event-state", "past");
+  const after = (await feature.boundingBox()).height;
+  expect(after).toBeLessThan(before * 0.65);
+  await expect(feature.getByRole("link")).toHaveAccessibleName(/Event details: Conversation with Olga/);
+});
+
+test("next event is selected without changing the build clock", async ({ page }) => {
+  await installUpcomingClock(page, shortlyBeforeArchiveTime);
+  await page.route('**/?qa=browser-regression*', async route => {
+    const response = await route.fetch();
+    let html = await response.text();
+    html = html.replace(/(<script type="application\/json" id="event-data">)([\s\S]*?)(<\/script>)/, (_, start, json, end) => {
+      const events = JSON.parse(json);
+      events.push({ ...events[0], id: 'test-next-event', title: 'Next conversation', ticketTitle: 'Next conversation', startsAt: '2026-09-13T18:00:00+02:00', archivesAt: '2026-09-14T00:00:00+02:00' });
+      return start + JSON.stringify(events) + end;
+    });
+    await route.fulfill({ response, body: html });
+  });
+  await openFreshPage(page);
+  await page.getByRole('button', { name: 'Hide event invitation' }).click();
+  await page.clock.runFor(5100);
+  await expect(page.locator('[data-featured-event]')).toHaveAttribute('data-event-id', 'test-next-event');
+  await expect(page.locator('[data-featured-event-status]')).toHaveText('Upcoming');
+  await expect(page.locator('[data-event-ticket]')).toBeVisible();
+  await expect(page.locator('[data-event-ticket-title]')).toHaveText('Next conversation');
+});
+
+test("both stacks advance once on tap, button and either drag direction", async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openFreshPage(page, 'work');
+  for (const figure of await page.locator('figure:has([data-archive-stack])').all()) {
+    const cards = figure.locator('[data-archive-card]');
+    const next = figure.locator('[data-archive-next]');
+    await next.scrollIntoViewIfNeeded();
+    if (testInfo.project.use.hasTouch) await next.tap(); else await next.click();
+    await expect(cards.nth(1)).toHaveAttribute('data-stack-depth', '0');
+    await next.focus();
+    await next.press('Enter');
+    await expect(cards.nth(2)).toHaveAttribute('data-stack-depth', '0');
+    await expect(next).toBeFocused();
+    await cards.nth(2).scrollIntoViewIfNeeded();
+    if (testInfo.project.use.hasTouch) await cards.nth(2).tap(); else await cards.nth(2).click();
+    await expect(cards.nth(3)).toHaveAttribute('data-stack-depth', '0');
+    let current = 3;
+    for (const direction of [-1, 1]) {
+      const card = cards.nth(current);
+      await card.scrollIntoViewIfNeeded();
+      const box = await card.boundingBox();
+      const x = box.x + box.width / 2;
+      const y = box.y + Math.min(box.height / 2, 150);
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      await page.mouse.move(x + direction * Math.min(box.width * 0.35, 180), y, { steps: 8 });
+      await page.mouse.up();
+      current = (current + 1) % await cards.count();
+      await expect(cards.nth(current)).toHaveAttribute('data-stack-depth', '0');
+    }
+  }
+});
+
+test("Index contrast passes over the blue archive in every theme", async ({ page }) => {
+  await openFreshPage(page);
+  await page.locator('.project--archive').scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Index', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Index' });
+  for (const mode of ['Light', 'Dark', 'System']) {
+    await dialog.getByRole('button', { name: mode, exact: true }).first().click();
+    await page.waitForTimeout(500);
+    const results = await new AxeBuilder({ page }).withRules(['color-contrast']).analyze();
+    expect(results.violations).toEqual([]);
+  }
+});
+
+test("analytics goals respect consent and do not replay earlier actions", async ({ page }) => {
+  await page.route('https://mc.yandex.ru/**', route => route.fulfill({ status: 200, contentType: 'application/javascript', body: '/* test stub */' }));
+  await openFreshPage(page);
+  await page.evaluate(() => document.addEventListener('click', event => { if (event.target.closest('a')) event.preventDefault(); }));
+  const project = page.locator('.project--women h3 a');
+  await project.click();
+  expect(await page.evaluate(() => window.ym?.a?.filter(call => call[1] === 'reachGoal') || [])).toEqual([]);
+  await page.getByRole('button', { name: 'Index', exact: true }).click();
+  const group = page.getByRole('group', { name: 'Analytics preference' });
+  await group.getByRole('button', { name: 'Allow', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await project.click();
+  await page.locator('.contact__footer a[href$=".pdf"]').click();
+  await page.getByRole('link', { name: 'Email Olga Shirokostup to work together', exact: true }).click();
+  expect(await page.evaluate(() => window.ym.a.filter(call => call[1] === 'reachGoal').map(call => call[2]))).toEqual(['project_open', 'cv_open', 'email_click']);
+  await page.getByRole('button', { name: 'Index', exact: true }).click();
+  await group.getByRole('button', { name: 'Decline', exact: true }).click();
+  await page.keyboard.press('Escape');
+  await project.click();
+  expect(await page.evaluate(() => window.ym.a.filter(call => call[1] === 'reachGoal').length)).toBe(3);
 });
 
 test("rendered page has no serious WCAG A or AA violations", async ({ page }) => {

@@ -16,8 +16,8 @@ python3 -m http.server 4173
 
 Then open `http://127.0.0.1:4173`.
 
-The site remains static and can be published directly with GitHub Pages. The build step only combines the authored CSS
-modules into `styles.css` and updates content-derived cache keys in `index.html`.
+The site remains static. The build renders editorial data into semantic HTML, compacts authored CSS/JavaScript with
+esbuild, and synchronises content-derived cache keys in `index.html` and `404.html`. There is no browser framework or CMS.
 
 ## Checks
 
@@ -30,7 +30,9 @@ pnpm run test:browser
 The fast gate verifies generated files, document landmarks, unique anchors, local assets, image alternatives and
 dimensions, sharing metadata, consistent contact actions, theme and motion controls, JavaScript syntax, and performance
 budgets. Playwright then checks rendered Chromium and Safari/WebKit layouts, both archive stacks, keyboard focus, themes,
-reduced motion, and WCAG A/AA rules with axe. Both gates run for every pull request and push to `main`.
+reduced motion, and WCAG A/AA rules with axe. Both gates run for every pull request and push to `main`. The `deploy` job
+depends on their success: GitHub Pages receives only the verified `_site` artifact, never the repository root directly.
+Tests own an isolated local server on port 4196 (`SITE_TEST_PORT` overrides it); an unrelated preview is never reused.
 
 Automation supports rather than replaces the focused real-browser release gate in [`ACCESSIBILITY.md`](ACCESSIBILITY.md).
 
@@ -46,11 +48,18 @@ pnpm run images
 
 ## Structure
 
-- `index.html` — content and document structure
+- `content/site.json` — project descriptions, gallery records, biography, timeline and reading-room entries
+- `content/events.json` — event history and future invitations; no manual build clock is needed
+- `index.html` — document structure; do not edit `GENERATED:*` blocks directly
+- `templates/arca-network.svg` — the preserved ARCA illustration used by the timeline renderer
 - `styles/*.css` — authored visual-system modules
 - `styles.css` — generated browser bundle; do not edit directly
-- `script.js` — index dialog, scroll progress, and restrained reveal motion
-- `scripts/build-assets.mjs` — deterministic CSS bundle and cache-key generator
+- `src/script.js` — authored interactions, preferences, events, consent and analytics goals
+- `script.js` — generated browser JavaScript; do not edit directly
+- `scripts/build-assets.mjs` — deterministic content/bundle/cache-key generator
+- `scripts/render-content.mjs` — small validated renderers for editable editorial data
+- `scripts/package-site.mjs` — public-file allowlist for the verified Pages artifact
+- `tests/content.test.mjs` — data validation and rendering contracts
 - `tests/site.spec.mjs` — rendered desktop/mobile interaction and accessibility checks
 - `assets/images` — locally stored project imagery
 
@@ -63,3 +72,9 @@ The companion interaction rule is consistency as predictability rather than same
 ## Content sources
 
 The first prototype is based on Olga’s supplied website materials and the public project pages linked from that document. Image provenance is recorded in [`assets/images/CREDITS.md`](assets/images/CREDITS.md).
+
+## Analytics goals
+
+After visitor consent, the site sends `project_open`, `cv_open`, and `email_click` to counter `111895186`.
+Create matching **JavaScript event** goals in the Metrica dashboard to use them as conversions. Test traffic stubs Metrica;
+no real visitor reports or account configuration are inferred from the browser tests. See `HANDOFF.md` for the setup checklist.

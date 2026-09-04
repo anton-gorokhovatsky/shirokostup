@@ -152,7 +152,7 @@
 .practice-statement {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  min-height: 92svh;
+  min-height: 0;
   padding: var(--section-top-clearance) var(--gutter) clamp(3rem, 7vw, 7rem);
   background: linear-gradient(180deg, var(--paper), var(--paper-bright) clamp(10rem, 18vh, 14rem));
 }
@@ -160,7 +160,7 @@
 .practice-statement h2 {
   align-self: center;
   max-width: 78rem;
-  margin: 10vh 0;
+  margin: clamp(2.5rem, 6vw, 5rem) 0;
   font-family: var(--serif);
   font-size: clamp(3rem, 7.1vw, 8rem);
   font-weight: 400;

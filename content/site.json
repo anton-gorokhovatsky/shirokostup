@@ -1,0 +1,296 @@
+{
+  "hero": "Artistic research, archives, and exhibitions across the European High North.",
+  "practice": {
+    "title": "Local histories in public view",
+    "note": "Olga works with artists, museums, and researchers to bring local histories into public view through exhibitions, writing, and long-term collaborations."
+  },
+  "about": {
+    "title": "From the Kola Peninsula to Lyon",
+    "introduction": "Olga Shirokostup is an independent curator, researcher, and educator. Born in Severomorsk, she works across the European High North and is based in Lyon.",
+    "paragraphs": [
+      "Olga studied history at the Moscow School of Social and Economic Sciences and graduated from the Chto Delat’ School of Engaged Art. Her work moves between long-term institutional collaborations and independent research.",
+      "She is currently a curator within the European research project ARCA (Biocultural Heritage in Arctic Cities as a Potential Resource for Climate Adaptation, 2024–2027). She was co-curator of Arctic Art Forum V at the Natural History Museum in Oslo in 2026 and has been part of the Women in the North project, curated by Maria Lind, since 2022.",
+      "Between 2021 and 2023, Olga served as Chief Curator of the <a href=\"https://radiancecca.com/\">Radiance Centre for Contemporary Art</a> in Apatity. Since 2023, she has curated the Archive of Artistic Life in Zapolyarye within RAAN. From 2020 to 2024, she was a Research Course Leader at <a href=\"https://garagemca.academy/\">Garage Academy</a>. She is a recipient of a Robert Bosch Stiftung grant and a former participant in the Frame Curatorial Exchange Programme."
+    ]
+  },
+  "projects": [
+    {
+      "id": "women",
+      "title": "Women in the North",
+      "url": "https://kinmuseum.se/en/events/kvinnor-i-norr-kajsa-zetterquist-i-fokus",
+      "type": "Research · exhibitions · publications",
+      "since": "2022",
+      "date": null,
+      "description": "At Kin Museum of Contemporary Art, Olga contributes archival research, essays, exhibitions, and zines to Women in the North, a long-term project curated by Maria Lind. Her contributions include <em>The Warmth of the Invisible Sun</em>, a publication devoted to Evgenia Patsia and the Kola North.",
+      "action": "View the project",
+      "publication": {
+        "title": "The Warmth of the Invisible Sun",
+        "subtitle": "Evgenia Patsia and the Kola North"
+      },
+      "images": [
+        {
+          "src": "assets/images/women-house.jpg",
+          "widths": [
+            480,
+            800,
+            1280,
+            1800
+          ],
+          "width": 1800,
+          "height": 1006,
+          "alt": "Kajsa Zetterquist walking between timber buildings at her home on Saltfjellet",
+          "label": "Still from The Calm Steps Behind by Ingela Johansson",
+          "caption": "Still from <cite>The Calm Steps Behind</cite> · Ingela Johansson"
+        },
+        {
+          "src": "assets/images/women-window.jpg",
+          "widths": [
+            480,
+            800,
+            1280,
+            1800
+          ],
+          "width": 1800,
+          "height": 1011,
+          "alt": "A multi-pane window in the timber wall of Kajsa Zetterquist’s home on Saltfjellet",
+          "label": "Second still from The Calm Steps Behind by Ingela Johansson",
+          "caption": "Still from <cite>The Calm Steps Behind</cite> · Ingela Johansson"
+        },
+        {
+          "src": "assets/images/women-installation.jpg",
+          "widths": [
+            480,
+            800,
+            1280,
+            1800
+          ],
+          "width": 1800,
+          "height": 1234,
+          "alt": "Installation view of Kajsa Zetterquist’s paintings arranged across a gallery wall",
+          "label": "Exhibition view photographed by Johan Ylitalo",
+          "caption": "Exhibition view · Photo: Johan Ylitalo"
+        },
+        {
+          "src": "assets/images/women-painting.jpg",
+          "widths": [
+            480,
+            800,
+            1280,
+            1800
+          ],
+          "width": 1800,
+          "height": 1197,
+          "alt": "Felicias dans by Kajsa Zetterquist, an abstract painting in muted earth, black, green, and yellow tones",
+          "label": "Felicias dans, 2005 to 2006, by Kajsa Zetterquist",
+          "caption": "<cite>Felicias dans</cite>, 2005–2006 · Kajsa Zetterquist"
+        }
+      ]
+    },
+    {
+      "id": "archive",
+      "title": "Archive of Artistic Life in Zapolyarye",
+      "url": "https://russianartarchive.net/en/catalogue/institution/archive-of-artistic-life-in-zapolyarye",
+      "type": "Archive · oral history · research",
+      "since": "2023",
+      "date": null,
+      "description": "An independent archive of contemporary art in Murmansk Oblast, launched by Olga within the Russian Art Archive Network. Beginning with the art scene in Apatity, it brings together testimonies, artworks, documents, and research spanning the mid-1970s through the 2000s.",
+      "action": "Enter the archive",
+      "images": [
+        {
+          "src": "assets/images/apatity-archive.jpg",
+          "widths": [
+            480,
+            800
+          ],
+          "width": 800,
+          "height": 507,
+          "alt": "Apatity town square with the Khibiny Mountains in the distance, photographed in the 1970s or 1980s",
+          "label": "Apatity, Murmansk Region, 1970s–80s",
+          "caption": "Apatity, Murmansk Region, 1970s–80s · Original source unknown",
+          "kind": "Photograph",
+          "year": "1970s–80s"
+        },
+        {
+          "src": "assets/images/archive-painting-coup-poster.jpg",
+          "widths": [
+            480,
+            800,
+            1273
+          ],
+          "width": 1273,
+          "height": 1800,
+          "alt": "A 1991 Gallery M exhibition poster with three black-and-white artist portraits and Russian typography",
+          "label": "Painting at a Time of Upheaval exhibition poster, Gallery M, 1991",
+          "caption": "Painting at a Time of Upheaval · Gallery “M”, 1991",
+          "document": true,
+          "kind": "Poster",
+          "year": "1991"
+        },
+        {
+          "src": "assets/images/archive-gallery-m-1991.jpg",
+          "widths": [
+            480,
+            800,
+            1280,
+            1800
+          ],
+          "width": 1800,
+          "height": 1370,
+          "alt": "Artists and visitors gathered informally around a table at Gallery M in Apatity in 1991",
+          "label": "Artists and visitors at Gallery M in Apatity, 1991",
+          "caption": "Artists and visitors at Gallery “M” · Apatity, 1991",
+          "kind": "Photograph",
+          "year": "1991"
+        },
+        {
+          "src": "assets/images/archive-gallery-modern-art-leaflet.jpg",
+          "widths": [
+            480,
+            800,
+            1273
+          ],
+          "width": 1273,
+          "height": 1800,
+          "alt": "A scanned Gallery M information leaflet with the gallery logo, English text, and an Apatity address",
+          "label": "The Gallery of Modern Art leaflet, Gallery M, 1991",
+          "caption": "The Gallery of Modern Art · Gallery “M”, 1991",
+          "document": true,
+          "kind": "Leaflet",
+          "year": "1991"
+        },
+        {
+          "src": "assets/images/archive-gallery-banner.jpg",
+          "widths": [
+            480,
+            800,
+            1081
+          ],
+          "width": 1081,
+          "height": 800,
+          "alt": "Two people carrying a long hand-painted banner through an art gallery in Apatity",
+          "label": "The art scene in Apatity, RAAN collection image",
+          "caption": "The art scene in Apatity · RAAN collection image",
+          "kind": "Collection image",
+          "year": "Undated"
+        },
+        {
+          "src": "assets/images/archive-russian-arctic-poster.jpg",
+          "widths": [
+            480,
+            800,
+            1273
+          ],
+          "width": 1273,
+          "height": 1800,
+          "alt": "A pink 1994 exhibition poster titled Art from the Russian Arctic with a high-contrast artwork reproduction",
+          "label": "Art from the Russian Arctic exhibition poster, Fairfield Gallery, Croydon, 1994",
+          "caption": "Art from the Russian Arctic · Croydon, 1994",
+          "document": true,
+          "kind": "Poster",
+          "year": "1994"
+        },
+        {
+          "src": "assets/images/archive-gallery-guests.jpg",
+          "widths": [
+            480,
+            800,
+            1095
+          ],
+          "width": 1095,
+          "height": 800,
+          "alt": "A crowded gathering around a tea table at Gallery M in Apatity in 1996",
+          "label": "Igor Tchaikovsky and guests of Gallery M, 1996",
+          "caption": "Igor Tchaikovsky and guests of Gallery “M” · 1996",
+          "kind": "Photograph",
+          "year": "1996"
+        },
+        {
+          "src": "assets/images/archive-mosaic-installation.jpg",
+          "widths": [
+            480,
+            800,
+            1280,
+            1422
+          ],
+          "width": 1422,
+          "height": 800,
+          "alt": "Two people on ladders installing a colourful cosmonaut mosaic on a brick wall in Apatity",
+          "label": "Installing the 13 Cosmonauts mosaic, 2019",
+          "caption": "Installing the “13 Cosmonauts” mosaic · 2019",
+          "kind": "Documentation",
+          "year": "2019"
+        }
+      ]
+    },
+    {
+      "id": "forum",
+      "title": "Arctic Art Forum V",
+      "url": "https://www.nhm.uio.no/utstillinger/x-utstillinger/e-arctic/",
+      "type": "Curating · artistic research · climate",
+      "since": null,
+      "date": "Oslo · 2026",
+      "description": "Co-curated with Ekaterina Sharova at the Natural History Museum in Oslo. The exhibition <em>Climate Microchanges</em> brought artists, researchers, local voices, and Indigenous knowledge into a shared space for thinking about cultural and ecological change in the North.",
+      "action": "Visit the exhibition"
+    }
+  ],
+  "timeline": [
+    {
+      "date": "2024–27",
+      "ongoing": false,
+      "role": "Curator, ARCA European research project",
+      "illustration": "arca"
+    },
+    {
+      "date": "2026",
+      "ongoing": false,
+      "role": "Co-curator, Arctic Art Forum V, Oslo",
+      "illustration": null
+    },
+    {
+      "date": "2023",
+      "ongoing": true,
+      "role": "Archive of Artistic Life in Zapolyarye, RAAN",
+      "illustration": null
+    },
+    {
+      "date": "2022",
+      "ongoing": true,
+      "role": "Women in the North, Kin Museum",
+      "illustration": null
+    },
+    {
+      "date": "2021–23",
+      "ongoing": false,
+      "role": "Chief Curator, <a href=\"https://radiancecca.com/\">Radiance Centre</a>, Apatity",
+      "illustration": null
+    },
+    {
+      "date": "2020–24",
+      "ongoing": false,
+      "role": "Research Course Leader, <a href=\"https://garagemca.academy/\">Garage Academy</a>",
+      "illustration": null
+    }
+  ],
+  "texts": [
+    {
+      "url": "https://en.highnorthnews.com/arctic-living/the-arctic-is-a-mirror-of-what-happens-around-the-world/1107650",
+      "meta": "Interview · High North News",
+      "title": "The Arctic Is a Mirror of What Happens Around the World"
+    },
+    {
+      "url": "https://www.arctictoday.com/arctic-artists-draw-attention-to-how-climate-change-impacts-local-life/",
+      "meta": "Conversation · Arctic Today",
+      "title": "Arctic Artists Draw Attention to How Climate Change Impacts Local Life"
+    },
+    {
+      "url": "https://russianartarchive.net/en/research/art-practices-and-a-public-of-svoi-the-local-history-of-the-art-scene-in-apatity",
+      "meta": "Essay · Russian Art Archive Network",
+      "title": "Art Practices and a Public of “Svoi”: The Local History of the Art Scene in Apatity"
+    },
+    {
+      "url": "https://www.e-flux.com/announcements/582787/konstfest",
+      "meta": "Programme · e‑flux",
+      "title": "Konstfest: The Observatory—Art and Life in the Critical Zone"
+    }
+  ]
+}

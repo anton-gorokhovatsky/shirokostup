@@ -45,7 +45,7 @@
   --orbit-line-active: rgba(17, 19, 16, 0.24);
   --inverse-line: rgba(242, 239, 231, 0.26);
   --inverse-accent: #dceb8e;
-  --menu-accent: #536d18;
+  --menu-accent: #405610;
   --accent-ink: #111310;
   --accent-line: rgba(17, 19, 16, 0.4);
   --archive-ink: #101820;
@@ -250,7 +250,7 @@ body {
   font-family: var(--sans);
   font-size: var(--type-body);
   line-height: 1.4;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   font-kerning: normal;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -951,6 +951,7 @@ button {
   display: inline-flex;
   align-items: center;
   width: fit-content;
+  max-width: 100%;
   min-height: 44px;
   margin: -0.45rem 0 -0.35rem;
   background-image: linear-gradient(
@@ -1135,26 +1136,21 @@ button {
 }
 
 .analytics-consent {
-  position: fixed;
-  right: var(--gutter);
-  bottom: var(--gutter);
-  z-index: 110;
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 1.25rem;
   align-items: end;
-  width: min(46rem, calc(100vw - (2 * var(--gutter))));
-  max-height: calc(100svh - 2rem);
+  width: calc(100% - (2 * var(--gutter)));
+  margin: 0 var(--gutter) 2rem;
   padding: 1.1rem;
   overflow-y: auto;
   color: var(--ink);
-  background: var(--glass-background-dense);
+  background: var(--paper-bright);
   border: 1px solid var(--glass-border);
   border-radius: 1.5rem;
   box-shadow: var(--glass-shadow);
   corner-shape: superellipse(1.55);
-  -webkit-backdrop-filter: blur(22px) saturate(116%);
-  backdrop-filter: blur(22px) saturate(116%);
 }
 
 .analytics-consent[hidden] {
@@ -1185,6 +1181,7 @@ button {
 
 .analytics-consent__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
 }
@@ -1199,7 +1196,7 @@ button {
   cursor: pointer;
   font: inherit;
   font-size: 0.75rem;
-  white-space: nowrap;
+  white-space: normal;
   transition: color var(--duration-fast) var(--ease-move), background-color var(--duration-fast) var(--ease-move),
     border-color var(--duration-fast) var(--ease-move), transform var(--duration-fast) var(--ease-move);
 }
@@ -1221,11 +1218,6 @@ button {
   color: var(--paper);
   background: var(--ink);
   border-color: var(--ink);
-}
-
-:root.analytics-consent-pending .event-ticket {
-  opacity: 0;
-  pointer-events: none;
 }
 
 @keyframes index-in {

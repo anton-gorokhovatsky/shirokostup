@@ -1,0 +1,24 @@
+<svg class="arca-network timeline__state" viewBox="0 0 72 42" aria-hidden="true" focusable="false">
+                <defs>
+                  <mask id="arca-network-reveal" x="0" y="0" width="72" height="42" maskUnits="userSpaceOnUse">
+                    <path
+                      class="route-reveal-path arca-network__reveal arca-network__reveal--arc"
+                      d="M7 29C19 8 34 8 43 20S58 37 67 12"
+                    />
+                    <path
+                      class="route-reveal-path arca-network__reveal arca-network__reveal--direct"
+                      d="M7 29C25 37 46 38 67 12"
+                    />
+                  </mask>
+                </defs>
+                <g class="arca-network__links" mask="url(#arca-network-reveal)">
+                  <path d="M7 29C19 8 34 8 43 20S58 37 67 12" />
+                  <path d="M7 29C25 37 46 38 67 12" />
+                </g>
+                <g class="arca-network__places">
+                  <circle cx="7" cy="29" r="3" />
+                  <circle cx="29" cy="12" r="2.6" />
+                  <circle cx="43" cy="20" r="3.4" />
+                  <circle cx="67" cy="12" r="2.8" />
+                </g>
+              </svg>
