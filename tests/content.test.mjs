@@ -31,6 +31,7 @@ test('new gallery records receive dimensions, sources and safe inactive state', 
   const images = [...content.projects[0].images, content.projects[0].images[0]];
   const html = renderGallery(images);
   assert.equal((html.match(/<source/g) || []).length, images.length * 2);
-  assert.equal((html.match(/tabindex="0"/g) || []).length, 1);
+  assert.equal((html.match(/tabindex="0"/g) || []).length, 0);
+  assert.ok(!html.includes('role="button"'), 'Static images become controls only after their handlers load.');
   assert.equal((html.match(/aria-hidden="true"/g) || []).length, images.length - 1);
 });

@@ -29,6 +29,20 @@
       },
       "images": [
         {
+          "src": "assets/images/women-installation.jpg",
+          "widths": [
+            480,
+            800,
+            1280,
+            1800
+          ],
+          "width": 1800,
+          "height": 1234,
+          "alt": "Installation view of Kajsa Zetterquist’s paintings arranged across a gallery wall",
+          "label": "Exhibition view photographed by Johan Ylitalo",
+          "caption": "Exhibition view · Photo: Johan Ylitalo"
+        },
+        {
           "src": "assets/images/women-house.jpg",
           "widths": [
             480,
@@ -55,20 +69,6 @@
           "alt": "A multi-pane window in the timber wall of Kajsa Zetterquist’s home on Saltfjellet",
           "label": "Second still from The Calm Steps Behind by Ingela Johansson",
           "caption": "Still from <cite>The Calm Steps Behind</cite> · Ingela Johansson"
-        },
-        {
-          "src": "assets/images/women-installation.jpg",
-          "widths": [
-            480,
-            800,
-            1280,
-            1800
-          ],
-          "width": 1800,
-          "height": 1234,
-          "alt": "Installation view of Kajsa Zetterquist’s paintings arranged across a gallery wall",
-          "label": "Exhibition view photographed by Johan Ylitalo",
-          "caption": "Exhibition view · Photo: Johan Ylitalo"
         },
         {
           "src": "assets/images/women-painting.jpg",

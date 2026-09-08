@@ -73,6 +73,8 @@
   text-align: right;
 }
 
+.hero__work-link { display: none; }
+
 .scroll-cue {
   position: absolute;
   z-index: 3;

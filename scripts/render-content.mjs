@@ -75,7 +75,7 @@ export function renderGallery(images) {
     const stem = image.src.replace('assets/images/', '').replace('.jpg', '');
     const srcset = format => image.widths.map(width => `${format === 'jpg' && width === image.width ? image.src : `assets/images/responsive/${stem}-${width}.${format}`} ${width}w`).join(', ');
     const sizes = '(max-width: 980px) 92vw, 56vw';
-    return `<div class="archive-card${image.document ? ' archive-card--document' : ''}" data-archive-card data-archive-label="${e(image.label)}"${image.kind ? ` data-archive-kind="${e(image.kind)}" data-archive-year="${e(image.year)}"` : ''} data-stack-depth="${index}" role="button" tabindex="${index ? -1 : 0}"${index ? ' aria-hidden="true"' : ''}>
+    return `<div class="archive-card${image.document ? ' archive-card--document' : ''}" data-archive-card data-archive-label="${e(image.label)}"${image.kind ? ` data-archive-kind="${e(image.kind)}" data-archive-year="${e(image.year)}"` : ''} data-stack-depth="${index}" tabindex="-1"${index ? ' aria-hidden="true"' : ''}>
       <picture class="archive-card__picture">
         <source type="image/avif" srcset="${srcset('avif')}" sizes="${sizes}" />
         <source type="image/webp" srcset="${srcset('webp')}" sizes="${sizes}" />
@@ -97,11 +97,13 @@ export function renderContent(content, arcaSvg) {
     texts: content.texts.map(item => `<a data-reveal href="${e(item.url)}"><span class="texts__meta">${e(item.meta)}</span><strong>${e(item.title)}</strong><span class="texts__arrow">${arrow}</span></a>`).join('\n'),
   };
   content.projects.forEach((project, index) => {
-    blocks[`project-${project.id}`] = `<div class="project__information" data-reveal>
+    blocks[`project-heading-${project.id}`] = `<header class="project__heading" data-reveal>
       <div class="project__count">${String(index+1).padStart(2,'0')}</div>
       <p class="project__type">${e(project.type)}</p>
       <h3><a href="${e(project.url)}" data-analytics-goal="project_open" data-project="${project.id}">${e(project.title)}</a></h3>
       <p class="project__years">${project.since ? `<span>Since ${e(project.since)}</span>${ongoing}` : e(project.date)}</p>
+    </header>`;
+    blocks[`project-${project.id}`] = `<div class="project__information" data-reveal>
       <p class="project__description">${richText(project.description)}</p>
       ${project.publication ? `<div class="project__publication"><span class="project__publication-label">Featured publication</span><p><cite>${e(project.publication.title)}</cite><small>${e(project.publication.subtitle)}</small></p></div>` : ''}
       <a class="text-link" href="${e(project.url)}" data-analytics-goal="project_open" data-project="${project.id}">${e(project.action)}${arrow}</a>
