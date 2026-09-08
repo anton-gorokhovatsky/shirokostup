@@ -83,6 +83,9 @@
 
   .project {
     grid-template-columns: 1fr;
+    grid-template-areas: "heading" "visual" "body";
+    grid-template-rows: auto auto auto;
+    row-gap: 2rem;
     min-height: 0;
     padding-bottom: clamp(6rem, 14vw, 11rem);
   }
@@ -93,23 +96,14 @@
     margin-top: calc(max(62vw, 63.291%) - 4.85rem);
   }
 
-  .project--forum .project__information {
-    grid-row: 1;
-    grid-column: 1;
-  }
-
-  .project__visual--forum {
-    grid-row: 2;
-    grid-column: 1;
-  }
-
+  .project__heading,
   .project__information {
     position: static;
     max-width: 56rem;
   }
 
   .project__count {
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
   }
 
   .project__visual .project__image:not(.project__image--inset),
@@ -499,12 +493,19 @@
     display: none;
   }
 
+  .hero__work-link {
+    display: inline-flex;
+    margin-top: 1.25rem;
+  }
+
   .practice-statement {
     min-height: 0;
+    padding-top: 3.5rem;
   }
 
   .practice-statement h2 {
-    font-size: clamp(2.85rem, 13.6vw, 5rem);
+    margin-block: 1.75rem;
+    font-size: var(--type-feature-heading);
   }
 
   .practice-statement__note {
@@ -561,21 +562,22 @@
   }
 
   .section-heading {
-    padding-bottom: 7rem;
+    padding-top: 3.5rem;
+    padding-bottom: 2.5rem;
   }
 
   .section-heading h2,
   .texts > h2 {
-    margin-top: 5rem;
-    font-size: clamp(4rem, 20vw, 7rem);
+    margin-top: 2rem;
+    font-size: var(--type-feature-heading);
   }
 
   .project {
-    gap: 4rem;
+    gap: 1.5rem;
   }
 
   .project__count {
-    margin-bottom: 3.5rem;
+    margin-bottom: 1.5rem;
   }
 
   .project h3 {
@@ -729,15 +731,11 @@
   }
 
   .about__intro {
-    padding-top: 6rem;
+    padding-block: 3rem;
   }
 
   .about__intro h2 {
-    font-size: clamp(3.4rem, 15.5vw, 5.8rem);
-  }
-
-  .about__biography {
-    font-size: clamp(1.55rem, 7vw, 2.3rem);
+    font-size: var(--type-feature-heading);
   }
 
   .timeline li {
@@ -984,6 +982,15 @@
 }
 
 @media (max-width: 360px) {
+  :root {
+    --gutter: min(1.25rem, 6.25vw);
+    --type-feature-heading: clamp(2.25rem, 11.5vw, 4rem);
+  }
+
+  .project h3 {
+    font-size: clamp(1.875rem, 14vw, 5rem);
+  }
+
   .site-index__body {
     gap: 0.75rem;
     padding-top: 1rem;

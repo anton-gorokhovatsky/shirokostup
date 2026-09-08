@@ -551,7 +551,7 @@ button {
 }
 
 .no-js .site-header--portfolio {
-  position: relative;
+  position: absolute;
 }
 
 .no-js .site-header--portfolio .site-header__actions {

@@ -103,8 +103,8 @@
   white-space: nowrap;
 }
 
-.js .now__card[data-reveal] .now__date,
-.js .now__card[data-reveal] .now__copy {
+.js .now__card[data-reveal].is-visible .now__date,
+.js .now__card[data-reveal].is-visible .now__copy {
   transition: opacity var(--duration-slow) var(--ease-enter), transform var(--duration-slow) var(--ease-enter);
 }
 
@@ -294,17 +294,17 @@
 }
 
 .section-heading {
-  padding: var(--section-top-clearance) var(--gutter) clamp(6rem, 15vw, 14rem);
+  padding: var(--section-top-clearance) var(--gutter) clamp(2.5rem, 5vw, 5rem);
 }
 
 .section-heading h2,
 .texts > h2 {
-  margin: clamp(5rem, 12vw, 12rem) 0 0;
+  margin: clamp(2rem, 4vw, 4rem) 0 0;
   font-family: var(--serif);
-  font-size: clamp(4.5rem, 12vw, 13rem);
+  font-size: var(--type-feature-heading);
   font-weight: 400;
-  line-height: 0.72;
-  letter-spacing: -0.068em;
+  line-height: 1.02;
+  letter-spacing: -0.05em;
 }
 
 .section-heading h2 > span {
@@ -313,10 +313,10 @@
 }
 
 .section-heading h2 {
-  line-height: 0.82;
+  line-height: 1.02;
 }
 
-.js .section-heading h2[data-reveal] > span {
+.js .section-heading h2[data-reveal].is-visible > span {
   transition: transform var(--duration-slow) var(--ease-enter);
 }
 
@@ -335,7 +335,9 @@
 .project {
   display: grid;
   grid-template-columns: minmax(22rem, 0.87fr) minmax(0, 1.13fr);
-  gap: clamp(2rem, 5vw, 6rem);
+  grid-template-areas: "heading visual" "body visual";
+  grid-template-rows: auto 1fr;
+  column-gap: clamp(2rem, 5vw, 6rem);
   min-height: 92svh;
   padding: clamp(2.2rem, 4vw, 4.5rem) var(--gutter);
   border-top: 1px solid var(--line);
@@ -345,11 +347,15 @@
   overflow: hidden;
 }
 
+.project__heading,
 .project__information {
   position: relative;
   align-self: start;
   max-width: 40rem;
 }
+
+.project__heading { grid-area: heading; }
+.project__information { grid-area: body; }
 
 .project__count,
 .project__type,
@@ -546,6 +552,7 @@
 
 .project__visual {
   position: relative;
+  grid-area: visual;
   align-self: start;
   margin: 0;
 }
@@ -989,10 +996,9 @@
   background-color: var(--editorial-frame);
 }
 
+.project--forum .project__heading,
 .project--forum .project__information {
   z-index: 2;
-  grid-row: 1;
-  grid-column: 1;
 }
 
 .project--forum .project__description {
@@ -1045,8 +1051,7 @@
 }
 
 .project__visual--forum {
-  grid-row: 1;
-  grid-column: 2;
+  grid-area: visual;
   isolation: auto;
   overflow: hidden;
 }
@@ -1198,8 +1203,7 @@
 .forum-caption {
   position: relative;
   z-index: 3;
-  grid-row: 1;
-  grid-column: 2;
+  grid-area: visual;
   align-self: start;
   justify-self: start;
   max-width: calc(100% - 3rem);

@@ -10,7 +10,7 @@
   grid-template-columns: minmax(0, 2.2fr) minmax(18rem, 0.8fr);
   gap: var(--gutter);
   align-items: end;
-  padding: clamp(6rem, 13vw, 13rem) 0 clamp(6rem, 11vw, 11rem);
+  padding: clamp(3rem, 6vw, 6rem) 0 clamp(3rem, 6vw, 6rem);
   border-bottom: 1px solid var(--line);
 }
 
@@ -19,9 +19,9 @@
   max-width: 70rem;
   margin: 0;
   font-family: var(--serif);
-  font-size: clamp(3.7rem, 8.1vw, 9rem);
+  font-size: var(--type-feature-heading);
   font-weight: 400;
-  line-height: 0.93;
+  line-height: 1.02;
   letter-spacing: -0.058em;
 }
 
@@ -41,10 +41,16 @@
 }
 
 .about__biography {
-  max-inline-size: var(--measure-editorial);
+  max-inline-size: var(--measure-prose);
   font-family: var(--serif);
-  font-size: var(--type-editorial-copy);
-  line-height: 1.15;
+  font-size: clamp(1.125rem, calc(0.95rem + 0.35vw), 1.3rem);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+.about__biography p:first-child {
+  font-size: clamp(1.45rem, calc(1.1rem + 1vw), 2rem);
+  line-height: 1.2;
   letter-spacing: -0.025em;
 }
 
@@ -198,7 +204,7 @@
 }
 
 .texts > h2 {
-  margin-bottom: clamp(5rem, 11vw, 10rem);
+  margin-bottom: clamp(3rem, 6vw, 6rem);
 }
 
 .texts__list {
@@ -219,7 +225,7 @@
   transition: color var(--duration-fast) var(--ease-move);
 }
 
-.js .texts__list a[data-reveal] {
+.js .texts__list a[data-reveal].is-visible {
   transition: color var(--duration-fast) var(--ease-move), opacity var(--duration-slow) var(--ease-enter),
     transform var(--duration-slow) var(--ease-enter);
   transition-delay: var(--reveal-delay, 0ms);
@@ -708,17 +714,22 @@
 .js [data-reveal] {
   opacity: 0;
   transform: translateY(1.4rem);
-  transition: opacity var(--duration-slow) var(--ease-enter), transform var(--duration-slow) var(--ease-enter);
-  transition-delay: var(--reveal-delay, 0ms);
 }
 
 .js [data-reveal].is-visible {
   opacity: 1;
   transform: translateY(0);
+  transition: opacity var(--duration-slow) var(--ease-enter), transform var(--duration-slow) var(--ease-enter);
+  transition-delay: var(--reveal-delay, 0ms);
 }
 
+.js .project__heading[data-reveal],
 .js .project__information[data-reveal] {
   transform: none;
+}
+
+.js .project__heading[data-reveal].is-visible,
+.js .project__information[data-reveal].is-visible {
   transition: opacity 560ms var(--ease-enter);
 }
 

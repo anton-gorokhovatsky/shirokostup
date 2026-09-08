@@ -56,6 +56,48 @@ test("content and native navigation survive an unavailable interaction script", 
   await expect(page.getByRole('link', { name: 'Return to the portfolio' })).toBeVisible();
 });
 
+test("a delayed interaction script keeps the already visible introduction in place", async ({ page }) => {
+  let releaseScript;
+  const scriptReady = new Promise(resolve => { releaseScript = resolve; });
+  await page.route('**/script.js*', async route => {
+    await scriptReady;
+    await route.continue();
+  });
+  try {
+    await page.goto('/?qa=delayed-script', { waitUntil: 'commit' });
+    const title = page.locator('.hero__title');
+    await expect(title.locator('span').first()).toHaveCSS('opacity', '1');
+    const before = await title.boundingBox();
+    releaseScript();
+    await page.waitForLoadState('load');
+    await expect(page.locator('html')).toHaveClass(/\bjs\b/);
+    const after = await title.boundingBox();
+    expect(Math.abs(after.y - before.y)).toBeLessThanOrEqual(1);
+    await expect(title.locator('span').first()).toHaveCSS('opacity', '1');
+  } finally {
+    releaseScript();
+  }
+});
+
+test("a mobile first visit reaches visual work directly from the introduction", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openFreshPage(page, 'top', { analyticsConsent: null });
+  const workLink = page.locator('.hero').getByRole('link', { name: 'Selected work' });
+  await expect(workLink).toBeInViewport({ ratio: 1 });
+  await workLink.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/#work$/);
+  await expect(page.locator('.project--women [data-stack-depth="0"] img')).toBeInViewport();
+  for (const project of await page.locator('.project').all()) {
+    const heading = await project.locator('.project__heading').boundingBox();
+    const visual = await project.locator('.project__visual').boundingBox();
+    const description = await project.locator('.project__information').boundingBox();
+    expect(visual.y).toBeGreaterThan(heading.y + heading.height);
+    expect(description.y).toBeGreaterThanOrEqual(visual.y + visual.height);
+  }
+});
+
 test("Index keeps background detail from showing through its reading surface", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await openFreshPage(page, 'contact');
