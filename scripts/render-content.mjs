@@ -75,7 +75,7 @@ export function renderGallery(images) {
     const stem = image.src.replace('assets/images/', '').replace('.jpg', '');
     const srcset = format => image.widths.map(width => `${format === 'jpg' && width === image.width ? image.src : `assets/images/responsive/${stem}-${width}.${format}`} ${width}w`).join(', ');
     const sizes = '(max-width: 980px) 92vw, 56vw';
-    return `<div class="archive-card${image.document ? ' archive-card--document' : ''}" data-archive-card data-archive-label="${e(image.label)}"${image.kind ? ` data-archive-kind="${e(image.kind)}" data-archive-year="${e(image.year)}"` : ''} data-stack-depth="${index}" role="button" tabindex="${index ? -1 : 0}"${index ? ' aria-hidden="true"' : ''}>
+    return `<div class="archive-card${image.document ? ' archive-card--document' : ''}" data-archive-card data-archive-label="${e(image.label)}"${image.kind ? ` data-archive-kind="${e(image.kind)}" data-archive-year="${e(image.year)}"` : ''} data-stack-depth="${index}" tabindex="-1"${index ? ' aria-hidden="true"' : ''}>
       <picture class="archive-card__picture">
         <source type="image/avif" srcset="${srcset('avif')}" sizes="${sizes}" />
         <source type="image/webp" srcset="${srcset('webp')}" sizes="${sizes}" />

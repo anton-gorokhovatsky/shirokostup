@@ -550,6 +550,34 @@ button {
   display: none;
 }
 
+.no-js .site-header--portfolio {
+  position: relative;
+}
+
+.no-js .site-header--portfolio .site-header__actions {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.no-js .index-button,
+.js .fallback-nav {
+  display: none;
+}
+
+.fallback-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
+  font-size: 0.875rem;
+}
+
+.fallback-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-underline-offset: var(--underline-clearance);
+}
+
 .theme-switcher {
   position: relative;
   display: flex;
@@ -764,14 +792,13 @@ button {
   margin: 0;
   padding: 0;
   color: var(--ink);
-  background-color: var(--glass-background-dense);
-  background-image: none;
+  /* A full-screen reading surface must not depend on WebKit backdrop compositing. */
+  background-color: var(--paper);
+  background-image: var(--glass-sheen);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   overflow: hidden;
   transform-origin: top center;
-  -webkit-backdrop-filter: blur(24px) saturate(116%);
-  backdrop-filter: blur(24px) saturate(116%);
 }
 
 .site-index[open] {

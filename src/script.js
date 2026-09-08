@@ -800,6 +800,11 @@ creditsSummary?.addEventListener("click", (event) => {
 
 const revealItems = document.querySelectorAll("[data-reveal]");
 
+// Content may already be on screen while the script downloads. Never hide it again.
+revealItems.forEach((item) => {
+  if (item.getBoundingClientRect().top < window.innerHeight) item.classList.add("is-visible");
+});
+
 if ("IntersectionObserver" in window) {
   const revealObserver = new IntersectionObserver(
     (entries, observer) => {
@@ -869,6 +874,7 @@ archiveStacks.forEach((archiveStack) => {
     if (focus) activeCard.focus({ preventScroll: true });
 
     archiveCards.forEach((card, index) => {
+      card.setAttribute("role", "button");
       if (card !== departingCard) clearArchiveDrag(card);
       const depth = (index - activeArchiveIndex + archiveCards.length) % archiveCards.length;
       card.dataset.stackDepth = String(depth);
@@ -1042,3 +1048,6 @@ archiveStacks.forEach((archiveStack) => {
 
   renderArchiveStack();
 });
+
+// Opt into enhanced controls and reveals only after their handlers are installed.
+root.classList.replace("no-js", "js");

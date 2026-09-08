@@ -978,6 +978,10 @@
   display: none;
 }
 
+.no-js .archive-card {
+  cursor: default;
+}
+
 .project--forum {
   position: relative;
   isolation: isolate;

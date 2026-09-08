@@ -38,6 +38,61 @@ const rectanglesOverlap = (first, second) =>
   first.top < second.bottom &&
   first.bottom > second.top;
 
+test("content and native navigation survive an unavailable interaction script", async ({ page }) => {
+  await page.route('**/script.js*', route => route.abort());
+  await page.goto('/?qa=script-unavailable');
+  for (const line of await page.locator('.hero__title span').all()) {
+    await expect(line).toHaveCSS('opacity', '1');
+  }
+  await expect(page.locator('.index-button')).toBeHidden();
+  await expect(page.locator('[data-archive-card][role="button"]')).toHaveCount(0);
+  const workLink = page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('link', { name: 'Selected work' });
+  await workLink.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/#work$/);
+  await expect(page.locator('#work-title')).toHaveCSS('opacity', '1');
+  await page.goto('/404.html?qa=script-unavailable');
+  await expect(page.locator('h1')).toHaveCSS('opacity', '1');
+  await expect(page.getByRole('link', { name: 'Return to the portfolio' })).toBeVisible();
+});
+
+test("Index keeps background detail from showing through its reading surface", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openFreshPage(page, 'contact');
+  await page.evaluate(() => {
+    const backdrop = document.createElement('div');
+    backdrop.id = 'qa-background-detail';
+    backdrop.style.cssText = 'position:fixed;inset:0;z-index:1000;background:repeating-linear-gradient(90deg,#000 0 1px,#fff 1px 2px);pointer-events:none';
+    document.body.append(backdrop);
+  });
+  await page.getByRole('button', { name: 'Index', exact: true }).click();
+  for (const colorScheme of ['light', 'dark']) {
+    await page.emulateMedia({ colorScheme });
+    await expect(page.locator('html')).toHaveAttribute('data-theme', colorScheme);
+    // WebKit may acknowledge the media change before painting the new surface.
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    const clip = { x: 4, y: 160, width: 10, height: 80 };
+    const before = await page.screenshot({ clip });
+    await page.locator('#qa-background-detail').evaluate(el => el.style.backgroundPositionX = '1px');
+    const after = await page.screenshot({ clip });
+    const difference = await page.evaluate(async (images) => {
+      const pixels = await Promise.all(images.map(async data => {
+        const img = new Image();
+        img.src = `data:image/png;base64,${data}`;
+        await img.decode();
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width; canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        return ctx.getImageData(0, 0, img.width, img.height).data;
+      }));
+      return pixels[0].reduce((sum, value, i) => sum + Math.abs(value - pixels[1][i]), 0) / pixels[0].length;
+    }, [before, after].map(image => image.toString('base64')));
+    expect(difference, `Background details remain suppressed in ${colorScheme}`).toBeLessThan(2);
+    await page.locator('#qa-background-detail').evaluate(el => el.style.backgroundPositionX = '0px');
+  }
+});
+
 test("hero reserves space for the active event ticket", async ({ page }) => {
   await installUpcomingClock(page);
   await openFreshPage(page);
