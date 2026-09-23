@@ -816,9 +816,19 @@ test("Areal loads its variable styles and follows manual and system themes witho
   const body = page.locator("body");
   const paragraph = page.locator(".practice-statement p");
   const geometry = () => paragraph.evaluate(element => {
+    // Compare actual line breaks, not platform-specific glyph ink/hinting bounds.
+    const lines = new Map();
+    const nodes = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
     const range = document.createRange();
-    range.selectNodeContents(element);
-    return [...range.getClientRects()].map(rect => ({ width: rect.width, height: rect.height }));
+    for (let node = nodes.nextNode(); node; node = nodes.nextNode()) {
+      for (let offset = 0; offset < node.length; offset++) {
+        range.setStart(node, offset);
+        range.setEnd(node, offset + 1);
+        const top = range.getBoundingClientRect().top;
+        lines.set(top, (lines.get(top) || "") + node.textContent[offset]);
+      }
+    }
+    return { height: element.getBoundingClientRect().height, lines: [...lines.values()].map(line => line.trim()) };
   });
   const initial = await geometry();
   await page.getByRole("button", { name: "Index", exact: true }).click();
@@ -850,6 +860,7 @@ test("footer credit and image sources remain readable at narrow enlarged text", 
   await page.evaluate(async () => { await document.fonts.ready; document.documentElement.style.fontSize = "200%"; });
   const credit = page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo" });
   await expect(credit).toHaveAttribute("href", "https://are.al.are.na/");
+  await credit.scrollIntoViewIfNeeded();
   await credit.focus();
   await expect(credit).toBeFocused();
   await expect(credit).toBeInViewport();
