@@ -801,3 +801,65 @@ test("rendered page has no serious WCAG A or AA violations", async ({ page }) =>
 
   expect(seriousViolations).toEqual([]);
 });
+
+test("Areal loads its variable styles and follows manual and system themes without reflow", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+  const fontResponse = page.waitForResponse(response => response.url().includes("ABCArealVariable-") && response.url().endsWith(".woff2"));
+  await page.goto("/?qa=areal");
+  expect((await fontResponse).status()).toBe(200);
+  expect(await page.evaluate(async () => {
+    const styles = ['400 16px "ABC Areal"', '600 16px "ABC Areal"', 'italic 400 16px "ABC Areal"'];
+    const faces = await Promise.all(styles.map(style => document.fonts.load(style)));
+    return faces.every(loaded => loaded.length > 0 && loaded.every(face => face.status === "loaded"));
+  })).toBe(true);
+
+  const body = page.locator("body");
+  const paragraph = page.locator(".practice-statement p");
+  const geometry = () => paragraph.evaluate(element => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return [...range.getClientRects()].map(rect => ({ width: rect.width, height: rect.height }));
+  });
+  const initial = await geometry();
+  await page.getByRole("button", { name: "Index", exact: true }).click();
+  const theme = page.getByRole("group", { name: "Colour theme" });
+  for (const [name, axis] of [["Dark", 1], ["Light", 0], ["System", 0]]) {
+    const choice = theme.getByRole("button", { name, exact: true });
+    await choice.focus();
+    await page.keyboard.press("Enter");
+    await expect(choice).toHaveAttribute("aria-pressed", "true");
+    await expect(body).toHaveCSS("font-variation-settings", `"DRKM" ${axis}`);
+    expect(await geometry()).toEqual(initial);
+  }
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(body).toHaveCSS("font-variation-settings", '"DRKM" 1');
+  expect(await geometry()).toEqual(initial);
+  // Labels on fixed-colour surfaces follow their own background, in either theme.
+  await expect(page.locator(".archive-card__caption").first()).toHaveCSS("font-variation-settings", '"DRKM" 1');
+  await expect(page.locator(".forum-caption").first()).toHaveCSS("font-variation-settings", '"DRKM" 0');
+
+  await page.goto("/404.html?qa=areal");
+  expect(await page.evaluate(async () => (await document.fonts.load('400 16px "ABC Areal"')).length)).toBeGreaterThan(0);
+  await expect(body).toHaveCSS("font-variation-settings", '"DRKM" 1');
+});
+
+test("footer credit and image sources remain readable at narrow enlarged text", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/?qa=areal-footer#contact");
+  await page.evaluate(async () => { await document.fonts.ready; document.documentElement.style.fontSize = "200%"; });
+  const credit = page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo" });
+  await expect(credit).toHaveAttribute("href", "https://are.al.are.na/");
+  await credit.focus();
+  await expect(credit).toBeFocused();
+  await expect(credit).toBeInViewport();
+  expect((await credit.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  await expect(credit).toHaveCSS("text-decoration-line", "underline");
+  const label = page.locator(".credits summary > span").first();
+  expect(await label.evaluate(element => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return range.getClientRects().length;
+  })).toBeLessThanOrEqual(2);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+});

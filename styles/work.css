@@ -1,4 +1,5 @@
 .now {
+  font-variation-settings: "DRKM" 0;
   padding: 2rem var(--gutter) 3rem;
   color: var(--accent-ink);
   background: var(--lichen);
@@ -25,6 +26,7 @@
 
 /* A completed invitation is an editorial record, not a second hero. */
 .now[data-event-state="past"] {
+  font-variation-settings: "DRKM" var(--font-darkmode);
   padding-block: 1.5rem 2rem;
   color: var(--ink);
   background: color-mix(in srgb, var(--paper-bright) 94%, var(--lichen));
@@ -888,6 +890,7 @@
 }
 
 .archive-card__caption {
+  font-variation-settings: "DRKM" 1;
   min-width: 0;
   margin: 0;
   padding: clamp(0.72rem, 1vw, 0.9rem) 0 0.08rem;
@@ -1156,6 +1159,7 @@
 }
 
 .forum-overlay {
+  font-variation-settings: "DRKM" 0;
   position: absolute;
   z-index: 2;
   inset: 1.5rem 1.5rem auto;
@@ -1170,6 +1174,7 @@
 
 .forum-overlay span,
 .forum-caption {
+  font-variation-settings: "DRKM" 0;
   width: fit-content;
   padding: 0.42rem 0.55rem;
   background: var(--forum-label);

@@ -4,9 +4,10 @@
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "scripts": {
+    "fonts:prepare": "node scripts/prepare-fonts.mjs",
     "build": "node scripts/build-assets.mjs",
     "build:check": "node scripts/build-assets.mjs --check",
-    "check": "node scripts/build-assets.mjs --check && node --test tests/content.test.mjs && node scripts/check-site.mjs && node scripts/check-performance-budget.mjs && node --check script.js",
+    "check": "node scripts/prepare-fonts.mjs --check && node scripts/build-assets.mjs --check && node --test tests/content.test.mjs && node scripts/check-site.mjs && node scripts/check-performance-budget.mjs && node --check script.js",
     "package:site": "node scripts/package-site.mjs",
     "images": "python3 scripts/generate-responsive-images.py",
     "test": "playwright test",
