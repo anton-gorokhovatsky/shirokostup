@@ -865,7 +865,6 @@ test("footer credit and image sources remain readable at narrow enlarged text", 
   await expect(credit).toBeFocused();
   await expect(credit).toBeInViewport();
   expect((await credit.boundingBox()).height).toBeGreaterThanOrEqual(44);
-  await expect(credit).toHaveCSS("text-decoration-line", "underline");
   const label = page.locator(".credits summary > span").first();
   expect(await label.evaluate(element => {
     const range = document.createRange();

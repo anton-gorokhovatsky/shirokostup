@@ -522,31 +522,22 @@
   flex-wrap: wrap;
 }
 
-.site-credit {
+.contact__utilities a {
   display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, currentColor 48%, transparent);
-  text-decoration-thickness: 1px;
-  transition: text-decoration-color var(--duration-responsive) var(--ease-move);
-}
-
-.site-credit:hover,
-.site-credit:focus-visible {
-  text-decoration-color: currentColor;
-}
-
-.back-to-top {
-  display: inline-flex;
-  gap: 0.55rem;
   align-items: center;
   min-height: 44px;
   text-decoration: none;
 }
 
-.back-to-top__label {
+.footer-link__text {
+  min-width: 0;
+}
+
+/* An inline label inside the flex item keeps a separate underline on every wrapped line. */
+.footer-link__label {
   padding-bottom: var(--underline-clearance);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
   background-image: linear-gradient(
       90deg,
       color-mix(in srgb, currentColor 48%, transparent),
@@ -557,6 +548,15 @@
   background-repeat: no-repeat;
   background-size: 100% 1px, 0 2px;
   transition: background-size var(--duration-responsive) var(--ease-move);
+}
+
+.contact__utilities a:hover .footer-link__label,
+.contact__utilities a:focus-visible .footer-link__label {
+  background-size: 0 1px, 100% 2px;
+}
+
+.back-to-top {
+  gap: 0.55rem;
 }
 
 .back-to-top__arrow {
@@ -572,11 +572,6 @@
 .back-to-top:hover .back-to-top__arrow,
 .back-to-top:focus-visible .back-to-top__arrow {
   transform: translateY(-0.2rem);
-}
-
-.back-to-top:hover .back-to-top__label,
-.back-to-top:focus-visible .back-to-top__label {
-  background-size: 0 1px, 100% 2px;
 }
 
 .credits {
