@@ -427,7 +427,7 @@
 .contact__footer {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(12.5rem, 0.78fr) minmax(23rem, 1.4fr) minmax(14rem, 0.85fr) minmax(14rem, 0.8fr);
+  grid-template-columns: minmax(12.5rem, 0.78fr) minmax(23rem, 1.4fr) minmax(14rem, 0.85fr);
   column-gap: clamp(2rem, 3vw, 4.5rem);
   row-gap: 1rem;
   align-items: start;
@@ -499,17 +499,16 @@
 }
 
 .contact__closing {
-  display: grid;
-  gap: 0.15rem;
-  align-content: start;
-  align-items: flex-end;
-  justify-self: end;
-  text-align: right;
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
 }
 
 .contact__closing > p {
-  display: flex;
-  align-items: flex-start;
   line-height: 1.3;
   opacity: 0.74;
 }
@@ -518,8 +517,9 @@
   display: flex;
   gap: 0 1.25rem;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .contact__utilities a {
