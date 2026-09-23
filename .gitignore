@@ -3,3 +3,4 @@ playwright-report/
 test-results/
 .DS_Store
 _site/
+assets/fonts/*.woff2

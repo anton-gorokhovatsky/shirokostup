@@ -1,5 +1,22 @@
+@font-face {
+  font-family: "ABC Areal";
+  src: url("/assets/fonts/ABCArealVariable-97fb33de45.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "ABC Areal";
+  src: url("/assets/fonts/ABCArealVariable-97fb33de45.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: oblique 0deg 12deg;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light;
+  --font-darkmode: 0;
   --paper: #f2efe7;
   --paper-bright: #faf9f5;
   --editorial-frame: var(--paper-bright);
@@ -83,7 +100,7 @@
   --measure-prose-narrow: 40ch;
   --measure-editorial: 32ch;
   --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
-  --sans: Arial, Helvetica, sans-serif;
+  --sans: "ABC Areal", Arial, Helvetica, sans-serif;
 }
 
 ::view-transition-old(root),
@@ -105,6 +122,7 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
+  --font-darkmode: 1;
   --paper: #11130f;
   --paper-bright: #171a15;
   --editorial-frame: transparent;
@@ -162,6 +180,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
     color-scheme: dark;
+    --font-darkmode: 1;
     --paper: #11130f;
     --paper-bright: #171a15;
     --editorial-frame: transparent;
@@ -248,6 +267,7 @@ body {
   background-image: radial-gradient(var(--texture-dot) 0.65px, transparent 0.65px);
   background-size: 5px 5px;
   font-family: var(--sans);
+  font-variation-settings: "DRKM" var(--font-darkmode);
   font-size: var(--type-body);
   line-height: 1.4;
   overflow-wrap: anywhere;
@@ -366,6 +386,7 @@ button {
 }
 
 .skip-link {
+  font-variation-settings: "DRKM" calc(1 - var(--font-darkmode));
   position: fixed;
   top: 1rem;
   left: 1rem;
@@ -433,6 +454,7 @@ button {
 }
 
 .site-header[data-header-ink="dark"] {
+  font-variation-settings: "DRKM" 0;
   --index-material-background: rgba(250, 249, 245, 0.64);
   --index-material-border: rgba(17, 19, 16, 0.13);
   --index-material-highlight: rgba(255, 255, 255, 0.72);
@@ -441,6 +463,7 @@ button {
 }
 
 .site-header[data-header-ink="light"] {
+  font-variation-settings: "DRKM" 1;
   --index-material-background: rgba(17, 19, 15, 0.6);
   --index-material-border: rgba(243, 240, 232, 0.18);
   --index-material-highlight: rgba(243, 240, 232, 0.12);
@@ -1242,6 +1265,7 @@ button {
 }
 
 .analytics-consent__actions .analytics-consent__allow {
+  font-variation-settings: "DRKM" calc(1 - var(--font-darkmode));
   color: var(--paper);
   background: var(--ink);
   border-color: var(--ink);

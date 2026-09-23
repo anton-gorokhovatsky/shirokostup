@@ -10,6 +10,7 @@ For ownership transfer, recurring content updates, fragile interaction contracts
 ```bash
 corepack enable
 pnpm install
+# Prepare the licensed webfont first; see assets/fonts/README.md.
 pnpm run build
 python3 -m http.server 4173
 ```
@@ -18,6 +19,9 @@ Then open `http://127.0.0.1:4173`.
 
 The site remains static. The build renders editorial data into semantic HTML, compacts authored CSS/JavaScript with
 esbuild, and synchronises content-derived cache keys in `index.html` and `404.html`. There is no browser framework or CMS.
+
+ABC Areal is a self-hosted, licensed webfont. Its binary is kept outside the public Git history;
+follow [`assets/fonts/README.md`](assets/fonts/README.md) for local setup and repository transfer.
 
 ## Checks
 
