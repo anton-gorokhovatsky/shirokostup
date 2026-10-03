@@ -1,5 +1,7 @@
 # Editorial text and screen typography
 
+Apply [`UX_RULES.md`](UX_RULES.md), especially UX-05 and UX-09–11, alongside this guide. Headings must provide an accurate content outline, action names must predict the destination, and project descriptions must distinguish Olga's contribution from collaborators' roles. Preserve useful depth and supplied facts while improving scanning. The [NN/g source register](docs/nng-research.md#content) explains the evidence and its limits; generic brevity targets do not override authorial meaning.
+
 Text is part of this site's interface and visual composition. These rules adapt the useful, medium-independent parts of Kontur's interface-writing and screen-typography guidance to an English-language curatorial portfolio. They are not a copy of a SaaS product voice and do not override the wording of artwork, exhibition, institution, or publication titles.
 
 ## Voice and purpose
@@ -14,7 +16,7 @@ Text is part of this site's interface and visual composition. These rules adapt 
 
 ## Interface labels and actions
 
-- Name links and buttons by the destination or outcome: `View the project`, `Visit the exhibition`, `Enter the archive`, `Event details`. Avoid `Click here`, vague `More`, and labels that only make sense after reading nearby text.
+- Name links and buttons by the destination or outcome. Prefer the actual project or publication title; a shorter contextual label such as `View the project` requires a distinct, accurate accessible name that identifies the project. Avoid `Click here`, vague `More`, and repeated generic labels that are indistinguishable outside their paragraphs. Include PDF, email, or new-tab information when relevant.
 - Keep equivalent actions verbally consistent across sections and breakpoints. Change a label only when the destination or task genuinely differs.
 - Use short, factual state labels such as `Upcoming`, `Past event`, and `Ongoing`. Do not use colour, position, or motion as the only explanation of state.
 - A single heading, compact label, caption, button, or tooltip does not need a final full stop. Full sentences in prose retain normal punctuation.

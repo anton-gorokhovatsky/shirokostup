@@ -1,5 +1,13 @@
 # Project instructions
 
+## Mandatory UX rules
+
+Follow [`UX_RULES.md`](UX_RULES.md) for every design, content, interface, and implementation decision. Its 24 rules are project requirements, not optional inspiration. The primary-source evidence and its limits are in [`docs/nng-research.md`](docs/nng-research.md). Also consult the owner's [web-project principles](https://app.notion.com/p/gorokhovatsky/3a6777056402808bb79df09beedc4161) when relevant.
+
+Before changing the interface, identify the visitor's task, applicable `UX-*` rules, and verification. Do not silently weaken a rule, remove a check, or preserve a poor pattern merely because it exists. A revision of the standard needs an explicit owner decision and a recorded rationale with evidence; an ordinary implementation request is not that decision.
+
+Keep the main routes discoverable, link destinations predictable, content and attribution truthful, and the visitor in control. Review the entire affected composition after the final edit, including adjacent elements and responsive wrapping. Distinguish automated checks, browser/device evidence, expert judgement, and actual user research. Track inherited concerns honestly without expanding an unrelated task into a redesign.
+
 ## Accessibility is a release gate
 
 Treat accessibility as a required metric for every interface, content, and visual change in this repository. Follow [`ACCESSIBILITY.md`](ACCESSIBILITY.md) and target WCAG 2.2 Level AA.

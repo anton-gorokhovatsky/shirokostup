@@ -5,6 +5,10 @@ A static editorial portfolio for independent curator, researcher, and educator O
 For ownership transfer, recurring content updates, fragile interaction contracts, and the complete release procedure, see
 [`HANDOFF.md`](HANDOFF.md).
 
+## Mandatory project rules
+
+Start with [`AGENTS.md`](AGENTS.md) and [`UX_RULES.md`](UX_RULES.md): 24 binding rules for visitor tasks, navigation, content, visual composition, accessibility, interaction, and evidence. The [NN/g research register](docs/nng-research.md) contains 35 primary-source materials, contextual limits, and open questions. Use [`DESIGN_EVALS.md`](DESIGN_EVALS.md) to select verification proportional to the change.
+
 ## Run locally
 
 ```bash

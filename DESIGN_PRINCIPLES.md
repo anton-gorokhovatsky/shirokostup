@@ -1,5 +1,7 @@
 # Design principles
 
+The mandatory decision and acceptance standard is [`UX_RULES.md`](UX_RULES.md). The [NN/g research register](docs/nng-research.md) records primary sources, dates, contextual limits, and unresolved questions. These principles describe the site's visual language within that standard; they never excuse a failure of clarity, accessibility, truthfulness, or visitor control.
+
 ## Consistency means predictability
 
 Consistency is a project rule, but it does not mean making every section look the same. The goal is to help people recognise patterns, predict behaviour, and spend their attention on Olga's work rather than relearning the interface.
