@@ -14,6 +14,7 @@ const indexEntries = indexLinks
   .filter((entry) => entry.section);
 const themeChoices = Array.from(document.querySelectorAll("[data-theme-choice]"));
 const motionChoices = Array.from(document.querySelectorAll("[data-motion-choice]"));
+const authorSignatures = Array.from(document.querySelectorAll("ag-signature"));
 const analyticsConsentPanel = document.querySelector("[data-analytics-consent]");
 const analyticsChoices = Array.from(document.querySelectorAll("[data-analytics-choice]"));
 const themeColor = document.querySelector('meta[name="theme-color"]');
@@ -193,6 +194,11 @@ const applyMotion = (motionMode, { save = false } = {}) => {
   root.dataset.motionMode = nextMotionMode;
   root.dataset.motion = nextMotion;
 
+  authorSignatures.forEach((signature) => {
+    signature.toggleAttribute("paused", nextMotion === "reduced");
+    signature.setAttribute("controls", "external");
+  });
+
   motionChoices.forEach((choice) => {
     choice.setAttribute("aria-pressed", String(choice.dataset.motionChoice === nextMotionMode));
   });
@@ -221,6 +227,8 @@ const applyTheme = (themeMode, { save = false } = {}) => {
   document.documentElement.dataset.themeMode = nextThemeMode;
   document.documentElement.dataset.theme = nextTheme;
   document.documentElement.style.colorScheme = nextTheme;
+
+  authorSignatures.forEach((signature) => signature.setAttribute("theme", nextTheme));
 
   if (themeColor) {
     themeColor.content = nextTheme === "dark" ? "#11130f" : "#f2efe7";

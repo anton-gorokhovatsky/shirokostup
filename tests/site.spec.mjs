@@ -4,6 +4,8 @@ import { expect, test } from "@playwright/test";
 const eventId = "kin-conversation-2026-08-13";
 const eventDismissalKey = `olga-event-ticket-dismissed:${eventId}`;
 const analyticsConsentKey = "olga-analytics-consent";
+// macOS WebKit uses Option-Tab to include links with the default keyboard preference.
+const linkTabKey = (browserName) => browserName === "webkit" && process.platform === "darwin" ? "Alt+Tab" : "Tab";
 const upcomingTime = new Date("2026-08-13T12:00:00+02:00");
 const shortlyBeforeArchiveTime = new Date("2026-08-13T23:59:55+02:00");
 
@@ -853,10 +855,11 @@ test("Areal loads its variable styles and follows manual and system themes witho
   await expect(body).toHaveCSS("font-variation-settings", '"DRKM" 1');
 });
 
-test("footer credit and image sources remain readable at narrow enlarged text", async ({ page }) => {
+test("footer credit and image sources remain readable at narrow enlarged text", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 320, height: 844 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/?qa=areal-footer#contact");
+  await expect(page.locator("ag-signature")).toHaveAttribute("data-signature-version", /^1\./);
   await page.evaluate(async () => { await document.fonts.ready; document.documentElement.style.fontSize = "200%"; });
   const credit = page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo" });
   await expect(credit).toHaveAttribute("href", "https://are.al.are.na/");
@@ -872,4 +875,78 @@ test("footer credit and image sources remain readable at narrow enlarged text", 
     return range.getClientRects().length;
   })).toBeLessThanOrEqual(2);
   expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  // A clipped grid can hide overflow from document.scrollWidth; inspect the actual columns.
+  expect(await page.locator(".contact__footer").evaluate(footer => {
+    const bounds = footer.getBoundingClientRect();
+    return [...footer.children].filter(child => {
+      const rect = child.getBoundingClientRect();
+      return rect.left < bounds.left - 1 || rect.right > bounds.right + 1;
+    }).map(child => child.className);
+  })).toEqual([]);
+  await page.locator(".contact__footer").screenshot({ path: testInfo.outputPath("signature-footer-200.png"), animations: "disabled" });
+});
+
+test("shared author signature follows site themes and motion without losing native links", async ({ page, browserName }, testInfo) => {
+  await page.emulateMedia({ colorScheme: "light", reducedMotion: "no-preference" });
+  await openFreshPage(page, "contact");
+  const signature = page.locator("ag-signature");
+  await expect(signature).toHaveAttribute("data-signature-version", /^1\./);
+  await page.evaluate(() => document.fonts.ready);
+  await signature.scrollIntoViewIfNeeded();
+  const mark = signature.locator(".mark");
+  const author = signature.getByRole("link", { name: "Anton Gorokhovatsky Design & development", exact: true });
+  await expect(signature.getByRole("link")).toHaveCount(1);
+  await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/");
+  await expect(author).toHaveAttribute("rel", "author");
+  await expect(page.getByRole("link", { name: "About this website", exact: true }))
+    .toHaveAttribute("href", "https://gorokhovatsky.tech/?point=shirokostup");
+  await expect(signature).toHaveAttribute("theme", "light");
+  await expect(mark).toHaveAttribute("data-arc-running", "true");
+  await expect(signature.getByRole("button")).toHaveCount(0);
+  await page.keyboard.press("End");
+  await page.screenshot({ path: testInfo.outputPath("signature-footer-light.png"), animations: "disabled" });
+
+  await page.locator(".contact__footer").getByRole("link", { name: "Open Olga Shirokostup’s CV as a PDF" }).focus();
+  await page.keyboard.press(linkTabKey(browserName));
+  await expect(author).toBeFocused();
+  await expect(author).toHaveCSS("outline-style", "solid");
+  expect((await author.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  await page.keyboard.press(linkTabKey(browserName));
+  await expect(page.getByRole("link", { name: "About this website", exact: true })).toBeFocused();
+
+  await page.getByRole("button", { name: "Index", exact: true }).click();
+  const theme = page.getByRole("group", { name: "Colour theme" });
+  const motion = page.getByRole("group", { name: "Motion preference" });
+  await theme.getByRole("button", { name: "Dark", exact: true }).click();
+  await motion.getByRole("button", { name: "Reduced", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await expect(signature).toHaveAttribute("theme", "dark");
+  await expect(signature).toHaveAttribute("paused", "");
+  await signature.scrollIntoViewIfNeeded();
+  await expect(mark).toHaveAttribute("data-arc-running", "false");
+  await page.keyboard.press("End");
+  await page.screenshot({ path: testInfo.outputPath("signature-footer-dark.png"), animations: "disabled" });
+
+  await page.getByRole("button", { name: "Index", exact: true }).click();
+  await theme.getByRole("button", { name: "System", exact: true }).click();
+  await motion.getByRole("button", { name: "System", exact: true }).click();
+  await page.keyboard.press("Escape");
+  await signature.scrollIntoViewIfNeeded();
+  await expect(signature).toHaveAttribute("theme", "light");
+  await expect(mark).toHaveAttribute("data-arc-running", "true");
+  await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+  await expect(signature).toHaveAttribute("theme", "dark");
+  await expect(mark).toHaveAttribute("data-arc-running", "false");
+});
+
+test("author credit remains keyboard accessible when the shared module is unavailable", async ({ page, browserName }) => {
+  await page.route("https://gorokhovatsky.tech/signature/v1/signature.js", route => route.abort());
+  await openFreshPage(page, "contact");
+  const author = page.getByRole("link", { name: "Anton Gorokhovatsky — Design & development", exact: true });
+  await expect(author).toBeVisible();
+  await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/");
+  await author.focus();
+  await expect(author).toBeFocused();
+  await page.keyboard.press(linkTabKey(browserName));
+  await expect(page.getByRole("link", { name: "About this website", exact: true })).toBeFocused();
 });

@@ -815,7 +815,7 @@
   }
 
   .contact__footer {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 2.5rem;
     margin-top: 7rem;
   }
@@ -823,11 +823,17 @@
   .contact__coordinates {
     grid-column: auto;
     grid-row: auto;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .contact__coordinates p {
+    flex: 1 1 7rem;
+    min-width: 0;
   }
 
   .contact__coordinates p:first-child {
-    grid-column: 1 / -1;
+    flex-basis: 100%;
   }
 
   .contact__closing {
@@ -837,6 +843,11 @@
 
   .contact__utilities {
     flex-basis: 100%;
+  }
+
+  .contact__utilities .site-signature {
+    flex-basis: 100%;
+    margin-bottom: 0.75rem;
   }
 
   .credits {
