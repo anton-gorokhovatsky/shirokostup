@@ -60,6 +60,12 @@
     margin-block-start: 1rem;
   }
 
+  .contact__colophon > p,
+  .site-credit,
+  .site-signature {
+    align-self: start;
+  }
+
   .credits {
     align-self: start;
   }
@@ -67,6 +73,14 @@
   .credits li {
     grid-template-columns: 1fr;
     gap: 0.25rem;
+  }
+}
+
+/* Keep the surname intact beside the mark at narrow widths with enlarged text. */
+@container contact (max-width: 14rem) {
+  .site-signature {
+    --ag-signature-size: 40px;
+    --ag-signature-gap: 12px;
   }
 }
 

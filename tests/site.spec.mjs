@@ -66,6 +66,9 @@ const inspectFooterReflow = () => {
     first.top < second.bottom - 1 && first.bottom > second.top + 1));
   const mark = signature.querySelector(".mark").getBoundingClientRect();
   const name = signature.querySelector(".name").getBoundingClientRect();
+  const text = signature.querySelector(".text").getBoundingClientRect();
+  const role = signature.querySelector(".role").getBoundingClientRect();
+  const author = footer.querySelector("ag-signature").getBoundingClientRect();
   const primaryText = [
     [footer.querySelector(".contact__colophon > p"), footer.querySelector(".contact__colophon > p")],
     [footer.querySelector("ag-signature"), signature.querySelector(".name")],
@@ -80,13 +83,18 @@ const inspectFooterReflow = () => {
     const text = range.getBoundingClientRect();
     return { owner: owner.getBoundingClientRect(), textTop: text.top, textBottom: text.bottom, textLeft: text.left };
   });
+  const identity = footer.querySelector(".contact__signature").getBoundingClientRect();
+  const coordinates = footer.querySelector(".contact__coordinates").getBoundingClientRect();
+  const professional = footer.querySelector(".professional-contact--footer").getBoundingClientRect();
+  const threeColumns = professional.left > coordinates.right + 1;
+  const multipleColumns = coordinates.left > identity.left + 1;
   const misaligned = [];
   for (let first = 0; first < primaryText.length; first++) {
     for (let second = first + 1; second < primaryText.length; second++) {
       const a = primaryText[first];
       const b = primaryText[second];
-      // A mark/role can span a neighbouring text row. Compare the actual first text lines.
-      const sharedRow = Math.min(a.textBottom, b.textBottom) - Math.max(a.textTop, b.textTop) > 1;
+      // Compare text baselines in the named closing row, even if the mark makes the owner taller.
+      const sharedRow = threeColumns || (multipleColumns && first === 0 && second === 1);
       if (sharedRow && Math.abs(a.textTop - b.textTop) > 1) misaligned.push({
         pair: [first, second],
         ownerTops: [a.owner.top, b.owner.top],
@@ -96,25 +104,30 @@ const inspectFooterReflow = () => {
       });
     }
   }
-  const identity = footer.querySelector(".contact__signature").getBoundingClientRect();
-  const coordinates = footer.querySelector(".contact__coordinates").getBoundingClientRect();
-  const professional = footer.querySelector(".professional-contact--footer").getBoundingClientRect();
-  const threeColumns = professional.left > coordinates.right + 1;
-  const multipleColumns = coordinates.left > identity.left + 1;
   const textAxes = [
     [0, identity.left],
     [2, threeColumns ? coordinates.left : identity.left],
-    [1, threeColumns ? professional.left : multipleColumns ? coordinates.left : identity.left],
   ];
   const offGrid = textAxes.filter(([index, axis]) => Math.abs(primaryText[index].textLeft - axis) > 1)
     .map(([index, axis]) => ({ label: index, expectedLeft: axis, actualLeft: primaryText[index].textLeft }));
+  // The mark anchors the whole credit to the footer column; name and role share its text rail.
+  const authorAxis = threeColumns ? professional.left : multipleColumns ? coordinates.left : identity.left;
+  for (const [label, actual, expected] of [
+    ["author", author.left, authorAxis],
+    ["mark", mark.left, authorAxis],
+    ["name", primaryText[1].textLeft, text.left],
+    ["role", role.left, text.left],
+    ["text", text.left, mark.right + parseFloat(getComputedStyle(signature.querySelector(".credit")).columnGap)],
+  ]) {
+    if (Math.abs(actual - expected) > 1) offGrid.push({ label, expectedLeft: expected, actualLeft: actual });
+  }
   return {
     clipped,
     overlapping,
     misaligned,
     offGrid,
     horizontalScroll: document.documentElement.scrollWidth > innerWidth,
-    markBesideName: (name.right <= mark.left || name.left >= mark.right) && name.top < mark.bottom && name.bottom > mark.top,
+    markLeftOfName: mark.right <= name.left && name.top < mark.bottom && name.bottom > mark.top,
   };
 };
 
@@ -963,7 +976,7 @@ test("footer row and image sources reflow continuously and with enlarged text", 
       // Measure after a paint: rAF itself runs before the container-query layout.
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       expect(await page.evaluate(inspectFooterReflow), `Footer at ${width}px / ${theme}`).toEqual({
-        clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false, markBesideName: true,
+        clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false, markLeftOfName: true,
       });
       if ([320, 390, 700, 768, 1280, 1512, 1920].includes(width)) {
         await page.locator(".contact__footer").screenshot({ path: testInfo.outputPath(`signature-footer-${theme}-${width}.png`), animations: "disabled" });
@@ -983,7 +996,7 @@ test("footer row and image sources reflow continuously and with enlarged text", 
     })).toBeLessThanOrEqual(2);
     // A clipped grid can hide overflow from document.scrollWidth; inspect actual content too.
     expect(await page.evaluate(inspectFooterReflow), `Footer at ${width}px / text 200%`).toMatchObject({
-      clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false,
+      clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false, markLeftOfName: true,
     });
     if ([320, 768, 1280, 1920].includes(width)) {
       await credit.scrollIntoViewIfNeeded();

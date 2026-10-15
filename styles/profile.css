@@ -539,7 +539,8 @@
 
 .site-signature {
   grid-area: author;
-  --ag-signature-size: 5rem;
+  /* The decorative mark keeps its scale when only the reader's text grows. */
+  --ag-signature-size: min(5rem, 80px);
   --ag-signature-name-size: 0.875rem;
   --ag-signature-role-size: 0.75rem;
   --ag-signature-gap: 0.75rem;
@@ -556,24 +557,22 @@
 }
 
 .site-signature::part(credit) {
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: var(--ag-signature-size) minmax(0, 1fr);
   align-items: baseline;
   gap: var(--ag-signature-gap);
 }
 
 .site-signature::part(mark) {
-  align-self: center;
+  align-self: start;
   /* The visible core sits below the SVG's top edge; align it with the name. */
-  margin-block-start: -0.5rem;
+  margin-block-start: calc(var(--ag-signature-size) * -0.1);
 }
 
 .site-signature::part(text) {
-  /* Keep the name on the footer's text axis; the decorative mark follows it. */
-  order: -1;
   display: block;
-  flex: 0 1 auto;
   min-inline-size: 0;
-  inline-size: max-content;
+  inline-size: auto;
   max-inline-size: 100%;
 }
 
