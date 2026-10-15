@@ -428,7 +428,7 @@
 .contact__footer {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.4fr) minmax(max-content, 0.85fr);
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.4fr) minmax(0, 0.85fr);
   column-gap: clamp(2rem, 3vw, 4.5rem);
   row-gap: 1rem;
   align-items: start;
@@ -516,20 +516,16 @@
   line-height: 1.4;
 }
 
-.contact__closing > p {
+.contact__colophon p {
   line-height: inherit;
   opacity: 0.74;
 }
 
-.contact__utilities {
-  display: contents;
-}
-
-.contact__links {
-  grid-column: 3;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) max-content;
-  gap: 1.5rem;
+.contact__colophon {
+  grid-column: 1 / 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2rem;
   align-items: baseline;
   min-width: 0;
 }
@@ -543,7 +539,8 @@
   --ag-signature-muted: var(--ink-soft);
   --ag-signature-accent: var(--menu-accent);
   --ag-signature-node-ink: var(--ink);
-  grid-column: var(--signature-column, 2);
+  grid-column: var(--signature-column, 3);
+  justify-self: var(--signature-align, end);
   display: block;
   inline-size: fit-content;
   min-width: 0;
@@ -551,15 +548,10 @@
   font-family: var(--sans);
 }
 
-.site-signature:defined {
-  /* Hang the mark into the gutter; align the text with From. Fallback has no mark. */
-  margin-inline-start: var(--signature-hang, calc(-1 * (var(--ag-signature-size) + var(--ag-signature-gap))));
-}
-
 .site-signature::part(credit) {
   flex-direction: row;
   align-items: baseline;
-  gap: 0.75rem;
+  gap: var(--ag-signature-gap);
 }
 
 .site-signature::part(mark) {
@@ -597,18 +589,22 @@
   vertical-align: calc(1cap - 0.625rem - 0.09375rem);
 }
 
-.contact__utilities a {
+.contact__closing a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   text-decoration: none;
 }
 
-.contact__links .site-credit {
+.site-credit {
   min-width: 0;
 }
 
-.contact__utilities a:focus-visible,
+.site-credit .footer-link__text {
+  text-wrap: balance;
+}
+
+.contact__closing a:focus-visible,
 .site-signature::part(credit):focus-visible {
   outline: 2px solid var(--menu-accent);
   outline-offset: 4px;
@@ -636,30 +632,11 @@
   transition: background-size var(--duration-responsive) var(--ease-move);
 }
 
-.contact__utilities a:hover .footer-link__label,
-.contact__utilities a:focus-visible .footer-link__label,
+.contact__closing a:hover .footer-link__label,
+.contact__closing a:focus-visible .footer-link__label,
 .site-signature:hover::part(name),
 .site-signature:focus-within::part(name) {
   background-size: 0 1px, 100% 2px;
-}
-
-.back-to-top {
-  gap: 0.55rem;
-}
-
-.back-to-top__arrow {
-  display: grid;
-  width: 1rem;
-  height: 1rem;
-  font-size: 1rem;
-  line-height: 1;
-  place-items: center;
-  transition: transform var(--duration-responsive) var(--ease-move);
-}
-
-.back-to-top:hover .back-to-top__arrow,
-.back-to-top:focus-visible .back-to-top__arrow {
-  transform: translateY(-0.2rem);
 }
 
 .credits {

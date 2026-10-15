@@ -60,17 +60,16 @@ const inspectFooterReflow = () => {
     footerRight: bounds.right,
     signatureMargin: getComputedStyle(footer.querySelector("ag-signature")).marginInlineStart,
   }));
-  const links = [...footer.querySelectorAll("ag-signature, .contact__links > a")].map(element => element.getBoundingClientRect());
+  const links = [...footer.querySelectorAll("ag-signature, .contact__colophon > a")].map(element => element.getBoundingClientRect());
   const overlapping = links.some((first, index) => links.slice(index + 1).some(second =>
     first.left < second.right - 1 && first.right > second.left + 1 &&
     first.top < second.bottom - 1 && first.bottom > second.top + 1));
   const mark = signature.querySelector(".mark").getBoundingClientRect();
   const name = signature.querySelector(".name").getBoundingClientRect();
   const primaryText = [
-    [footer.querySelector(".contact__closing > p"), footer.querySelector(".contact__closing > p")],
+    [footer.querySelector(".contact__colophon > p"), footer.querySelector(".contact__colophon > p")],
     [footer.querySelector("ag-signature"), signature.querySelector(".name")],
     [footer.querySelector(".site-credit"), footer.querySelector(".site-credit .footer-link__label")],
-    [footer.querySelector(".back-to-top"), footer.querySelector(".back-to-top .footer-link__label")],
   ].map(([owner, label]) => {
     const walker = document.createTreeWalker(label, NodeFilter.SHOW_TEXT);
     let node;
@@ -78,14 +77,16 @@ const inspectFooterReflow = () => {
     const range = document.createRange();
     range.setStart(node, 0);
     range.setEnd(node, 1);
-    return { owner: owner.getBoundingClientRect(), textTop: range.getBoundingClientRect().top };
+    const text = range.getBoundingClientRect();
+    return { owner: owner.getBoundingClientRect(), textTop: text.top, textBottom: text.bottom };
   });
   const misaligned = [];
   for (let first = 0; first < primaryText.length; first++) {
     for (let second = first + 1; second < primaryText.length; second++) {
       const a = primaryText[first];
       const b = primaryText[second];
-      const sharedRow = Math.min(a.owner.bottom, b.owner.bottom) - Math.max(a.owner.top, b.owner.top) > 1;
+      // A mark/role can span a neighbouring text row. Compare the actual first text lines.
+      const sharedRow = Math.min(a.textBottom, b.textBottom) - Math.max(a.textTop, b.textTop) > 1;
       if (sharedRow && Math.abs(a.textTop - b.textTop) > 1) misaligned.push({
         pair: [first, second],
         ownerTops: [a.owner.top, b.owner.top],
@@ -993,10 +994,9 @@ test("shared author signature follows site themes and motion without losing nati
   const mark = signature.locator(".mark");
   const author = signature.getByRole("link", { name: "Anton Gorokhovatsky Design & development", exact: true });
   const typeface = page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo", exact: true });
-  const backToTop = page.getByRole("link", { name: "Back to top", exact: true });
   const cv = page.locator(".contact__footer").getByRole("link", { name: "Open Olga Shirokostup’s CV as a PDF" });
-  const labels = [signature.locator(".name"), typeface.locator(".footer-link__label"), backToTop.locator(".footer-link__label")];
-  const links = [author, typeface, backToTop];
+  const labels = [signature.locator(".name"), typeface.locator(".footer-link__label")];
+  const links = [author, typeface];
   const verifyUtilityFeedback = async (themeName) => {
     await cv.focus();
     await page.mouse.move(0, 0);
@@ -1032,6 +1032,7 @@ test("shared author signature follows site themes and motion without losing nati
   await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/?point=shirokostup");
   await expect(author).toHaveAttribute("rel", "author");
   await expect(page.getByRole("link", { name: "About this website", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Back to top", exact: true })).toHaveCount(0);
   await expect(signature).toHaveAttribute("theme", "light");
   await expect(mark).toHaveAttribute("data-arc-running", "true");
   await expect(signature.getByRole("button")).toHaveCount(0);
@@ -1041,13 +1042,11 @@ test("shared author signature follows site themes and motion without losing nati
 
   await cv.focus();
   await page.keyboard.press(linkTabKey(browserName));
+  await expect(typeface).toBeFocused();
+  await page.keyboard.press(linkTabKey(browserName));
   await expect(author).toBeFocused();
   await expect(author).toHaveCSS("outline-style", "solid");
   expect((await author.boundingBox()).height).toBeGreaterThanOrEqual(44);
-  await page.keyboard.press(linkTabKey(browserName));
-  await expect(typeface).toBeFocused();
-  await page.keyboard.press(linkTabKey(browserName));
-  await expect(backToTop).toBeFocused();
   await page.keyboard.press(linkTabKey(browserName));
   await expect(page.locator(".credits summary")).toBeFocused();
 
@@ -1086,6 +1085,10 @@ test("author credit remains keyboard accessible when the shared module is unavai
   await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/?point=shirokostup");
   await author.focus();
   await expect(author).toBeFocused();
-  await page.keyboard.press(linkTabKey(browserName));
+  await page.keyboard.press(`Shift+${linkTabKey(browserName)}`);
   await expect(page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo", exact: true })).toBeFocused();
+  await page.keyboard.press(linkTabKey(browserName));
+  await expect(author).toBeFocused();
+  await page.keyboard.press(linkTabKey(browserName));
+  await expect(page.locator(".credits summary")).toBeFocused();
 });

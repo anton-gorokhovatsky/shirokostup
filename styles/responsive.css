@@ -10,17 +10,15 @@
     grid-row: 1 / span 2;
   }
 
-  .contact__closing > p {
-    grid-column: 1 / -1;
-  }
-
   .contact__closing {
-    --signature-hang: 0px;
-    --signature-column: 1;
+    --signature-column: 2;
   }
 
-  .contact__links {
-    grid-column: 2;
+  .contact__colophon {
+    grid-column: 1;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: start;
   }
 }
 
@@ -48,18 +46,10 @@
   }
 
   .contact__closing {
+    --signature-column: 1;
+    --signature-align: start;
     margin-top: 0;
     align-items: start;
-  }
-
-  .contact__links {
-    grid-column: 1;
-    justify-self: start;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 1.5rem;
-    inline-size: fit-content;
-    max-inline-size: 100%;
   }
 
   .credits {
