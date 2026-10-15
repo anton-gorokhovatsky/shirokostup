@@ -646,8 +646,14 @@ test("decorative routes draw through stable masks and finish as solid strokes", 
     await expect(reveal.last()).toHaveCSS("stroke-dashoffset", "0px", { timeout: 4_000 });
   }
 
-  await page.getByRole("button", { name: "Index" }).click();
+  // This scenario checks motion after scrolling, not pointer hit testing. In the
+  // Linux WebKit trace, scrolling shifted during the synthetic click and Index
+  // stayed closed. Keep pointer coverage in the dedicated Index/footer tests.
+  const index = page.getByRole("button", { name: "Index", exact: true });
+  await index.press("Enter");
   const dialog = page.getByRole("dialog", { name: "Index" });
+  await expect(index).toHaveAttribute("aria-expanded", "true");
+  await expect(dialog).toBeVisible();
   await dialog.getByRole("button", { name: "Reduced" }).click();
   const reducedReveal = page.locator(".route-reveal-path");
   await expect(reducedReveal.first()).toHaveCSS("animation-name", "none");
