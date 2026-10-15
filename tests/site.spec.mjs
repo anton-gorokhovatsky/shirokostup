@@ -896,10 +896,9 @@ test("shared author signature follows site themes and motion without losing nati
   const mark = signature.locator(".mark");
   const author = signature.getByRole("link", { name: "Anton Gorokhovatsky Design & development", exact: true });
   await expect(signature.getByRole("link")).toHaveCount(1);
-  await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/");
+  await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/?point=shirokostup");
   await expect(author).toHaveAttribute("rel", "author");
-  await expect(page.getByRole("link", { name: "About this website", exact: true }))
-    .toHaveAttribute("href", "https://gorokhovatsky.tech/?point=shirokostup");
+  await expect(page.getByRole("link", { name: "About this website", exact: true })).toHaveCount(0);
   await expect(signature).toHaveAttribute("theme", "light");
   await expect(mark).toHaveAttribute("data-arc-running", "true");
   await expect(signature.getByRole("button")).toHaveCount(0);
@@ -912,7 +911,7 @@ test("shared author signature follows site themes and motion without losing nati
   await expect(author).toHaveCSS("outline-style", "solid");
   expect((await author.boundingBox()).height).toBeGreaterThanOrEqual(44);
   await page.keyboard.press(linkTabKey(browserName));
-  await expect(page.getByRole("link", { name: "About this website", exact: true })).toBeFocused();
+  await expect(page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo", exact: true })).toBeFocused();
 
   await page.getByRole("button", { name: "Index", exact: true }).click();
   const theme = page.getByRole("group", { name: "Colour theme" });
@@ -940,13 +939,13 @@ test("shared author signature follows site themes and motion without losing nati
 });
 
 test("author credit remains keyboard accessible when the shared module is unavailable", async ({ page, browserName }) => {
-  await page.route("https://gorokhovatsky.tech/signature/v1/signature.js", route => route.abort());
+  await page.route("https://gorokhovatsky.tech/signature/1.0.4/signature.js", route => route.abort());
   await openFreshPage(page, "contact");
   const author = page.getByRole("link", { name: "Anton Gorokhovatsky — Design & development", exact: true });
   await expect(author).toBeVisible();
-  await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/");
+  await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/?point=shirokostup");
   await author.focus();
   await expect(author).toBeFocused();
   await page.keyboard.press(linkTabKey(browserName));
-  await expect(page.getByRole("link", { name: "About this website", exact: true })).toBeFocused();
+  await expect(page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo", exact: true })).toBeFocused();
 });
