@@ -40,6 +40,33 @@ const rectanglesOverlap = (first, second) =>
   first.top < second.bottom &&
   first.bottom > second.top;
 
+const inspectFooterReflow = () => {
+  const footer = document.querySelector(".contact__footer");
+  const bounds = footer.getBoundingClientRect();
+  const signature = footer.querySelector("ag-signature").shadowRoot;
+  const elements = [
+    ...footer.children,
+    ...footer.querySelectorAll("p, a, summary, .credits__count"),
+    ...signature.querySelectorAll(".credit, .mark, .text, .name, .role, .arrow"),
+  ];
+  const clipped = elements.filter(element => {
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && (rect.left < bounds.left - 1 || rect.right > bounds.right + 1);
+  }).map(element => element.className);
+  const links = [...footer.querySelectorAll("ag-signature, .contact__links > a")].map(element => element.getBoundingClientRect());
+  const overlapping = links.some((first, index) => links.slice(index + 1).some(second =>
+    first.left < second.right - 1 && first.right > second.left + 1 &&
+    first.top < second.bottom - 1 && first.bottom > second.top + 1));
+  const mark = signature.querySelector(".mark").getBoundingClientRect();
+  const name = signature.querySelector(".name").getBoundingClientRect();
+  return {
+    clipped,
+    overlapping,
+    horizontalScroll: document.documentElement.scrollWidth > innerWidth,
+    markBesideName: name.left >= mark.right && name.top < mark.bottom && name.bottom > mark.top,
+  };
+};
+
 test("content and native navigation survive an unavailable interaction script", async ({ page }) => {
   await page.route('**/script.js*', route => route.abort());
   await page.goto('/?qa=script-unavailable');
@@ -855,35 +882,59 @@ test("Areal loads its variable styles and follows manual and system themes witho
   await expect(body).toHaveCSS("font-variation-settings", '"DRKM" 1');
 });
 
-test("footer credit and image sources remain readable at narrow enlarged text", async ({ page }, testInfo) => {
+test("footer row and image sources reflow continuously and with enlarged text", async ({ page }, testInfo) => {
+  test.setTimeout(60_000);
   await page.setViewportSize({ width: 320, height: 844 });
-  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
   await page.goto("/?qa=areal-footer#contact");
   await expect(page.locator("ag-signature")).toHaveAttribute("data-signature-version", /^1\./);
-  await page.evaluate(async () => { await document.fonts.ready; document.documentElement.style.fontSize = "200%"; });
+  await page.evaluate(() => document.fonts.ready);
   const credit = page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo" });
   await expect(credit).toHaveAttribute("href", "https://are.al.are.na/");
-  await credit.scrollIntoViewIfNeeded();
-  await credit.focus();
-  await expect(credit).toBeFocused();
-  await expect(credit).toBeInViewport();
-  expect((await credit.boundingBox()).height).toBeGreaterThanOrEqual(44);
-  const label = page.locator(".credits summary > span").first();
-  expect(await label.evaluate(element => {
-    const range = document.createRange();
-    range.selectNodeContents(element);
-    return range.getClientRects().length;
-  })).toBeLessThanOrEqual(2);
-  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
-  // A clipped grid can hide overflow from document.scrollWidth; inspect the actual columns.
-  expect(await page.locator(".contact__footer").evaluate(footer => {
-    const bounds = footer.getBoundingClientRect();
-    return [...footer.children].filter(child => {
-      const rect = child.getBoundingClientRect();
-      return rect.left < bounds.left - 1 || rect.right > bounds.right + 1;
-    }).map(child => child.className);
-  })).toEqual([]);
-  await page.locator(".contact__footer").screenshot({ path: testInfo.outputPath("signature-footer-200.png"), animations: "disabled" });
+  // Sweep the range and both sides of the old and current wrapping boundaries.
+  const widths = [...new Set([
+    ...Array.from({ length: 56 }, (_, index) => 320 + index * 64),
+    324, 325, 326, 360, 390, 430, 600, 679, 680, 681, 699, 700, 701,
+    704, 705, 706, 768, 820, 824, 825, 826, 900, 1024, 1180, 1181,
+    1204, 1205, 1206, 1280, 1410, 1411, 1412, 1440, 1600, 1920,
+    2408, 2409, 2410, 2560, 3840,
+  ])].sort((first, second) => first - second);
+  for (const theme of ["light", "dark"]) {
+    await page.emulateMedia({ colorScheme: theme });
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: 844 });
+      expect(await page.evaluate(inspectFooterReflow), `Footer at ${width}px / ${theme}`).toEqual({
+        clipped: [], overlapping: false, horizontalScroll: false, markBesideName: true,
+      });
+      if ([320, 390, 700, 768, 1280, 1920].includes(width)) {
+        await page.locator(".contact__footer").screenshot({ path: testInfo.outputPath(`signature-footer-${theme}-${width}.png`), animations: "disabled" });
+      }
+    }
+  }
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
+  for (const width of widths) {
+    await page.setViewportSize({ width, height: 844 });
+    const label = page.locator(".credits summary > span").first();
+    expect(await label.evaluate(element => {
+      const range = document.createRange();
+      range.selectNodeContents(element);
+      return range.getClientRects().length;
+    })).toBeLessThanOrEqual(2);
+    // A clipped grid can hide overflow from document.scrollWidth; inspect actual content too.
+    expect(await page.evaluate(inspectFooterReflow), `Footer at ${width}px / text 200%`).toMatchObject({
+      clipped: [], overlapping: false, horizontalScroll: false,
+    });
+    if ([320, 768, 1280, 1920].includes(width)) {
+      await credit.scrollIntoViewIfNeeded();
+      await credit.focus();
+      await expect(credit).toBeFocused();
+      await expect(credit).toBeInViewport();
+      await expect(page.getByRole("link", { name: "Skip to content", exact: true })).not.toBeInViewport();
+      expect((await credit.boundingBox()).height).toBeGreaterThanOrEqual(44);
+      await page.screenshot({ path: testInfo.outputPath(`signature-footer-200-${width}.png`), animations: "disabled" });
+    }
+  }
 });
 
 test("shared author signature follows site themes and motion without losing native links", async ({ page, browserName }, testInfo) => {
@@ -895,6 +946,42 @@ test("shared author signature follows site themes and motion without losing nati
   await signature.scrollIntoViewIfNeeded();
   const mark = signature.locator(".mark");
   const author = signature.getByRole("link", { name: "Anton Gorokhovatsky Design & development", exact: true });
+  const typeface = page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo", exact: true });
+  const backToTop = page.getByRole("link", { name: "Back to top", exact: true });
+  const cv = page.locator(".contact__footer").getByRole("link", { name: "Open Olga Shirokostup’s CV as a PDF" });
+  const labels = [signature.locator(".name"), typeface.locator(".footer-link__label"), backToTop.locator(".footer-link__label")];
+  const links = [author, typeface, backToTop];
+  const verifyUtilityFeedback = async (themeName) => {
+    await cv.focus();
+    await page.mouse.move(0, 0);
+    const ink = await typeface.evaluate(element => getComputedStyle(element).color);
+    const gradient = await labels[1].evaluate(element => getComputedStyle(element).backgroundImage);
+    let focusColor;
+    for (let index = 0; index < links.length; index++) {
+      await expect(labels[index]).toHaveCSS("font-size", "14px");
+      await expect(labels[index]).toHaveCSS("font-weight", "400");
+      await expect(labels[index]).toHaveCSS("background-image", gradient);
+      await links[index].hover();
+      await expect(labels[index]).toHaveCSS("background-size", "0px 1px, 100% 2px");
+      await expect(labels[index]).toHaveCSS("color", ink);
+      await page.mouse.move(0, 0);
+      await links[index].focus();
+      await expect(links[index]).toHaveCSS("outline-style", "solid");
+      await expect(links[index]).toHaveCSS("outline-width", "2px");
+      focusColor ??= await links[index].evaluate(element => getComputedStyle(element).outlineColor);
+      await expect(links[index]).toHaveCSS("outline-color", focusColor);
+      await expect(labels[index]).toHaveCSS("background-size", "0px 1px, 100% 2px");
+      await expect(labels[index]).toHaveCSS("color", ink);
+      expect((await links[index].boundingBox()).height).toBeGreaterThanOrEqual(44);
+      if (index === 0) {
+        await page.locator(".contact__footer").screenshot({ path: testInfo.outputPath(`signature-focus-${themeName}.png`), animations: "disabled" });
+      }
+    }
+    await cv.focus();
+    for (const label of labels) await expect(label).toHaveCSS("background-size", "100% 1px, 0px 2px");
+    const contrast = await new AxeBuilder({ page }).include(".contact__footer").withRules(["color-contrast"]).analyze();
+    expect(contrast.violations).toEqual([]);
+  };
   await expect(signature.getByRole("link")).toHaveCount(1);
   await expect(author).toHaveAttribute("href", "https://gorokhovatsky.tech/?point=shirokostup");
   await expect(author).toHaveAttribute("rel", "author");
@@ -902,16 +989,21 @@ test("shared author signature follows site themes and motion without losing nati
   await expect(signature).toHaveAttribute("theme", "light");
   await expect(mark).toHaveAttribute("data-arc-running", "true");
   await expect(signature.getByRole("button")).toHaveCount(0);
+  await verifyUtilityFeedback("light");
   await page.keyboard.press("End");
   await page.screenshot({ path: testInfo.outputPath("signature-footer-light.png"), animations: "disabled" });
 
-  await page.locator(".contact__footer").getByRole("link", { name: "Open Olga Shirokostup’s CV as a PDF" }).focus();
+  await cv.focus();
   await page.keyboard.press(linkTabKey(browserName));
   await expect(author).toBeFocused();
   await expect(author).toHaveCSS("outline-style", "solid");
   expect((await author.boundingBox()).height).toBeGreaterThanOrEqual(44);
   await page.keyboard.press(linkTabKey(browserName));
-  await expect(page.getByRole("link", { name: "Typeface: ABC Areal by Dinamo", exact: true })).toBeFocused();
+  await expect(typeface).toBeFocused();
+  await page.keyboard.press(linkTabKey(browserName));
+  await expect(backToTop).toBeFocused();
+  await page.keyboard.press(linkTabKey(browserName));
+  await expect(page.locator(".credits summary")).toBeFocused();
 
   await page.getByRole("button", { name: "Index", exact: true }).click();
   const theme = page.getByRole("group", { name: "Colour theme" });
@@ -923,6 +1015,8 @@ test("shared author signature follows site themes and motion without losing nati
   await expect(signature).toHaveAttribute("paused", "");
   await signature.scrollIntoViewIfNeeded();
   await expect(mark).toHaveAttribute("data-arc-running", "false");
+  await expect(labels[0]).toHaveCSS("transition-duration", "0s");
+  await verifyUtilityFeedback("dark");
   await page.keyboard.press("End");
   await page.screenshot({ path: testInfo.outputPath("signature-footer-dark.png"), animations: "disabled" });
 

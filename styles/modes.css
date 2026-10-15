@@ -60,6 +60,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .site-signature::part(name) {
+    transition: none;
+  }
+
   html {
     scroll-behavior: auto;
   }
@@ -103,6 +107,10 @@
 
 :root[data-motion="reduced"] {
   scroll-behavior: auto;
+}
+
+:root[data-motion="reduced"] .site-signature::part(name) {
+  transition: none;
 }
 
 :root[data-motion="reduced"] *,
