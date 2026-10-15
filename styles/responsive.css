@@ -21,7 +21,7 @@
     /* Pass one layout state through the shadow boundary, including WebKit reflow. */
     --site-signature-outdent: 0px;
     --site-signature-columns: minmax(0, 1fr);
-    --site-signature-row-gap: 0.5rem;
+    --site-signature-row-gap: 0px;
     --site-signature-mark-lift: 0px;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
