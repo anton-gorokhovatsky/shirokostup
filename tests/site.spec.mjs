@@ -78,7 +78,7 @@ const inspectFooterReflow = () => {
     range.setStart(node, 0);
     range.setEnd(node, 1);
     const text = range.getBoundingClientRect();
-    return { owner: owner.getBoundingClientRect(), textTop: text.top, textBottom: text.bottom };
+    return { owner: owner.getBoundingClientRect(), textTop: text.top, textBottom: text.bottom, textLeft: text.left };
   });
   const misaligned = [];
   for (let first = 0; first < primaryText.length; first++) {
@@ -96,12 +96,25 @@ const inspectFooterReflow = () => {
       });
     }
   }
+  const identity = footer.querySelector(".contact__signature").getBoundingClientRect();
+  const coordinates = footer.querySelector(".contact__coordinates").getBoundingClientRect();
+  const professional = footer.querySelector(".professional-contact--footer").getBoundingClientRect();
+  const threeColumns = professional.left > coordinates.right + 1;
+  const multipleColumns = coordinates.left > identity.left + 1;
+  const textAxes = [
+    [0, identity.left],
+    [2, threeColumns ? coordinates.left : identity.left],
+    [1, threeColumns ? professional.left : multipleColumns ? coordinates.left : identity.left],
+  ];
+  const offGrid = textAxes.filter(([index, axis]) => Math.abs(primaryText[index].textLeft - axis) > 1)
+    .map(([index, axis]) => ({ label: index, expectedLeft: axis, actualLeft: primaryText[index].textLeft }));
   return {
     clipped,
     overlapping,
     misaligned,
+    offGrid,
     horizontalScroll: document.documentElement.scrollWidth > innerWidth,
-    markBesideName: name.left >= mark.right && name.top < mark.bottom && name.bottom > mark.top,
+    markBesideName: (name.right <= mark.left || name.left >= mark.right) && name.top < mark.bottom && name.bottom > mark.top,
   };
 };
 
@@ -950,7 +963,7 @@ test("footer row and image sources reflow continuously and with enlarged text", 
       // Measure after a paint: rAF itself runs before the container-query layout.
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       expect(await page.evaluate(inspectFooterReflow), `Footer at ${width}px / ${theme}`).toEqual({
-        clipped: [], overlapping: false, misaligned: [], horizontalScroll: false, markBesideName: true,
+        clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false, markBesideName: true,
       });
       if ([320, 390, 700, 768, 1280, 1512, 1920].includes(width)) {
         await page.locator(".contact__footer").screenshot({ path: testInfo.outputPath(`signature-footer-${theme}-${width}.png`), animations: "disabled" });
@@ -970,7 +983,7 @@ test("footer row and image sources reflow continuously and with enlarged text", 
     })).toBeLessThanOrEqual(2);
     // A clipped grid can hide overflow from document.scrollWidth; inspect actual content too.
     expect(await page.evaluate(inspectFooterReflow), `Footer at ${width}px / text 200%`).toMatchObject({
-      clipped: [], overlapping: false, misaligned: [], horizontalScroll: false,
+      clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false,
     });
     if ([320, 768, 1280, 1920].includes(width)) {
       await credit.scrollIntoViewIfNeeded();
