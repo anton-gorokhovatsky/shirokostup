@@ -428,7 +428,7 @@
 .contact__footer {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.4fr) minmax(0, 0.85fr);
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.4fr) minmax(max-content, 0.85fr);
   column-gap: clamp(2rem, 3vw, 4.5rem);
   row-gap: 1rem;
   align-items: start;
@@ -506,11 +506,11 @@
 
 .contact__closing {
   grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem 2rem;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: subgrid;
+  column-gap: inherit;
+  row-gap: 1.25rem;
+  align-items: baseline;
   margin-top: 1rem;
   font-size: 0.875rem;
   line-height: 1.4;
@@ -521,15 +521,17 @@
   opacity: 0.74;
 }
 
-.contact__utilities,
+.contact__utilities {
+  display: contents;
+}
+
 .contact__links {
-  display: flex;
-  gap: 0.75rem 1.5rem;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
+  grid-column: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) max-content;
+  gap: 1.5rem;
+  align-items: baseline;
   min-width: 0;
-  max-width: 100%;
 }
 
 .site-signature {
@@ -541,6 +543,7 @@
   --ag-signature-muted: var(--ink-soft);
   --ag-signature-accent: var(--menu-accent);
   --ag-signature-node-ink: var(--ink);
+  grid-column: var(--signature-column, 2);
   display: block;
   inline-size: fit-content;
   min-width: 0;
@@ -548,10 +551,21 @@
   font-family: var(--sans);
 }
 
+.site-signature:defined {
+  /* Hang the mark into the gutter; align the text with From. Fallback has no mark. */
+  margin-inline-start: var(--signature-hang, calc(-1 * (var(--ag-signature-size) + var(--ag-signature-gap))));
+}
+
 .site-signature::part(credit) {
   flex-direction: row;
-  align-items: center;
+  align-items: baseline;
   gap: 0.75rem;
+}
+
+.site-signature::part(mark) {
+  align-self: center;
+  /* The visible core sits below the SVG's top edge; align it with the name. */
+  margin-block-start: -0.5rem;
 }
 
 .site-signature::part(text) {
@@ -576,11 +590,22 @@
   margin-top: 0.25rem;
 }
 
+.site-signature::part(arrow) {
+  inline-size: 0.625rem;
+  block-size: 0.625rem;
+  margin-inline-start: 0.4em;
+  vertical-align: calc(1cap - 0.625rem - 0.09375rem);
+}
+
 .contact__utilities a {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   text-decoration: none;
+}
+
+.contact__links .site-credit {
+  min-width: 0;
 }
 
 .contact__utilities a:focus-visible,

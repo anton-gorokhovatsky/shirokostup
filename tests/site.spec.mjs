@@ -52,16 +52,53 @@ const inspectFooterReflow = () => {
   const clipped = elements.filter(element => {
     const rect = element.getBoundingClientRect();
     return rect.width > 0 && (rect.left < bounds.left - 1 || rect.right > bounds.right + 1);
-  }).map(element => element.className);
+  }).map(element => ({
+    class: element.getAttribute("class"),
+    left: element.getBoundingClientRect().left,
+    right: element.getBoundingClientRect().right,
+    footerLeft: bounds.left,
+    footerRight: bounds.right,
+    signatureMargin: getComputedStyle(footer.querySelector("ag-signature")).marginInlineStart,
+  }));
   const links = [...footer.querySelectorAll("ag-signature, .contact__links > a")].map(element => element.getBoundingClientRect());
   const overlapping = links.some((first, index) => links.slice(index + 1).some(second =>
     first.left < second.right - 1 && first.right > second.left + 1 &&
     first.top < second.bottom - 1 && first.bottom > second.top + 1));
   const mark = signature.querySelector(".mark").getBoundingClientRect();
   const name = signature.querySelector(".name").getBoundingClientRect();
+  const primaryText = [
+    [footer.querySelector(".contact__closing > p"), footer.querySelector(".contact__closing > p")],
+    [footer.querySelector("ag-signature"), signature.querySelector(".name")],
+    [footer.querySelector(".site-credit"), footer.querySelector(".site-credit .footer-link__label")],
+    [footer.querySelector(".back-to-top"), footer.querySelector(".back-to-top .footer-link__label")],
+  ].map(([owner, label]) => {
+    const walker = document.createTreeWalker(label, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode()) && !node.textContent.trim()) { /* Find the first visible text. */ }
+    const range = document.createRange();
+    range.setStart(node, 0);
+    range.setEnd(node, 1);
+    return { owner: owner.getBoundingClientRect(), textTop: range.getBoundingClientRect().top };
+  });
+  const misaligned = [];
+  for (let first = 0; first < primaryText.length; first++) {
+    for (let second = first + 1; second < primaryText.length; second++) {
+      const a = primaryText[first];
+      const b = primaryText[second];
+      const sharedRow = Math.min(a.owner.bottom, b.owner.bottom) - Math.max(a.owner.top, b.owner.top) > 1;
+      if (sharedRow && Math.abs(a.textTop - b.textTop) > 1) misaligned.push({
+        pair: [first, second],
+        ownerTops: [a.owner.top, b.owner.top],
+        ownerBottoms: [a.owner.bottom, b.owner.bottom],
+        textTops: [a.textTop, b.textTop],
+        signatureColumn: getComputedStyle(footer.querySelector("ag-signature")).gridColumn,
+      });
+    }
+  }
   return {
     clipped,
     overlapping,
+    misaligned,
     horizontalScroll: document.documentElement.scrollWidth > innerWidth,
     markBesideName: name.left >= mark.right && name.top < mark.bottom && name.bottom > mark.top,
   };
@@ -889,7 +926,7 @@ test("Areal loads its variable styles and follows manual and system themes witho
 });
 
 test("footer row and image sources reflow continuously and with enlarged text", async ({ page }, testInfo) => {
-  test.setTimeout(60_000);
+  test.setTimeout(90_000);
   await page.setViewportSize({ width: 320, height: 844 });
   await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
   await page.goto("/?qa=areal-footer#contact");
@@ -902,17 +939,19 @@ test("footer row and image sources reflow continuously and with enlarged text", 
     ...Array.from({ length: 56 }, (_, index) => 320 + index * 64),
     324, 325, 326, 360, 390, 430, 600, 679, 680, 681, 699, 700, 701,
     704, 705, 706, 768, 820, 824, 825, 826, 900, 1024, 1180, 1181,
-    1204, 1205, 1206, 1280, 1410, 1411, 1412, 1440, 1600, 1920,
+    1204, 1205, 1206, 1280, 1410, 1411, 1412, 1440, 1512, 1600, 1920,
     2408, 2409, 2410, 2560, 3840,
   ])].sort((first, second) => first - second);
   for (const theme of ["light", "dark"]) {
     await page.emulateMedia({ colorScheme: theme });
     for (const width of widths) {
       await page.setViewportSize({ width, height: 844 });
+      // Measure after a paint: rAF itself runs before the container-query layout.
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
       expect(await page.evaluate(inspectFooterReflow), `Footer at ${width}px / ${theme}`).toEqual({
-        clipped: [], overlapping: false, horizontalScroll: false, markBesideName: true,
+        clipped: [], overlapping: false, misaligned: [], horizontalScroll: false, markBesideName: true,
       });
-      if ([320, 390, 700, 768, 1280, 1920].includes(width)) {
+      if ([320, 390, 700, 768, 1280, 1512, 1920].includes(width)) {
         await page.locator(".contact__footer").screenshot({ path: testInfo.outputPath(`signature-footer-${theme}-${width}.png`), animations: "disabled" });
       }
     }
@@ -921,6 +960,7 @@ test("footer row and image sources reflow continuously and with enlarged text", 
   await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
   for (const width of widths) {
     await page.setViewportSize({ width, height: 844 });
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
     const label = page.locator(".credits summary > span").first();
     expect(await label.evaluate(element => {
       const range = document.createRange();
@@ -929,7 +969,7 @@ test("footer row and image sources reflow continuously and with enlarged text", 
     })).toBeLessThanOrEqual(2);
     // A clipped grid can hide overflow from document.scrollWidth; inspect actual content too.
     expect(await page.evaluate(inspectFooterReflow), `Footer at ${width}px / text 200%`).toMatchObject({
-      clipped: [], overlapping: false, horizontalScroll: false,
+      clipped: [], overlapping: false, misaligned: [], horizontalScroll: false,
     });
     if ([320, 768, 1280, 1920].includes(width)) {
       await credit.scrollIntoViewIfNeeded();
