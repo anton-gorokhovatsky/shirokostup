@@ -18,6 +18,11 @@
 
 @container contact (max-width: 41rem) {
   .contact__footer {
+    /* Pass one layout state through the shadow boundary, including WebKit reflow. */
+    --site-signature-outdent: 0px;
+    --site-signature-columns: minmax(0, 1fr);
+    --site-signature-row-gap: 0.5rem;
+    --site-signature-mark-lift: 0px;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "identity"
@@ -73,14 +78,6 @@
   .credits li {
     grid-template-columns: 1fr;
     gap: 0.25rem;
-  }
-}
-
-/* Keep the surname intact beside the mark at narrow widths with enlarged text. */
-@container contact (max-width: 14rem) {
-  .site-signature {
-    --ag-signature-size: 40px;
-    --ag-signature-gap: 12px;
   }
 }
 
