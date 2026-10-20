@@ -206,7 +206,7 @@
 
 .now__card.is-visible:hover .now__date,
 .now__card.is-visible:focus-visible .now__date {
-  transform: translate3d(0, -0.35rem, 0);
+  transform: none;
   transition-delay: 0ms;
 }
 

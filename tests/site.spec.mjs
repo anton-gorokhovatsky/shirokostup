@@ -294,6 +294,25 @@ test("hero reserves space for the active event ticket", async ({ page }, testInf
       expect(layout.dateToCopy, `Date stays with its event at ${width}px`).toBeLessThanOrEqual(layout.dateHeight * 0.5);
     }
   }
+  if (testInfo.project.name === "desktop-chromium") {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.mouse.move(0, 0);
+    const card = page.locator("[data-featured-event-link]");
+    const dateToTitle = () => card.evaluate(el =>
+      el.querySelector(".now__date").getBoundingClientRect().bottom - el.querySelector("h2").getBoundingClientRect().bottom);
+    const restingAlignment = await dateToTitle();
+    const finishFeedback = () => card.evaluate(async el => {
+      await Promise.allSettled(el.getAnimations({ subtree: true }).map(animation => animation.finished));
+    });
+    await card.hover();
+    await finishFeedback();
+    expect(Math.abs(await dateToTitle() - restingAlignment)).toBeLessThanOrEqual(1);
+    await card.press("ArrowDown");
+    await expect(card).toBeFocused();
+    await finishFeedback();
+    expect(Math.abs(await dateToTitle() - restingAlignment)).toBeLessThanOrEqual(1);
+  }
 });
 
 test("event lifecycle moves from invitation to a lasting past record", async ({ page }) => {
