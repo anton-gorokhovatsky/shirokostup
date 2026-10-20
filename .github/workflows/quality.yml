@@ -51,7 +51,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium webkit
 
       - name: Run browser and accessibility checks
-        run: pnpm run test:browser
+        run: pnpm exec playwright test --project=mobile-webkit --grep "event ticket dismissal is scoped|next event is selected" --repeat-each=10 --retries=0 --trace=on
 
       - name: Package public site
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
@@ -64,7 +64,7 @@ jobs:
           path: _site
 
       - name: Preserve browser failure evidence
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: browser-failure

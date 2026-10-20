@@ -338,6 +338,32 @@ test("event lifecycle moves from invitation to a lasting past record", async ({ 
   await expect(permanentLink).toBeVisible();
 });
 
+test.beforeEach(async ({ page }, testInfo) => {
+  if (!/event ticket dismissal is scoped|next event is selected/.test(testInfo.title)) return;
+  await page.addInitScript(() => {
+    window.invitationDiagnostics = [];
+    const capture = (type, target = null, x = null, y = null) => {
+      const ticket = document.querySelector('[data-event-ticket]');
+      const button = ticket?.querySelector('button');
+      const rect = button?.getBoundingClientRect();
+      const point = rect && document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+      window.invitationDiagnostics.push({ type, date: new Date().toISOString(), target: target?.outerHTML.slice(0, 200), x, y, button: rect?.toJSON(), hit: point?.outerHTML.slice(0, 200), ticket: ticket?.outerHTML.slice(0, 250), scrollY });
+    };
+    for (const type of ['pointerdown', 'pointerup', 'click']) {
+      document.addEventListener(type, event => capture(type, event.target.closest('button, a, section') || event.target, event.clientX, event.clientY), true);
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const ticket = document.querySelector('[data-event-ticket]');
+      if (ticket) new MutationObserver(() => capture('ticket-change')).observe(ticket, { attributes: true, attributeFilter: ['class', 'hidden', 'style'] });
+    });
+  });
+});
+
+test.afterEach(async ({ page }, testInfo) => {
+  if (!/event ticket dismissal is scoped|next event is selected/.test(testInfo.title)) return;
+  await testInfo.attach('invitation-diagnostics', { body: JSON.stringify(await page.evaluate(() => window.invitationDiagnostics), null, 2), contentType: 'application/json' });
+});
+
 test("event ticket dismissal is scoped to the current event", async ({ page }) => {
   await installUpcomingClock(page);
   await openFreshPage(page);
