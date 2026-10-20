@@ -34,6 +34,14 @@ const installUpcomingClock = async (page, time = upcomingTime) => {
   await page.clock.install({ time });
 };
 
+const openAtEventBoundary = async (page) => {
+  // Navigation is setup, not part of the five seconds under test. Keep timers
+  // running while the page loads, then own the exact boundary and every tick.
+  await installUpcomingClock(page, new Date(shortlyBeforeArchiveTime.getTime() - 60_000));
+  await openFreshPage(page);
+  await page.clock.pauseAt(shortlyBeforeArchiveTime);
+};
+
 const rectanglesOverlap = (first, second) =>
   first.left < second.right &&
   first.right > second.left &&
@@ -316,8 +324,7 @@ test("hero reserves space for the active event ticket", async ({ page }, testInf
 });
 
 test("event lifecycle moves from invitation to a lasting past record", async ({ page }) => {
-  await installUpcomingClock(page, shortlyBeforeArchiveTime);
-  await openFreshPage(page);
+  await openAtEventBoundary(page);
 
   const ticket = page.locator("[data-event-ticket]");
   const featuredEvent = page.locator("[data-featured-event]");
@@ -339,16 +346,23 @@ test("event lifecycle moves from invitation to a lasting past record", async ({ 
 });
 
 test("event ticket dismissal is scoped to the current event", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await installUpcomingClock(page);
   await openFreshPage(page);
 
   const ticket = page.locator("[data-event-ticket]");
   await expect(ticket).toBeVisible();
+  // WebKit can report two equal rectangles between entrance frames. Visibility
+  // alone does not mean the animated target has reached its resting position.
+  await expect(ticket).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+  await expect(ticket).toBeInViewport({ ratio: 1 });
   await page.getByRole("button", { name: "Hide event invitation" }).click();
   await expect(ticket).toBeHidden();
   await expect
     .poll(() => page.evaluate((key) => sessionStorage.getItem(key), eventDismissalKey))
     .toBe("true");
+  await page.reload();
+  await expect(ticket).toBeHidden();
 });
 
 test("event anchor keeps its date clear of the fixed Index", async ({ page }) => {
@@ -912,8 +926,7 @@ test("consent notice has an opaque surface and never overlaps the introduction",
 });
 
 test("past event becomes compact while a future event keeps its invitation", async ({ page }) => {
-  await installUpcomingClock(page, shortlyBeforeArchiveTime);
-  await openFreshPage(page);
+  await openAtEventBoundary(page);
   const feature = page.locator("[data-featured-event]");
   const before = (await feature.boundingBox()).height;
   await page.clock.runFor(5100);
@@ -973,9 +986,15 @@ test("past event uses the neutral dark surface while invitations retain their ac
 });
 
 test("next event is selected without changing the build clock", async ({ page }) => {
-  await installUpcomingClock(page, shortlyBeforeArchiveTime);
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
+  let firstNavigation = true;
   await page.route('**/?qa=browser-regression*', async route => {
     const response = await route.fetch();
+    if (firstNavigation) {
+      firstNavigation = false;
+      // A slow first response must not archive the fixture before dismissal.
+      await new Promise(resolve => setTimeout(resolve, 6000));
+    }
     let html = await response.text();
     html = html.replace(/(<script type="application\/json" id="event-data">)([\s\S]*?)(<\/script>)/, (_, start, json, end) => {
       const events = JSON.parse(json);
@@ -984,8 +1003,14 @@ test("next event is selected without changing the build clock", async ({ page })
     });
     await route.fulfill({ response, body: html });
   });
-  await openFreshPage(page);
+  await openAtEventBoundary(page);
+  const ticket = page.locator('[data-event-ticket]');
+  await expect(ticket).toHaveAttribute('data-event-id', eventId);
+  await expect(ticket).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+  await expect(ticket).toBeInViewport({ ratio: 1 });
   await page.getByRole('button', { name: 'Hide event invitation' }).click();
+  await expect(page.locator('[data-event-ticket]')).toBeHidden();
+  await expect.poll(() => page.evaluate(key => sessionStorage.getItem(key), eventDismissalKey)).toBe('true');
   await page.clock.runFor(5100);
   await expect(page.locator('[data-featured-event]')).toHaveAttribute('data-event-id', 'test-next-event');
   await expect(page.locator('[data-featured-event-status]')).toHaveText('Upcoming');

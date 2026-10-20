@@ -551,7 +551,8 @@
       color-mix(in srgb, currentColor 46%, transparent)
     ),
     var(--aurora-sweep);
-  background-position: left bottom;
+  /* The text owns the underline; the 44px hit area can extend below it. */
+  background-position: left calc(50% + 0.5em + var(--underline-clearance));
   background-repeat: no-repeat;
   background-size: 100% 1px, 0 2px;
   font-size: 0.82rem;
