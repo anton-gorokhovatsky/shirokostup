@@ -1,13 +1,13 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const eventId = "kin-conversation-2026-08-13";
+const eventId = "listening-to-the-land-tromso-2026-11-01";
 const eventDismissalKey = `olga-event-ticket-dismissed:${eventId}`;
 const analyticsConsentKey = "olga-analytics-consent";
 // macOS WebKit uses Option-Tab to include links with the default keyboard preference.
 const linkTabKey = (browserName) => browserName === "webkit" && process.platform === "darwin" ? "Alt+Tab" : "Tab";
-const upcomingTime = new Date("2026-08-13T12:00:00+02:00");
-const shortlyBeforeArchiveTime = new Date("2026-08-13T23:59:55+02:00");
+const upcomingTime = new Date("2026-11-01T12:00:00+01:00");
+const shortlyBeforeArchiveTime = new Date("2026-11-01T23:59:55+01:00");
 
 const openFreshPage = async (page, hash = "top", { analyticsConsent = "denied" } = {}) => {
   await page.goto(`/?qa=browser-regression#${hash}`);
@@ -232,7 +232,7 @@ test("Index keeps background detail from showing through its reading surface", a
   }
 });
 
-test("hero reserves space for the active event ticket", async ({ page }) => {
+test("hero reserves space for the active event ticket", async ({ page }, testInfo) => {
   await installUpcomingClock(page);
   await openFreshPage(page);
 
@@ -248,6 +248,8 @@ test("hero reserves space for the active event ticket", async ({ page }) => {
 
   const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: testInfo.outputPath("listening-hero.png"), animations: "disabled" });
 });
 
 test("event lifecycle moves from invitation to a lasting past record", async ({ page }) => {
@@ -265,8 +267,12 @@ test("event lifecycle moves from invitation to a lasting past record", async ({ 
   await expect(page.locator("html")).not.toHaveClass(/has-active-event/);
   await expect(featuredEvent).toHaveAttribute("data-event-state", "past");
   await expect(featuredEvent.locator("[data-featured-event-status]")).toHaveText("Past event");
-  await expect(featuredEvent.locator("[data-featured-event-date]")).toHaveText("13 August 2026");
+  await expect(featuredEvent.locator("[data-featured-event-date]")).toHaveText("1 November 2026");
   await expect(featuredEvent.getByText("Event details", { exact: true })).toBeVisible();
+  const permanentLink = page.getByRole("list", { name: "Selected roles and projects" })
+    .getByRole("link", { name: "Listening to the Land: Tromsø", exact: true });
+  await expect(permanentLink).toHaveAttribute("href", "https://www.smallprojects.net/listeningtotheland");
+  await expect(permanentLink).toBeVisible();
 });
 
 test("event ticket dismissal is scoped to the current event", async ({ page }) => {
@@ -542,7 +548,7 @@ test("content reflows at 320 px and equivalent 200% desktop zoom", async ({ page
 });
 
 test("enlarged text keeps consent, past event, and gallery actions inside a narrow screen", async ({ page }) => {
-  await page.clock.install({ time: new Date("2026-09-04T12:00:00Z") });
+  await page.clock.install({ time: new Date("2026-11-04T12:00:00Z") });
   await page.setViewportSize({ width: 320, height: 844 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openFreshPage(page, "top", { analyticsConsent: null });
@@ -752,7 +758,7 @@ test("past event becomes compact while a future event keeps its invitation", asy
   await expect(feature).toHaveAttribute("data-event-state", "past");
   const after = (await feature.boundingBox()).height;
   expect(after).toBeLessThan(before * 0.65);
-  await expect(feature.getByRole("link")).toHaveAccessibleName(/Event details: Conversation with Olga/);
+  await expect(feature.getByRole("link")).toHaveAccessibleName(/Event details: Listening to the Land: Tromsø/);
 });
 
 test("past event uses the neutral dark surface while invitations retain their accent", async ({ page }) => {
@@ -811,7 +817,7 @@ test("next event is selected without changing the build clock", async ({ page })
     let html = await response.text();
     html = html.replace(/(<script type="application\/json" id="event-data">)([\s\S]*?)(<\/script>)/, (_, start, json, end) => {
       const events = JSON.parse(json);
-      events.push({ ...events[0], id: 'test-next-event', title: 'Next conversation', ticketTitle: 'Next conversation', startsAt: '2026-09-13T18:00:00+02:00', archivesAt: '2026-09-14T00:00:00+02:00' });
+      events.push({ ...events[0], id: 'test-next-event', title: 'Next conversation', ticketTitle: 'Next conversation', startsAt: '2026-12-01T18:00:00+01:00', archivesAt: '2026-12-02T00:00:00+01:00' });
       return start + JSON.stringify(events) + end;
     });
     await route.fulfill({ response, body: html });

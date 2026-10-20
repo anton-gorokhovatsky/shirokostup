@@ -318,35 +318,52 @@
     </dialog>
 
     <!-- GENERATED:event-ticket:start -->
-    <script type="application/json" id="event-data">[{"id":"kin-conversation-2026-08-13","title":"Conversation with Olga Shirokostup and Tanja Muravskaja","ticketTitle":"In conversation with Tanja Muravskaja","kind":"Talk","venue":"Kin Museum of Contemporary Art","city":"Kiruna","startsAt":"2026-08-13T18:00:00+02:00","archivesAt":"2026-08-14T00:00:00+02:00","timeZone":"Europe/Stockholm","url":"https://kinmuseum.se/en/events/samtal-med-olga-shirokostup-och-tanja-muravskaja"}]</script>
+    <script type="application/json" id="event-data">[{"id":"kin-conversation-2026-08-13","title":"Conversation with Olga Shirokostup and Tanja Muravskaja","ticketTitle":"In conversation with Tanja Muravskaja","kind":"Talk","venue":"Kin Museum of Contemporary Art","city":"Kiruna","startsAt":"2026-08-13T18:00:00+02:00","archivesAt":"2026-08-14T00:00:00+02:00","timeZone":"Europe/Stockholm","url":"https://kinmuseum.se/en/events/samtal-med-olga-shirokostup-och-tanja-muravskaja"},{"id":"listening-to-the-land-tromso-2026-11-01","title":"Listening to the Land: Tromsø","ticketTitle":"Listening to the Land","kind":"Exhibition opening","venue":"Small Projects","city":"Tromsø","startsAt":"2026-11-01T18:00:00+01:00","archivesAt":"2026-11-02T00:00:00+01:00","timeZone":"Europe/Oslo","url":"https://www.smallprojects.net/listeningtotheland"}]</script>
+    <script>
+      (() => {
+        // Reserve the invitation's space before the hero is painted, even if script.js is delayed.
+        const now = Date.now();
+        const next = JSON.parse(document.getElementById("event-data").textContent)
+          .filter((event) => now < Date.parse(event.archivesAt))
+          .sort((first, second) => Date.parse(first.startsAt) - Date.parse(second.startsAt))[0];
+        if (!next) return;
+        let dismissed = false;
+        try {
+          dismissed = sessionStorage.getItem("olga-event-ticket-dismissed:" + next.id) === "true";
+        } catch (error) {
+          // Match the interaction script's default when session storage is unavailable.
+        }
+        document.documentElement.classList.toggle("has-active-event", !dismissed);
+      })();
+    </script>
 
     <aside
       class="event-ticket"
       data-event-ticket
-      data-event-id="kin-conversation-2026-08-13"
+      data-event-id="listening-to-the-land-tromso-2026-11-01"
       aria-labelledby="event-ticket-title"
       hidden
     >
       <a
         class="event-ticket__link"
         data-event-ticket-link
-        href="https://kinmuseum.se/en/events/samtal-med-olga-shirokostup-och-tanja-muravskaja"
-        aria-label="Conversation with Olga Shirokostup and Tanja Muravskaja, 13 August 2026 at 18:00, Kin Museum of Contemporary Art, Kiruna"
+        href="https://www.smallprojects.net/listeningtotheland"
+        aria-label="Listening to the Land: Tromsø, 1 November 2026 at 18:00, Small Projects, Tromsø"
       >
-        <time class="event-ticket__date" data-event-ticket-date datetime="2026-08-13T18:00:00+02:00">
-          <strong data-event-day>13</strong>
-          <span data-event-month>Aug</span>
+        <time class="event-ticket__date" data-event-ticket-date datetime="2026-11-01T18:00:00+01:00">
+          <strong data-event-day>1</strong>
+          <span data-event-month>Nov</span>
         </time>
         <span class="event-ticket__copy">
           <span>
             <span class="event-ticket__status" data-event-ticket-status>Event</span>
             <span class="event-ticket__details"
-              ><span data-event-city>Kiruna</span>&nbsp;·
+              ><span data-event-city>Tromsø</span>&nbsp;·
               <time data-event-ticket-time datetime="18:00">18:00</time></span
             >
           </span>
           <strong class="event-ticket__title" id="event-ticket-title" data-event-ticket-title
-            >In conversation with Tanja Muravskaja</strong
+            >Listening to the Land</strong
           >
         </span>
       </a>
@@ -466,24 +483,24 @@
         id="now"
         aria-labelledby="now-title"
         data-featured-event
-        data-event-id="kin-conversation-2026-08-13"
+        data-event-id="listening-to-the-land-tromso-2026-11-01"
         data-event-state="event"
         data-header-ink="dark"
       >
         <div class="section-label section-label--dark">
           <span data-featured-event-status>Event</span
-          ><time data-featured-event-date datetime="2026-08-13">13 August 2026</time>
+          ><time data-featured-event-date datetime="2026-11-01">1 November 2026</time>
         </div>
         <a
           class="now__card"
           data-featured-event-link
-          href="https://kinmuseum.se/en/events/samtal-med-olga-shirokostup-och-tanja-muravskaja"
-          aria-label="Event details: Conversation with Olga Shirokostup and Tanja Muravskaja, 13 August 2026 at 18:00, Kin Museum of Contemporary Art, Kiruna"
+          href="https://www.smallprojects.net/listeningtotheland"
+          aria-label="Event details: Listening to the Land: Tromsø, 1 November 2026 at 18:00, Small Projects, Tromsø"
           data-reveal
         >
           <div class="now__date" aria-hidden="true">
-            <strong data-event-day>13</strong>
-            <span><span data-event-month>Aug</span><br /><span data-event-time>18:00</span></span>
+            <strong data-event-day>1</strong>
+            <span><span data-event-month>Nov</span><br /><span data-event-time>18:00</span></span>
           </div>
           <span class="dialogue-field" aria-hidden="true">
             <i class="dialogue-field__voice dialogue-field__voice--olga"></i>
@@ -491,8 +508,8 @@
             <i class="dialogue-field__voice dialogue-field__voice--tanja"></i>
           </span>
           <div class="now__copy">
-            <p><span data-event-kind>Talk</span>&nbsp;· <span data-event-venue>Kin Museum of Contemporary Art</span>, <span data-event-city>Kiruna</span></p>
-            <h2 id="now-title" data-event-title>Conversation with Olga Shirokostup and Tanja Muravskaja</h2>
+            <p><span data-event-kind>Exhibition opening</span>&nbsp;· <span data-event-venue>Small Projects</span>, <span data-event-city>Tromsø</span></p>
+            <h2 id="now-title" data-event-title>Listening to the Land: Tromsø</h2>
           </div>
           <span class="now__action" aria-hidden="true">
             <span class="now__action-label">Event details</span>
@@ -975,6 +992,7 @@
                 </g>
               </svg>
 </li>
+<li><span class="timeline__date"><time datetime="2026">2026</time></span><span class="timeline__role">Curator, <a href="https://www.smallprojects.net/listeningtotheland">Listening to the Land: Tromsø</a>, Small Projects, 1–3 November</span></li>
 <li><span class="timeline__date"><time datetime="2026">2026</time></span><span class="timeline__role">Co-curator, Arctic Art Forum V, Oslo</span></li>
 <li><span class="timeline__date"><time datetime="2023">2023</time><span class="ongoing-status"><i aria-hidden="true"></i><span class="ongoing-status__label">Ongoing</span></span></span><span class="timeline__role">Archive of Artistic Life in Zapolyarye, RAAN</span></li>
 <li><span class="timeline__date"><time datetime="2022">2022</time><span class="ongoing-status"><i aria-hidden="true"></i><span class="ongoing-status__label">Ongoing</span></span></span><span class="timeline__role">Women in the North, Kin Museum</span></li>

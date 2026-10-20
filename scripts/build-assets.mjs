@@ -83,6 +83,23 @@ const renderEvents = (events) => {
 
   const ticket = `<!-- GENERATED:event-ticket:start -->
     <script type="application/json" id="event-data">${eventJson}</script>
+    <script>
+      (() => {
+        // Reserve the invitation's space before the hero is painted, even if script.js is delayed.
+        const now = Date.now();
+        const next = JSON.parse(document.getElementById("event-data").textContent)
+          .filter((event) => now < Date.parse(event.archivesAt))
+          .sort((first, second) => Date.parse(first.startsAt) - Date.parse(second.startsAt))[0];
+        if (!next) return;
+        let dismissed = false;
+        try {
+          dismissed = sessionStorage.getItem("olga-event-ticket-dismissed:" + next.id) === "true";
+        } catch (error) {
+          // Match the interaction script's default when session storage is unavailable.
+        }
+        document.documentElement.classList.toggle("has-active-event", !dismissed);
+      })();
+    </script>
 
     <aside
       class="event-ticket"

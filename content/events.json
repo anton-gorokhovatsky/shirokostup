@@ -10,5 +10,17 @@
     "archivesAt": "2026-08-14T00:00:00+02:00",
     "timeZone": "Europe/Stockholm",
     "url": "https://kinmuseum.se/en/events/samtal-med-olga-shirokostup-och-tanja-muravskaja"
+  },
+  {
+    "id": "listening-to-the-land-tromso-2026-11-01",
+    "title": "Listening to the Land: Tromsø",
+    "ticketTitle": "Listening to the Land",
+    "kind": "Exhibition opening",
+    "venue": "Small Projects",
+    "city": "Tromsø",
+    "startsAt": "2026-11-01T18:00:00+01:00",
+    "archivesAt": "2026-11-02T00:00:00+01:00",
+    "timeZone": "Europe/Oslo",
+    "url": "https://www.smallprojects.net/listeningtotheland"
   }
 ]
