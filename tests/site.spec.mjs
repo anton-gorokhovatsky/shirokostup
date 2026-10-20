@@ -250,6 +250,50 @@ test("hero reserves space for the active event ticket", async ({ page }, testInf
   expect(horizontalOverflow).toBeLessThanOrEqual(1);
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: testInfo.outputPath("listening-hero.png"), animations: "disabled" });
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 320, height: 844 });
+  await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
+  await expect(ticket).toBeVisible();
+  await ticket.scrollIntoViewIfNeeded();
+  for (const element of await ticket.locator("a, button, .event-calendar, .event-ticket__copy").all()) {
+    const box = await element.boundingBox();
+    expect(box.x).toBeGreaterThanOrEqual(0);
+    expect(box.x + box.width).toBeLessThanOrEqual(321);
+    expect(await element.evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+  }
+  const [textAt200, ticketAt200] = await Promise.all([
+    page.locator(".hero__content").boundingBox(), ticket.boundingBox(),
+  ]);
+  expect(textAt200.y + textAt200.height).toBeLessThanOrEqual(ticketAt200.y);
+  await page.screenshot({ path: testInfo.outputPath("calendar-text-200.png"), animations: "disabled" });
+  await page.locator("#now").scrollIntoViewIfNeeded();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
+  expect(await page.locator("#now-title").evaluate(el => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+  await page.screenshot({ path: testInfo.outputPath("event-text-200.png"), animations: "disabled" });
+
+  await page.evaluate(() => { document.documentElement.style.removeProperty("font-size"); });
+  for (const width of [320, 390, 700, 701, 800, 1024, 1280, 1920]) {
+    await page.setViewportSize({ width, height: 844 });
+    const layout = await page.locator("#now").evaluate(section => {
+      const blocks = [...section.querySelectorAll(".now__date, .now__copy > p, .now__copy > h2, .now__action")].map(el => el.getBoundingClientRect());
+      return {
+        clipped: blocks.some(rect => rect.left < 0 || rect.right > innerWidth + 1),
+        overlapping: blocks.some((first, index) => blocks.slice(index + 1).some(second =>
+          first.left < second.right - 1 && first.right > second.left + 1 &&
+          first.top < second.bottom - 1 && first.bottom > second.top + 1)),
+        titleOverflow: section.querySelector("h2").scrollWidth - section.querySelector("h2").clientWidth,
+        dateToCopy: blocks[1].top - blocks[0].bottom,
+        dateHeight: blocks[0].height,
+      };
+    });
+    expect(layout.clipped, `Event bounds at ${width}px`).toBe(false);
+    expect(layout.overlapping, `Event groups at ${width}px`).toBe(false);
+    expect(layout.titleOverflow, `Event title at ${width}px`).toBeLessThanOrEqual(1);
+    if (width <= 700) {
+      expect(layout.dateToCopy, `Date stays with its event at ${width}px`).toBeLessThanOrEqual(layout.dateHeight * 0.5);
+    }
+  }
 });
 
 test("event lifecycle moves from invitation to a lasting past record", async ({ page }) => {
@@ -829,6 +873,7 @@ test("next event is selected without changing the build clock", async ({ page })
   await expect(page.locator('[data-featured-event-status]')).toHaveText('Upcoming');
   await expect(page.locator('[data-event-ticket]')).toBeVisible();
   await expect(page.locator('[data-event-ticket-title]')).toHaveText('Next conversation');
+  await expect(page.locator('[data-event-ticket] [data-event-weekday]')).toHaveText('Tue');
 });
 
 test("both stacks advance once on tap, button and either drag direction", async ({ page }, testInfo) => {

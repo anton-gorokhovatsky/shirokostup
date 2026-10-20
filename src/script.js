@@ -334,6 +334,7 @@ const eventDisplay = (event) => {
   const format = (options) => new Intl.DateTimeFormat("en-GB", { ...options, timeZone: event.timeZone }).format(date);
   return {
     day: format({ day: "numeric" }),
+    weekday: format({ weekday: "short" }),
     month: format({ month: "short" }),
     date: format({ day: "numeric", month: "long", year: "numeric" }),
     machineDate: format({ year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-"),
@@ -395,6 +396,7 @@ const updateEventTicket = () => {
   eventTicket.dataset.eventId = upcomingEvent.id;
   setText("[data-event-ticket-status]", "Upcoming", eventTicket);
   setText("[data-event-day]", display.day, eventTicket);
+  setText("[data-event-weekday]", display.weekday, eventTicket);
   setText("[data-event-month]", display.month, eventTicket);
   setText("[data-event-city]", upcomingEvent.city, eventTicket);
   setText("[data-event-ticket-time]", display.time, eventTicket);
@@ -503,10 +505,21 @@ const updateEventTicketVisibility = () => {
 
   if (introIsVisible) {
     showEventTicket();
+    const ticketHeight = `${eventTicket.offsetHeight}px`;
+    if (root.style.getPropertyValue("--event-ticket-height") !== ticketHeight) {
+      root.style.setProperty("--event-ticket-height", ticketHeight);
+    }
+    const heroBottom = heroSection.getBoundingClientRect().bottom + window.scrollY;
+    eventTicket.style.setProperty("--event-ticket-hero-bottom", `${heroBottom}px`);
   } else {
     hideEventTicket();
   }
 };
+
+// Keep the invitation in the hero's reserved space when text or fonts change size.
+const eventTicketLayoutObserver = new ResizeObserver(updateEventTicketVisibility);
+if (heroSection) eventTicketLayoutObserver.observe(heroSection);
+if (eventTicket) eventTicketLayoutObserver.observe(eventTicket);
 
 eventTicketDismiss?.addEventListener("click", () => {
   eventTicketDismissed = true;

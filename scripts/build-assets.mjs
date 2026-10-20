@@ -66,6 +66,7 @@ const formatEvent = (event) => {
   const format = (options) => new Intl.DateTimeFormat("en-GB", { ...options, timeZone: event.timeZone }).format(startsAt);
   return {
     day: format({ day: "numeric" }),
+    weekday: format({ weekday: "short" }),
     month: format({ month: "short" }),
     date: format({ day: "numeric", month: "long", year: "numeric" }),
     machineDate: format({ year: "numeric", month: "2-digit", day: "2-digit" }).split("/").reverse().join("-"),
@@ -114,9 +115,9 @@ const renderEvents = (events) => {
         href="${escapeHtml(event.url)}"
         aria-label="${escapeHtml(details)}"
       >
-        <time class="event-ticket__date" data-event-ticket-date datetime="${escapeHtml(event.startsAt)}">
+        <time class="event-ticket__date event-calendar" data-event-ticket-date datetime="${escapeHtml(event.startsAt)}" aria-hidden="true">
+          <span class="event-calendar__label"><span class="event-calendar__weekday" data-event-weekday>${escapeHtml(display.weekday)}</span><span data-event-month>${escapeHtml(display.month)}</span></span>
           <strong data-event-day>${escapeHtml(display.day)}</strong>
-          <span data-event-month>${escapeHtml(display.month)}</span>
         </time>
         <span class="event-ticket__copy">
           <span>

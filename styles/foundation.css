@@ -1045,19 +1045,7 @@ button {
 }
 
 .professional-contact__cv-arrow {
-  display: grid;
-  width: 1rem;
-  height: 1rem;
-  flex: 0 0 auto;
-  font-size: 1rem;
-  place-items: center;
-  transform: translateY(-0.04rem);
-  transition: transform var(--duration-responsive) var(--ease-move);
-}
-
-.professional-contact__actions a:last-child:hover .professional-contact__cv-arrow,
-.professional-contact__actions a:last-child:focus-visible .professional-contact__cv-arrow {
-  transform: translate(0.12rem, -0.16rem);
+  display: none;
 }
 
 .professional-contact__actions a:last-child:hover .professional-contact__cv-label,

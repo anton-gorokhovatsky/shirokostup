@@ -599,10 +599,7 @@
 }
 
 .site-signature::part(arrow) {
-  inline-size: 0.625rem;
-  block-size: 0.625rem;
-  margin-inline-start: 0.4em;
-  vertical-align: calc(1cap - 0.625rem - 0.09375rem);
+  display: none;
 }
 
 .contact__closing a {
