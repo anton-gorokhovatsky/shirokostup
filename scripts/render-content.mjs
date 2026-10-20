@@ -48,6 +48,8 @@ export function validateContent(content) {
     if (project.publication) {
       text(project.publication.title, 'Publication title');
       text(project.publication.subtitle, 'Publication subtitle');
+      https(project.publication.url);
+      text(project.publication.meta, 'Publication metadata');
     }
     if (project.images && !project.images.length) throw new Error('A gallery needs at least one image.');
     for (const image of project.images || []) {
@@ -105,15 +107,15 @@ export function renderContent(content, arcaSvg) {
     </header>`;
     blocks[`project-${project.id}`] = `<div class="project__information" data-reveal>
       <p class="project__description">${richText(project.description)}</p>
-      ${project.publication ? `<div class="project__publication"><span class="project__publication-label">Featured publication</span><p><cite>${e(project.publication.title)}</cite><small>${e(project.publication.subtitle)}</small></p></div>` : ''}
-      <a class="text-link" href="${e(project.url)}" data-analytics-goal="project_open" data-project="${project.id}">${e(project.action)}${arrow}</a>
+      ${project.publication ? `<div class="project__publication"><span class="project__publication-label">Selected essay</span><p><cite><a href="${e(project.publication.url)}" aria-label="Read ${e(project.publication.title)} — ${e(project.publication.meta)}">${e(project.publication.title)}</a></cite><small>${e(project.publication.subtitle)}</small><small>${e(project.publication.meta)}</small></p></div>` : ''}
+      <a class="text-link" href="${e(project.url)}" aria-label="${e(project.action)}: ${e(project.title)}" data-analytics-goal="project_open" data-project="${project.id}">${e(project.action)}${arrow}</a>
     </div>`;
     if (project.images) {
       blocks[`gallery-${project.id}`] = renderGallery(project.images);
       const item = project.id === 'archive' ? 'record' : 'image';
       blocks[`controls-${project.id}`] = `<figcaption class="archive-stack__instructions" id="${project.id}-stack-instructions">
         <span data-archive-counter aria-hidden="true">01 / ${String(project.images.length).padStart(2, '0')}</span>
-        <span class="archive-stack__instruction archive-stack__instruction--desktop">Drag either way&nbsp;· Either arrow advances the stack</span>
+        <span class="archive-stack__instruction archive-stack__instruction--desktop">Drag either way</span>
         <span class="archive-stack__instruction archive-stack__instruction--touch">Swipe either way</span>
         <button class="archive-next" type="button" data-archive-next aria-label="Next ${item} in ${project.id === 'archive' ? 'the ' : ''}${e(project.title)}">Next ${item}</button>
       </figcaption>`;

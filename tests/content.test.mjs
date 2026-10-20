@@ -20,6 +20,9 @@ test('invalid editorial data fails before publication', () => {
   bad.projects[0].url = 'javascript:alert(1)';
   assert.throws(() => validateContent(bad), /HTTPS/);
   bad.projects[0].url = content.projects[0].url;
+  bad.projects[0].publication.url = 'javascript:alert(1)';
+  assert.throws(() => validateContent(bad), /HTTPS/);
+  bad.projects[0].publication.url = content.projects[0].publication.url;
   bad.projects.push(bad.projects[0]);
   assert.throws(() => validateContent(bad), /duplicate/);
 });

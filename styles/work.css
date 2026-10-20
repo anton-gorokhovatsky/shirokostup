@@ -1,5 +1,6 @@
 .now {
   font-variation-settings: "DRKM" 0;
+  scroll-margin-block-start: 4.5rem;
   padding: 2rem var(--gutter) 3rem;
   color: var(--accent-ink);
   background: var(--lichen);
@@ -518,6 +519,18 @@
   letter-spacing: -0.022em;
 }
 
+.project__publication a {
+  text-decoration-thickness: 0.05em;
+  text-underline-offset: var(--underline-clearance);
+  text-decoration-color: color-mix(in srgb, currentColor 46%, transparent);
+  transition: text-decoration-color var(--duration-fast) var(--ease-move);
+}
+
+.project__publication a:hover,
+.project__publication a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
 .project__publication small {
   display: block;
   margin-top: 0.45rem;
@@ -938,6 +951,7 @@
   font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
+  overflow-wrap: normal;
   cursor: pointer;
 }
 
@@ -954,6 +968,11 @@
   margin-left: auto;
 }
 
+.project__visual--women-stack,
+.project__visual--archive {
+  container: archive-visual / inline-size;
+}
+
 .archive-stack__instructions [data-archive-counter] {
   grid-column: 1;
   grid-row: 1;
@@ -965,6 +984,7 @@
   grid-row: 1;
   min-width: 0;
   text-align: right;
+  overflow-wrap: normal;
 }
 
 .archive-stack__instruction--touch {

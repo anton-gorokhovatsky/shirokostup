@@ -351,6 +351,97 @@ test("event ticket dismissal is scoped to the current event", async ({ page }) =
     .toBe("true");
 });
 
+test("event anchor keeps its date clear of the fixed Index", async ({ page }) => {
+  await installUpcomingClock(page);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openFreshPage(page);
+  for (const width of [320, 390, 1280, 1920]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const fontSize of ['100%', '200%']) {
+      await page.goto('/?qa=browser-regression#top');
+      await page.evaluate(size => { document.documentElement.style.fontSize = size; }, fontSize);
+      // Let fonts and the invitation's resize observer finish the new text/viewport layout.
+      await page.evaluate(async () => {
+        await document.fonts.ready;
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      });
+      await expect.poll(() => page.locator('[data-event-ticket]').evaluate(ticket =>
+        Math.abs(parseFloat(document.documentElement.style.getPropertyValue('--event-ticket-height')) - ticket.offsetHeight)
+      )).toBeLessThanOrEqual(1);
+      await page.goto('/?qa=browser-regression#now');
+      await expect.poll(async () => {
+        const index = await page.getByRole('button', { name: 'Index', exact: true }).boundingBox();
+        const date = await page.locator('[data-featured-event-date]').boundingBox();
+        return date.y - (index.y + index.height);
+      }, { message: `Event date clears Index at ${width}px and ${fontSize} text` }).toBeGreaterThanOrEqual(0);
+    }
+  }
+});
+
+test("calendar date stays painted after changing themes", async ({ page }, testInfo) => {
+  await installUpcomingClock(page);
+  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+  await openFreshPage(page);
+  await page.evaluate(() => document.fonts.ready);
+  const day = page.locator(".event-calendar strong");
+  await expect(day).toHaveText("1");
+  for (const width of [390, 1920]) {
+    await page.setViewportSize({ width, height: 1080 });
+    const initial = await day.screenshot({ animations: "disabled" });
+    for (const name of ["Dark", "Light", "Dark", "Light"]) {
+      await page.getByRole("button", { name: "Index", exact: true }).click();
+      await page.locator(`[data-theme-choice="${name.toLowerCase()}"]`).click();
+      await page.getByRole("button", { name: "Close index", exact: true }).click();
+      await expect(page.getByRole("dialog", { name: "Index" })).toBeHidden();
+      await expect(day).toBeVisible();
+      const rendered = await day.screenshot({ animations: "disabled" });
+      if (!rendered.equals(initial)) {
+        await testInfo.attach(`calendar-${width}-${name}`, { body: rendered, contentType: "image/png" });
+        await testInfo.attach(`calendar-${width}-initial`, { body: initial, contentType: "image/png" });
+      }
+      expect(rendered.equals(initial), `The date must stay painted after ${name} at ${width}px`).toBe(true);
+    }
+  }
+});
+
+test("professional link focus clears its labels and the next line", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
+  await openFreshPage(page, "contact");
+  for (const width of [320, 390, 1280]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const scale of ["100%", "200%"]) {
+      await page.evaluate(size => { document.documentElement.style.fontSize = size; }, scale);
+      for (const location of ["footer", "index"]) {
+        if (location === "index") await page.getByRole("button", { name: "Index", exact: true }).click();
+        const contact = page.locator(`.professional-contact--${location}`);
+        for (const link of await contact.locator("a").all()) {
+          await link.press("ArrowDown");
+          await expect(link).toBeFocused();
+          const focus = await link.evaluate(el => {
+            const group = el.closest(".professional-contact");
+            const styles = getComputedStyle(el);
+            const clearance = parseFloat(styles.outlineWidth) + parseFloat(styles.outlineOffset);
+            const bounds = el.getBoundingClientRect();
+            return {
+              top: bounds.top - clearance,
+              bottom: bounds.bottom + clearance,
+              labelBottom: group.querySelector(".professional-contact__label").getBoundingClientRect().bottom,
+              noteTop: group.querySelector(".professional-contact__note").getBoundingClientRect().top,
+              height: bounds.height,
+              outline: styles.outlineStyle,
+            };
+          });
+          expect(focus.outline).not.toBe("none");
+          expect(focus.height).toBeGreaterThanOrEqual(44);
+          expect(focus.top, `${location} focus above at ${width}px / ${scale}`).toBeGreaterThanOrEqual(focus.labelBottom);
+          expect(focus.bottom, `${location} focus below at ${width}px / ${scale}`).toBeLessThanOrEqual(focus.noteTop);
+        }
+        if (location === "index") await page.getByRole("button", { name: "Close index", exact: true }).click();
+      }
+    }
+  }
+});
+
 test("index keeps predictable focus, theme, and motion controls", async ({ page }, testInfo) => {
   await installUpcomingClock(page);
   await openFreshPage(page);
@@ -610,7 +701,7 @@ test("content reflows at 320 px and equivalent 200% desktop zoom", async ({ page
   expect(indexButtonBox.x + indexButtonBox.width).toBeLessThanOrEqual(viewport.width);
 });
 
-test("enlarged text keeps consent, past event, and gallery actions inside a narrow screen", async ({ page }) => {
+test("enlarged text keeps consent, past event, and gallery actions inside a narrow screen", async ({ page }, testInfo) => {
   await page.clock.install({ time: new Date("2026-11-04T12:00:00Z") });
   await page.setViewportSize({ width: 320, height: 844 });
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -631,6 +722,14 @@ test("enlarged text keeps consent, past event, and gallery actions inside a narr
   }
   expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1);
 
+  for (const instruction of await page.locator('.archive-stack__instruction:visible').all()) {
+    const lines = await instruction.evaluate(el => el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight));
+    expect(lines, 'A three-word gallery instruction must keep words readable at 200%').toBeLessThanOrEqual(3.01);
+  }
+  for (const project of ['women', 'archive']) {
+    await page.locator(`.project--${project} .archive-stack__instructions`).scrollIntoViewIfNeeded();
+    await page.screenshot({ path: testInfo.outputPath(`${project}-controls-text-200.png`), animations: 'disabled' });
+  }
   const next = page.getByRole("button", { name: "Next image in Women in the North" });
   await next.focus();
   await expect(next).toBeFocused();

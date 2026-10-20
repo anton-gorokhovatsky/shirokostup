@@ -74,7 +74,14 @@
   text-align: right;
 }
 
-.hero__work-link { display: none; }
+.hero__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1.5rem;
+  max-width: 100%;
+  margin-top: 0.75rem;
+}
 
 .scroll-cue {
   position: absolute;
@@ -529,9 +536,12 @@
 }
 
 .event-calendar strong {
+  /* A system calendar figure stays independent of the page's variable-font axis. */
+  font-family: ui-sans-serif, system-ui, sans-serif;
   font-size: calc(var(--event-calendar-size) * 0.64);
   font-weight: 500;
   font-variant-numeric: lining-nums tabular-nums;
+  font-variation-settings: normal;
   line-height: 1;
   letter-spacing: -0.055em;
 }

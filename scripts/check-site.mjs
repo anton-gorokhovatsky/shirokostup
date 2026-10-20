@@ -140,9 +140,17 @@ assert(professionalContacts === 2, "Professional contact must be available in bo
 const mailLinks = [...html.matchAll(/href="(mailto:[^"]+)"/gi)].map((match) => match[1]);
 assert(mailLinks.length >= 3 && new Set(mailLinks).size === 1, "All contact actions must use the same email address.");
 assert(
-  count(html, /href="assets\/olga-shirokostup-cv\.pdf"/gi) === 2,
-  "The original CV must be linked from both Index and footer.",
+  count(html, /href="assets\/olga-shirokostup-cv\.pdf"/gi) === 3,
+  "The original CV must be linked from the introduction, Index and footer.",
 );
+for (const location of ["index", "footer"]) {
+  const contact = html.match(new RegExp(`class="professional-contact professional-contact--${location}">([\\s\\S]*?)</div>`))?.[1];
+  assert(contact?.includes('href="assets/olga-shirokostup-cv.pdf"'), `The ${location} must retain its CV link.`);
+}
+const shortcuts = html.match(/<nav class="hero__links"[\s\S]*?<\/nav>/)?.[0];
+for (const destination of ["#work", "#contact", "assets/olga-shirokostup-cv.pdf"]) {
+  assert(shortcuts?.includes(`href="${destination}"`), `The introduction needs a visible route to ${destination}.`);
+}
 const cvFile = await readFile(resolve(root, "assets/olga-shirokostup-cv.pdf"));
 assert(cvFile.subarray(0, 4).toString() === "%PDF", "The linked CV must remain a valid PDF file.");
 

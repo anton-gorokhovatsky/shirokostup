@@ -2,14 +2,14 @@
   "hero": "Artistic research, archives, and exhibitions across the European High North.",
   "practice": {
     "title": "Local histories in public view",
-    "note": "Olga works with artists, museums, and researchers to bring local histories into public view through exhibitions, writing, and long-term collaborations."
+    "note": "Personal archives, oral histories, and fieldwork underpin Olga’s exhibitions and writing. Long-term collaborations connect artists, researchers, and local communities."
   },
   "about": {
     "title": "From the Kola Peninsula to Lyon",
-    "introduction": "Olga Shirokostup is an independent curator, researcher, and educator. Born in Severomorsk, she works across the European High North and is based in Lyon.",
+    "introduction": "Born in Severomorsk and based in Lyon, Olga connects independent research with work in museums, archives, and education.",
     "paragraphs": [
-      "Olga studied history at the Moscow School of Social and Economic Sciences and graduated from the Chto Delat’ School of Engaged Art. Her work moves between long-term institutional collaborations and independent research.",
-      "She is currently a curator within the European research project ARCA (Biocultural Heritage in Arctic Cities as a Potential Resource for Climate Adaptation, 2024–2027). She was co-curator of Arctic Art Forum V at the Natural History Museum in Oslo in 2026 and has been part of the Women in the North project, curated by Maria Lind, since 2022.",
+      "Olga studied history at the Moscow School of Social and Economic Sciences and graduated from the Chto Delat’ School of Engaged Art.",
+      "Within ARCA (2024–2027), she works as a curator on biocultural heritage and climate adaptation in Arctic cities. She co-curated Arctic Art Forum V in Oslo in 2026 and has contributed to Women in the North since 2022.",
       "Between 2021 and 2023, Olga served as Chief Curator of the <a href=\"https://radiancecca.com/\">Radiance Centre for Contemporary Art</a> in Apatity. Since 2023, she has curated the Archive of Artistic Life in Zapolyarye within RAAN. From 2020 to 2024, she was a Research Course Leader at <a href=\"https://garagemca.academy/\">Garage Academy</a>. She is a recipient of a Robert Bosch Stiftung grant and a former participant in the Frame Curatorial Exchange Programme."
     ]
   },
@@ -21,11 +21,13 @@
       "type": "Research · exhibitions · publications",
       "since": "2022",
       "date": null,
-      "description": "At Kin Museum of Contemporary Art, Olga contributes archival research, essays, exhibitions, and zines to Women in the North, a long-term project curated by Maria Lind. Her contributions include <em>The Warmth of the Invisible Sun</em>, a publication devoted to Evgenia Patsia and the Kola North.",
+      "description": "At Kin Museum of Contemporary Art, Olga contributes archival research, essays, exhibitions, and zines to Women in the North, a long-term project curated by Maria Lind. Her research on Evgenia Patsia follows the archivist’s work with Sámi literature, local histories, and the culture of the Kola North.",
       "action": "View the project",
       "publication": {
         "title": "The Warmth of the Invisible Sun",
-        "subtitle": "Evgenia Patsia and the Kola North"
+        "subtitle": "Evgenia Patsia and the Kola North",
+        "url": "https://gorky.media/context/teplo-nevidimogo-solntsa",
+        "meta": "Gorky · 2023 · In Russian"
       },
       "images": [
         {
