@@ -41,6 +41,7 @@ export function validateContent(content) {
     if (!/^[a-z][a-z0-9-]*$/.test(project.id) || ids.has(project.id)) throw new Error(`Invalid or duplicate project id: ${project.id}`);
     ids.add(project.id);
     for (const field of ['title', 'type', 'description', 'action']) text(project[field], `${project.id}.${field}`);
+    if (project.actionNote !== undefined) text(project.actionNote, `${project.id}.actionNote`);
     https(project.url);
     richText(project.description);
     if (project.since && !/^\d{4}$/.test(project.since)) throw new Error('Project start needs a four-digit year.');
@@ -99,16 +100,17 @@ export function renderContent(content, arcaSvg) {
     texts: content.texts.map(item => `<a data-reveal href="${e(item.url)}"><span class="texts__meta">${e(item.meta)}</span><strong>${e(item.title)}</strong><span class="texts__arrow">${arrow}</span></a>`).join('\n'),
   };
   content.projects.forEach((project, index) => {
+    const actionDescription = project.actionNote ? ` aria-describedby="${project.id}-action-note"` : '';
     blocks[`project-heading-${project.id}`] = `<header class="project__heading" data-reveal>
       <div class="project__count">${String(index+1).padStart(2,'0')}</div>
       <p class="project__type">${e(project.type)}</p>
-      <h3><a href="${e(project.url)}" data-analytics-goal="project_open" data-project="${project.id}">${e(project.title)}</a></h3>
+      <h3><a href="${e(project.url)}"${actionDescription} data-analytics-goal="project_open" data-project="${project.id}">${e(project.title)}</a></h3>
       <p class="project__years">${project.since ? `<span>Since ${e(project.since)}</span>${ongoing}` : e(project.date)}</p>
     </header>`;
     blocks[`project-${project.id}`] = `<div class="project__information" data-reveal>
       <p class="project__description">${richText(project.description)}</p>
       ${project.publication ? `<div class="project__publication"><span class="project__publication-label">Selected essay</span><p><cite><a href="${e(project.publication.url)}" aria-label="Read ${e(project.publication.title)} — ${e(project.publication.meta)}">${e(project.publication.title)}</a></cite><small>${e(project.publication.subtitle)}</small><small>${e(project.publication.meta)}</small></p></div>` : ''}
-      <a class="text-link" href="${e(project.url)}" aria-label="${e(project.action)}: ${e(project.title)}" data-analytics-goal="project_open" data-project="${project.id}">${e(project.action)}${arrow}</a>
+      ${project.actionNote ? '<div class="project__action">' : ''}<a class="text-link" href="${e(project.url)}" aria-label="${e(project.action)}: ${e(project.title)}"${actionDescription} data-analytics-goal="project_open" data-project="${project.id}">${e(project.action)}${arrow}</a>${project.actionNote ? `<small class="project__action-note" id="${project.id}-action-note">${e(project.actionNote)}</small></div>` : ''}
     </div>`;
     if (project.images) {
       blocks[`gallery-${project.id}`] = renderGallery(project.images);

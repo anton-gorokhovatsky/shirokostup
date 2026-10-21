@@ -539,6 +539,19 @@
   letter-spacing: 0.04em;
 }
 
+.project__action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.75rem;
+}
+
+.project__action-note {
+  font-size: 0.7rem;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+}
+
 .text-link {
   display: inline-flex;
   gap: 0.55rem;
