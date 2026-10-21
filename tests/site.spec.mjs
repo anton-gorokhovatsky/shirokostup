@@ -372,22 +372,41 @@ test("event anchor keeps its date clear of the fixed Index", async ({ page }) =>
   for (const width of [320, 390, 1280, 1920]) {
     await page.setViewportSize({ width, height: 844 });
     for (const fontSize of ['100%', '200%']) {
-      await page.goto('/?qa=browser-regression#top');
+      // A hash-only goto reuses the previous case's document, text size and
+      // pending scroll restoration. Each layout starts with its own document;
+      // the text resize and the anchor transition still happen live within it.
+      const scenarioUrl = `/?qa=browser-regression&width=${width}&text=${encodeURIComponent(fontSize)}`;
+      await page.goto(`${scenarioUrl}#top`);
       await page.evaluate(size => { document.documentElement.style.fontSize = size; }, fontSize);
-      // Let fonts and the invitation's resize observer finish the new text/viewport layout.
+      // Clock.install also replaces rAF: two mocked frames are not a browser
+      // layout commit. IntersectionObserver runs after native resize/layout,
+      // before the hash change is allowed to choose its scroll position.
       await page.evaluate(async () => {
         await document.fonts.ready;
-        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        await new Promise(resolve => {
+          const observer = new IntersectionObserver(() => {
+            observer.disconnect();
+            resolve();
+          });
+          observer.observe(document.querySelector('#top'));
+        });
       });
       await expect.poll(() => page.locator('[data-event-ticket]').evaluate(ticket =>
         Math.abs(parseFloat(document.documentElement.style.getPropertyValue('--event-ticket-height')) - ticket.offsetHeight)
       )).toBeLessThanOrEqual(1);
-      await page.goto('/?qa=browser-regression#now');
+      await page.goto(`${scenarioUrl}#now`);
       await expect.poll(async () => {
         const index = await page.getByRole('button', { name: 'Index', exact: true }).boundingBox();
         const date = await page.locator('[data-featured-event-date]').boundingBox();
-        return date.y - (index.y + index.height);
-      }, { message: `Event date clears Index at ${width}px and ${fontSize} text` }).toBeGreaterThanOrEqual(0);
+        const viewport = page.viewportSize();
+        return {
+          clearOfIndex: date.y >= index.y + index.height,
+          arrivedInViewport: date.y + date.height <= viewport.height,
+        };
+      }, { message: `Event date clears Index at ${width}px and ${fontSize} text` }).toEqual({
+        clearOfIndex: true, arrivedInViewport: true,
+      });
+      await expect(page.locator('[data-featured-event-date]')).toBeInViewport({ ratio: 1 });
     }
   }
 });
@@ -1167,17 +1186,21 @@ test("footer row and image sources reflow continuously and with enlarged text", 
     1204, 1205, 1206, 1280, 1410, 1411, 1412, 1440, 1512, 1600, 1920,
     2408, 2409, 2410, 2560, 3840,
   ])].sort((first, second) => first - second);
+  const expectSettledFooter = async (message) => {
+    // A container-query change must reach both the grid and inherited shadow
+    // parts. Assert the complete layout state rather than a transitional frame.
+    await expect.poll(() => page.evaluate(inspectFooterReflow), { message }).toMatchObject({
+      clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false,
+      signatureComposition: expect.stringMatching(/^(hanging|stacked)$/),
+    });
+  };
   for (const theme of ["light", "dark"]) {
     await page.emulateMedia({ colorScheme: theme });
     for (const width of widths) {
       await page.setViewportSize({ width, height: 844 });
       // Measure after a paint: rAF itself runs before the container-query layout.
       await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-      const reflow = await page.evaluate(inspectFooterReflow);
-      expect(reflow, `Footer at ${width}px / ${theme}`).toMatchObject({
-        clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false,
-      });
-      expect(reflow.signatureComposition).not.toBe("invalid");
+      await expectSettledFooter(`Footer at ${width}px / ${theme}`);
       if ([320, 390, 700, 768, 1280, 1512, 1920].includes(width)) {
         await page.locator(".contact__footer").screenshot({ path: testInfo.outputPath(`signature-footer-${theme}-${width}.png`), animations: "disabled" });
       }
@@ -1195,11 +1218,7 @@ test("footer row and image sources reflow continuously and with enlarged text", 
       return range.getClientRects().length;
     })).toBeLessThanOrEqual(2);
     // A clipped grid can hide overflow from document.scrollWidth; inspect actual content too.
-    const reflow = await page.evaluate(inspectFooterReflow);
-    expect(reflow, `Footer at ${width}px / text 200%`).toMatchObject({
-      clipped: [], overlapping: false, misaligned: [], offGrid: [], horizontalScroll: false,
-    });
-    expect(reflow.signatureComposition).not.toBe("invalid");
+    await expectSettledFooter(`Footer at ${width}px / text 200%`);
     if ([320, 768, 1280, 1920].includes(width)) {
       await credit.scrollIntoViewIfNeeded();
       await credit.focus();
