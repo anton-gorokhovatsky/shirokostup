@@ -2,6 +2,8 @@
 
 A static editorial portfolio for independent curator, researcher, and educator Olga Shirokostup.
 
+**Ольге: начните с [START_HERE.md](START_HERE.md)** — самостоятельный запуск, редакторские задачи, публикация и восстановление. Общие правила владельца синхронизированы 22 октября 2026 года и доступны локально в [references/](references/README.md).
+
 For ownership transfer, recurring content updates, fragile interaction contracts, and the complete release procedure, see
 [`HANDOFF.md`](HANDOFF.md).
 
@@ -13,10 +15,10 @@ Start with [`AGENTS.md`](AGENTS.md) and [`UX_RULES.md`](UX_RULES.md): 24 binding
 
 ```bash
 corepack enable
-pnpm install
+pnpm install --frozen-lockfile
 # Prepare the licensed webfont first; see assets/fonts/README.md.
 pnpm run build
-python3 -m http.server 4173
+python3 -m http.server 4173 --bind 127.0.0.1
 ```
 
 Then open `http://127.0.0.1:4173`.

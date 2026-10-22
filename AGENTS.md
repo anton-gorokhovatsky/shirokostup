@@ -1,5 +1,13 @@
 # Project instructions
 
+## Portable owner rules and handoff
+
+Before working on this project, read the complete [shared owner rules](references/owner-project-rules.md), then apply the project requirements below. The shared rules and their three supporting references are a portable snapshot of the owner's current global Codex instructions, synchronised on **22 October 2026**. They apply even on a computer without the owner's Codex profile or access to Notion. [Snapshot provenance](references/README.md) records the source and the limited path adaptations.
+
+Start an ordinary update with the accepted basis, the observable visitor outcome, the scope, and proportionate acceptance criteria. Preserve the accepted composition, source imagery, editorial meaning, and interactions. A request to refine or release does not authorise a new art direction. Distinguish implementation, rendered verification, owner acceptance, and publication.
+
+For independent operation, begin with [START_HERE.md](START_HERE.md), then [HANDOFF.md](HANDOFF.md). Work from authored sources, preserve unrelated edits, and complete the existing gates before publication. Never put the private handoff archive or its included webfont into the public repository.
+
 ## Mandatory UX rules
 
 Follow [`UX_RULES.md`](UX_RULES.md) for every design, content, interface, and implementation decision. Its 24 rules are project requirements, not optional inspiration. The primary-source evidence and its limits are in [`docs/nng-research.md`](docs/nng-research.md). Also consult the owner's [web-project principles](https://app.notion.com/p/gorokhovatsky/3a6777056402808bb79df09beedc4161) when relevant.

@@ -15,6 +15,13 @@ Do not commit font binaries, the full download bundle, or desktop font formats.
 
 ## Local setup
 
+The private handoff ZIP prepared for Olga on 22 October 2026 already includes this exact WOFF2 in
+`project/assets/fonts/` and in the ready-to-publish `site/` copy, with a copy of Dinamo's terms in
+the archive's `licenses/` folder. Keep that ZIP private. A Git clone or bundle still excludes the font;
+copy it from the private archive before running the checks. The ZIP does not include desktop fonts or
+the complete superfamily. The previously supplied terms were version 2.51; the archive records the
+current official terms separately, with their actual version and retrieval date.
+
 Obtain the licensed ABC Areal download from the owner or Dinamo. Copy the original file
 `ABC Areal/WOFF2/ABCArealVariable.woff2` to:
 
